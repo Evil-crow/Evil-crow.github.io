@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Chatting_X_Chatting项目文档 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Chatting_X_Chatting项目文档</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Chatting_X_Chatting项目文档</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/文档/">文档</a></span></div><div class="post-content"><h1 id="Chatting-X-Chatting项目文档"><a href="#Chatting-X-Chatting项目文档" class="headerlink" title="Chatting_X_Chatting项目文档"></a>Chatting_X_Chatting项目文档</h1><p><em>暑期的项目文档,也真的是拖了好久才来完成,真的很差劲</em></p>
+<p><em>本项目的内容一切都是可以随意进行学习,使用的,但是切勿用于一切具有商业目的的用途上</em></p>
+<p><em>请于下载内的24小时内迅速删除</em></p>
+<h2 id="0-目录"><a href="#0-目录" class="headerlink" title="0.目录"></a>0.目录</h2><ul>
+<li><a href="#1.引言">1.引言</a><ul>
+<li><a href="#1.1项目综述">1.1项目综述</a></li>
+<li><a href="#1.2术语表">1.2术语表</a></li>
+<li><a href="#1.3参考资料">1.3参考资料</a></li>
+<li><a href="#1.4开发环境及使用工具">1.4开发环境及使用工具</a></li>
+<li><a href="#1.5使用说明">1.5使用说明</a></li>
+</ul>
+</li>
+<li><a href="#2.数据结构">2.数据结构说明</a></li>
+<li><a href="#2.模块设计">3.模块设计</a><ul>
+<li><a href="#3.1程序函数调用图及模块分化">3.1程序函数调用图及模块分化</a></li>
+<li><a href="#3.2功能设计说明">3.2功能设计说明</a></li>
+</ul>
+</li>
+<li><a href="#4.文件说明">4.文件说明</a></li>
+<li><a href="#5.异常,错误处理">5.异常,错误处理</a></li>
+<li><a href="#6.已经存在的问题及改善方案">6.已经存在的问题及改善方案</a></li>
+<li><a href="#7.运行截图">7.运行截图</a></li>
+</ul>
+<h2 id="1-引言"><a href="#1-引言" class="headerlink" title="1.引言"></a>1.引言</h2><h3 id="1-1项目综述"><a href="#1-1项目综述" class="headerlink" title="1.1项目综述"></a>1.1项目综述</h3><hr>
+<p>随着网络的发展越来越快,地球越来越小,人与人之间的距离越来越小,<strong>实时通讯</strong>成为必须要实现的一个问题</p>
+<p>而在计算机发展史上,也不乏有各种各样的通讯工具的出现<strong>ICQ,MSN,Skype,QQ,Wechat,Yahoo!_Messager.</strong></p>
+<p>此项目是基于一些通讯软件的功能,再结合所学习到的<strong>进程,线程,网络通信</strong>的知识实现的一个通讯软件.</p>
+<p>仍然有许多的缺陷,但是已经初步具有实现通讯功能的能力.</p>
+<h3 id="1-2术语表"><a href="#1-2术语表" class="headerlink" title="1.2术语表"></a>1.2术语表</h3><hr>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>术语</th>
+<th>说明性定义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>C/S</td>
+<td>Client/Server模型</td>
+</tr>
+<tr>
+<td>2</td>
+<td>epoll</td>
+<td>Linux下处理并发的API</td>
+</tr>
+<tr>
+<td>3</td>
+<td>makefile</td>
+<td>Linux下进行工程构建的文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1-3参考资料"><a href="#1-3参考资料" class="headerlink" title="1.3参考资料"></a>1.3参考资料</h3><hr>
+<p>在进行该项目的实现时,也查阅了很多的资料</p>
+<blockquote>
+<p>a.相关类型的书籍</p>
+</blockquote>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>书籍</th>
+<th>作者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; Linux_C编程实战 &gt;</td>
+<td>董永清</td>
+</tr>
+<tr>
+<td>&lt; 高性能Linux服务器构建实战 &gt;</td>
+<td>高俊峰</td>
+</tr>
+<tr>
+<td>&lt; 鸟哥的Linux私房菜(第三版)</td>
+<td>VBird</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<blockquote>
+<p>b.查阅的相关的博客,网上资料</p>
+</blockquote>
+<blockquote>
+<table>
+<thead>
+<tr>
+<th>资料名</th>
+<th>作者</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="http://blog.csdn.net/bgylde/article/details/53096739" target="_blank" rel="noopener">Linux-C下C/S架构实例,实现文件传输功能</a></td>
+<td>bgylde</td>
+</tr>
+<tr>
+<td><a href="http://2627lounuo.blog.51cto.com/10696599/1784975" target="_blank" rel="noopener">IO复用之——epoll</a></td>
+<td>敲完代码好睡觉zzz</td>
+</tr>
+</tbody>
+</table>
+</blockquote>
+<p><del>事实上,网路上,很多书上的内容都是千篇一律,很废的</del></p>
+<p><strong>但是,我很推荐上面”IO多路复用之—epoll”,剖析得很好</strong></p>
+<h3 id="1-4开发环境及使用工具"><a href="#1-4开发环境及使用工具" class="headerlink" title="1.4开发环境及使用工具"></a>1.4开发环境及使用工具</h3><p>开发环境: Fedora 4.11.12 X86_64</p>
+<p>开发工具: Vim及VSCode,gcc编译器</p>
+<p>绘图工具: ProcessOn</p>
+<h3 id="1-5使用说明"><a href="#1-5使用说明" class="headerlink" title="1.5使用说明"></a>1.5使用说明</h3><p>如果你曾经有过进行编程的经验,翻一翻目录就会知道该怎么使用了,</p>
+<p>但是你如果是初级小白,请按照我接下来的方法进行操作</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">安装说明:</span><br><span class="line">cd ~/Public</span><br><span class="line">git clone https://github.com/Evil-crow/Chatting_X_Chatting.git</span><br><span class="line">cd Chatting_X_Chatting/v1.5/Client</span><br><span class="line">make</span><br><span class="line">make clean</span><br><span class="line">cd ../Server</span><br><span class="line">make</span><br><span class="line">make clean</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">使用说明:</span><br><span class="line"></span><br><span class="line">Terminal_I</span><br><span class="line"></span><br><span class="line">cd Chatting_X_Chatting/v1.5/Server/</span><br><span class="line">./Server</span><br><span class="line"></span><br><span class="line">Terminal_II</span><br><span class="line"></span><br><span class="line">cd Chatting_X_Chatting/v1.5/Client</span><br><span class="line">./Client</span><br><span class="line"></span><br><span class="line">之后,就可以按照提示进行使用</span><br></pre></td></tr></table></figure>
+<p>此为本机测试方法,若要进行跨机器的通信,请发邮件至我的邮箱</p>
+<blockquote>
+<p>Evilcrow</p>
+</blockquote>
+<blockquote>
+<p><a href="mailto:evilcrow486@gmail.com" target="_blank" rel="noopener">evilcrow486@gmail.com</a></p>
+</blockquote>
+<hr>
+<h2 id="2-数据结构说明"><a href="#2-数据结构说明" class="headerlink" title="2.数据结构说明"></a>2.数据结构说明</h2><p>本项目中主要是进行线程,进程,网络编程知识的综合运用</p>
+<p>所涉及到的数据结构并不是很多,主要是以下两种:</p>
+<table>
+<thead>
+<tr>
+<th>数据结构</th>
+<th>使用之处</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>数组</td>
+<td>使用数组,主要是在TCP发送包以及各种功能函数实现时所使用的.<br>存储字符串,标识符,各种各样的元素,这样可以使得功能的实现更加便利.<br>但是,在一定情况下,使用数组,并不能很好的提高程序的性能</td>
+</tr>
+<tr>
+<td>链表</td>
+<td>链表主要是在Server端使用,使用链表用来存储在线用户.<br>使用C语言不像其他OOP一样,有封装好的类,手动实现,虽然麻烦,但是后面很好使用.<br>,链表基本上,查找上相对慢一点,的那是其他操作很方便.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-模块设计"><a href="#3-模块设计" class="headerlink" title="3.模块设计"></a>3.模块设计</h2><h3 id="3-1程序函数调用图及模块分化"><a href="#3-1程序函数调用图及模块分化" class="headerlink" title="3.1程序函数调用图及模块分化"></a>3.1程序函数调用图及模块分化</h3><hr>
+<h4 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h4><p><img src="https://i.imgur.com/i29cDLM.png" alt=""></p>
+<h4 id="Server"><a href="#Server" class="headerlink" title="Server"></a>Server</h4><p><img src="https://i.imgur.com/5xhYBPf.png" alt=""></p>
+<h3 id="3-2功能设计说明"><a href="#3-2功能设计说明" class="headerlink" title="3.2功能设计说明"></a>3.2功能设计说明</h3><hr>
+<h4 id="3-2-1-Client–main模块"><a href="#3-2-1-Client–main模块" class="headerlink" title="3.2.1 Client–main模块"></a>3.2.1 Client–main模块</h4><hr>
+<h5 id="功能描述"><a href="#功能描述" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是进行Client总体控制的main模块</p>
+<h5 id="算法和流程图"><a href="#算法和流程图" class="headerlink" title="算法和流程图"></a>算法和流程图</h5><p><img src="https://i.imgur.com/K3BuFYz.png" alt=""></p>
+<h4 id="3-2-2-Client–recv模块"><a href="#3-2-2-Client–recv模块" class="headerlink" title="3.2.2 Client–recv模块"></a>3.2.2 Client–recv模块</h4><hr>
+<h5 id="功能描述-1"><a href="#功能描述-1" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是Client进行接收包的recv模块</p>
+<h5 id="算法和流程图-1"><a href="#算法和流程图-1" class="headerlink" title="算法和流程图"></a>算法和流程图</h5><p><img src="https://i.imgur.com/d78hUjq.png" alt=""></p>
+<h4 id="3-2-3-Client–chat-data模块"><a href="#3-2-3-Client–chat-data模块" class="headerlink" title="3.2.3 Client–chat_data模块"></a>3.2.3 Client–chat_data模块</h4><hr>
+<h5 id="功能描述-2"><a href="#功能描述-2" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是进行Client聊天室的主体控制程序模块</p>
+<h5 id="算法与流程图"><a href="#算法与流程图" class="headerlink" title="算法与流程图"></a>算法与流程图</h5><p><img src="https://i.imgur.com/cyY3fbh.png" alt=""></p>
+<h4 id="3-2-4-Server–main模块"><a href="#3-2-4-Server–main模块" class="headerlink" title="3.2.4 Server–main模块"></a>3.2.4 Server–main模块</h4><hr>
+<h5 id="功能描述-3"><a href="#功能描述-3" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是Server总体控制的main模块</p>
+<h5 id="算法与流程图-1"><a href="#算法与流程图-1" class="headerlink" title="算法与流程图"></a>算法与流程图</h5><p><img src="https://i.imgur.com/nUsHYKB.png" alt=""></p>
+<h4 id="3-2-5-Server–epoll-server模块"><a href="#3-2-5-Server–epoll-server模块" class="headerlink" title="3.2.5 Server–epoll_server模块"></a>3.2.5 Server–epoll_server模块</h4><hr>
+<h5 id="功能描述-4"><a href="#功能描述-4" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是Server进行事件管理的重要的epoll模块</p>
+<h5 id="算法与流程图-2"><a href="#算法与流程图-2" class="headerlink" title="算法与流程图"></a>算法与流程图</h5><p><img src="https://i.imgur.com/pCzXwPa.png" alt=""></p>
+<h3 id="3-2-6-Server–epoll-menu模块"><a href="#3-2-6-Server–epoll-menu模块" class="headerlink" title="3.2.6 Server–epoll_menu模块"></a>3.2.6 Server–epoll_menu模块</h3><hr>
+<h5 id="功能描述-5"><a href="#功能描述-5" class="headerlink" title="功能描述"></a>功能描述</h5><p>此模块是Server进行事件处理的模块</p>
+<h5 id="算法与流程图-3"><a href="#算法与流程图-3" class="headerlink" title="算法与流程图"></a>算法与流程图</h5><p><img src="https://i.imgur.com/hWXdRD5.png" alt=""></p>
+<h2 id="4-文件说明"><a href="#4-文件说明" class="headerlink" title="4.文件说明"></a>4.文件说明</h2><table>
+<thead>
+<tr>
+<th>文件名</th>
+<th>位置</th>
+<th>文件描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>buffer1</td>
+<td>~/Public/buffer1</td>
+<td>存储离线内容</td>
+</tr>
+<tr>
+<td>buffer2</td>
+<td>~/Public/buffer2</td>
+<td>存储离线信息位置</td>
+</tr>
+<tr>
+<td>File目录</td>
+<td>~/Public/File</td>
+<td>接受发送的文件</td>
+</tr>
+<tr>
+<td>[用户名]目录</td>
+<td>/Public/Information/[用户名]</td>
+<td>每一个用户建立一个目录,<br>其中包含了用户的好友目录,群组目录</td>
+</tr>
+<tr>
+<td>[好友名]目录</td>
+<td>~/Public/Information/[用户名]目录/[好友名]目录</td>
+<td>其中包含了buffer,history两个文件</td>
+</tr>
+<tr>
+<td>Groups目录</td>
+<td>~/Public/information/Groups目录</td>
+<td>其中包含了groups以及members两个文件</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-异常-错误处理"><a href="#5-异常-错误处理" class="headerlink" title="5.异常,错误处理"></a>5.异常,错误处理</h2><p>1.关于乱输入引发的错误</p>
+<p>解决方案:<strong>使用控制终端的方法进行选项的获取</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">int getch(void)</span><br><span class="line">&#123;</span><br><span class="line">     struct termios tm, tm_old;</span><br><span class="line">     int fd = 0, ch;</span><br><span class="line"></span><br><span class="line">     if (tcgetattr(fd, &amp;tm) &lt; 0) &#123;//保存现在的终端设置</span><br><span class="line">          return -1;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     tm_old = tm;</span><br><span class="line">     cfmakeraw(&amp;tm);//更改终端设置为原始模式，该模式下所有的输入数据以字节为单位被处理</span><br><span class="line">     if (tcsetattr(fd, TCSANOW, &amp;tm) &lt; 0) &#123;//设置上更改之后的设置</span><br><span class="line">          return -1;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     ch = getchar();</span><br><span class="line">     if (tcsetattr(fd, TCSANOW, &amp;tm_old) &lt; 0) &#123;//更改设置为最初的样子</span><br><span class="line">          return -1;</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     return ch;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>2.在其他方面因为操作文件的错误</p>
+<p>解决方法:<strong>进行文件打开结果的判断,不合格打印错误提示消息,并且退出</strong></p>
+<h2 id="6-已经存在的问题及改善方案"><a href="#6-已经存在的问题及改善方案" class="headerlink" title="6.已经存在的问题及改善方案"></a>6.已经存在的问题及改善方案</h2><p><strong>问题1:不合理的文件结构</strong></p>
+<p><strong>解决方案:分析实际程序的运行情况,一台主机仅绑定一个客户端,进行合理的文件结构分配</strong></p>
+<p><strong>问题2:对于不合理的输入</strong></p>
+<p><strong>解决方案:仍然需要继续进行非法输入的处理</strong></p>
+<h2 id="7-运行截图"><a href="#7-运行截图" class="headerlink" title="7.运行截图"></a>7.运行截图</h2><p>1.file<br><img src="https://i.imgur.com/soOzFv6.gif" alt=""></p>
+<p>2.friends<br><img src="https://i.imgur.com/SrQgs4b.gif" alt=""></p>
+<p>3.groups<br><img src="https://i.imgur.com/vO4ws3m.gif" alt=""></p>
+<p>4.history<br><img src="https://i.imgur.com/sriJJls.gif" alt=""></p>
+<p>5.file<br><img src="https://i.imgur.com/m7erd3M.gif" alt=""></p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/09/22/cji1p2lyy003oafnrrm03mlmg/" data-id="cji1p2lyy003oafnrrm03mlmg" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMElEQVR42u3aQW4DMQgF0Nz/0qnUbToOH9KqYz+vomY65mWBMPjxKK/n93r9vH7m6r/Wb7j69gMLAwPjtozncq2DWD//GtDkmau9MDAwzmH8RgJNw1rv8iZmDAwMjIu0mFLfJM1WGYqBgYGRBj0p+DAwMDDWjMqr08KucljtpWkMDIzTGJPBwG9//qP5BgYGxj9mzNNoffSYJtwgKgwMjK0Z6w16oUyOo2kLrxQcBgbGzRlp67+XLidFYSXdY2Bg7M2ohFVJl/UysV5EBiMBDAyMAxhpYq0PANIrX5MSEwMDY1dGPbXVm271g/GkKPyhwsXAwDiM0bvikLbJ0sHD5Y4YGBgHMCpn3F5DLR1SNgefGBgYxzDqg8m0cEwTdyVlY2BgnMaoJNNPXcIIhpGFQzIGBsbJjHpR2AurknCDK2sYGBhbM9IbGfF0tDWYnAwbMDAw9mP0XjQ/+k4GDz/EhoGBcSSjdwEiTdlpq645wsTAwLg5o95KqyfKyc/RKysxMDD2ZvQuOqwLtfQvk/djYGCcw0hHj2k7LA26/s7LOyMYGBgbMdKG2vzYWR+dxkNQDAyMTRnPcKUH0cqAoXc17fJaGAYGxnaM+krLuHiDMR4DA2NvRq/dX2/f95p6cfmIgYFxAGOSZOttu8dgvRmOYmBgYIRpsXLorSTo+qEaAwMDo36wnBSg6SBhlHAxMDBuyKg36z/QoA9/pmASi4GBsSljsmUvoPR4/DEMBgbG/Rhf/Dmods8/Iv8AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/项目文档/">项目文档</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/cji1p2lzh003vafnrqzmumchd/">关于C语言课程设计的经验总结</a><a class="next" href="/2017/09/22/cji1p2lzs0042afnr0oaan9n0/">暑期生活总结</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2lw9001vafnrzc41ns9c/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2m1l006lafnrweuf90y5/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/cji1p2m1d006bafnrs4yb5ybj/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/cji1p2m150065afnrzlerx49r/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/cji1p2m120064afnr89qqeiqy/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/cji1p2m1f006eafnrxror6er9/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/cji1p2lzn003xafnrqvtc32sz/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m170067afnrrk2lapu6/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m1i006iafnr70idg355/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/cji1p2m0z0062afnrr7snnou7/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

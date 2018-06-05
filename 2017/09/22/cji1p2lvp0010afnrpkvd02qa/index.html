@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第二篇 Linux基础知识 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第二篇 Linux基础知识</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第二篇 Linux基础知识</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Linux/">Linux</a></span></div><div class="post-content"><p><em>本章的知识是对Linux的初步了解，内容比较散。</em></p>
+<p><em>以自己的体悟为主，不会进行书本内容复制</em></p>
+<p>谈及Linux，则必须从计算机的发展史说起，Linux只是其发展过程中所激起的一个小波澜而已。</p>
+<ul>
+<li>First</li>
+</ul>
+<p>从计算机产生伊始，并没有操作系统这种东西，要对计算机进行操作所使用的都是，卡片机。</p>
+<p>在之后，由麻省理工所开发出的分时操作系统开创了一个新时代。</p>
+<p>但是，所谓分时操作系统也只能供30多余台终端机在主机中进行操作</p>
+<p><strong>注：此时的终端机并不具有计算功能，终端机仅仅具有进行输入/输出指令的功能。</strong></p>
+<ul>
+<li>Second</li>
+</ul>
+<p>人们不满足一直使用这样的主机进行操作，认为30台终端机太少，</p>
+<p>便意图开发出可以进行300多台终端机同时进行操作的系统出来。</p>
+<p>此项目汇聚了许多业界有名的人物，但后来因为进度的原因，便被搁置，虽然后来也做出了个东西，</p>
+<p>但也没有引起多大的关注。</p>
+<p>而参与此项目的一个人：肯 汤普逊则不满意此成果，想自己做出一个小系统出来供自己使用，</p>
+<p>此系统用汇编语言编写，即之后UNIX的原型</p>
+<p>之后，又有一个人参与进行来，丹尼斯 里奇，即C语言之父。</p>
+<p>此两人便完成了UNIX系统。</p>
+<p>而贝尔实验室所隶属的AT&amp;T公司，便进行发售UNIX的发行版，直至第七版开始，进行专利授权。</p>
+<ul>
+<li>Third</li>
+</ul>
+<p>因为在UNIX第七版里指出：不能向学生开放源码，使得谭教授的课程无法开放，</p>
+<p>所以谭教授便自己编写了一个Minix操作系统，即之后Linux的前身。</p>
+<p>此时又有了一个人理查德 史托曼先生，即GNU项目的创始人</p>
+<p>提倡，自由软件的倡导者，先后开发出：</p>
+<p>“神之编辑器”Emacs，GCC（GNU C Complier），等一些自由软件，从此开始了自由软件</p>
+<p>但是他们始终缺少一个自由的操作系统</p>
+<p>而林纳斯 托瓦兹 的出现便解决了这个问题</p>
+<ul>
+<li>Fourth</li>
+</ul>
+<p>Linus为了好玩，使用汇编语言的他，由于对硬件的深刻了解，最后使用C语言开发出了Linux 内核0.02版本</p>
+<p>而他在其中使用了bash，GCC等自由软件，所以他自己也将自己的软件作为自由软件释放出来</p>
+<p>之后更是衍生出了虚拟团队</p>
+<p>介绍一下Linux的版本：奇数为试用版本，不稳定。偶数版本为稳定版本。</p>
+<p>另外：关于Linux Distribution：</p>
+<p>Linux Distribution = Linux 内核 + 自由软件 + Tools + 可进行完整安装的安装包 即为Linux Distribution</p>
+<p>基本分为两大系：RedHat系 与 Debian 系，，也可以说区别在于安装包的区别，rpm包与tar.gz包</p>
+<ul>
+<li>Last</li>
+</ul>
+<p>谈谈Linux的优点与缺点：</p>
+<p>优点：极其稳定，免费或少许费用，软件更新修复快，多用户多任务的主机操作区别于Windows的单用户单任务。</p>
+<p>缺点：说到底，尽管Linux现在也是有很不错的桌面环境，比如：KDE，Gnome，xafe等</p>
+<p>但是图像界面终究是个短处，而且使用Linux操作系统时，终究避免不了使用终端操作，只有使用终端操作</p>
+<p>才能真正的体会到：Linux的乐趣。</p>
+<p>Date：2017/05/25/18:22</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/09/22/cji1p2lvp0010afnrpkvd02qa/" data-id="cji1p2lvp0010afnrpkvd02qa" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACNklEQVR42u3aS3KEMAxFUfa/abIAgnOfBKlCvoxSaRL79ECl33Hg57w8d+/cvX/9dH3K8cYjQ4aMzzLO5XN3wPUw/lcpeP2ODBky9mGQALoOi+vj1yeuz1rfTYYMGTJ4MseD8lPnypAhQwYPgqS4Jf8tLXdlyJCxG6PWIKs12tLU8OFaXIYMGR9k8K77///8ynxDhgwZn2Kc4dNp7tfGCehWMmTIGM3gAY6naOlCRi3gypAhYzdGbQDZWY/oN/JuqTJkyBjHSJch+lVyOhJAA1EZMmSMZvBiMh121oYKrWULGTJkjGakLbB1msgvl/4mKF9lyJAxmvHUYIAUwzwcozULGTJkbMNIEzLexK8F7uA+MmTIGMqorTik7TDSquPp6S+fypAhYzSDh9F06MhhvAwu1uIyZMgYweALWLVr1YrefkoqQ4aMGYx0qSI9ngdrjvyjiJUhQ8ZQRlAoho170tbvlL7VeleGDBnfY3TK0VqzjI9OUdCXIUPGaEb/QrWmfzr+RM04GTJkbMDgVyFJXjryjLuAd003GTJkjGakwbTDfiVky5AhYzNGGkzTNhlfrSjujMiQIWMQo7YqkQ4g02BKClcZMmTsw0jLRb4W1kkK+dVbO24yZMj4FIOvnKaH8ZFkcRhAvlEZMmQMYpCWWTqSJAsTtSJWhgwZMjoh9YFSs5bPypAhQ0Yj+eMJaDpIuB1hypAhYyiDN85qLTZe0BbHqDJkyBjNeCpR61y0to4mQ4aMDRg/qDgi4FHSfBUAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/OS/">OS</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/cji1p2lvr0015afnruja7d5uu/">第五篇 在线求助与基本操作</a><a class="next" href="/2017/09/22/cji1p2lvn000yafnrod0v2z1h/">第九篇 Linux文件与目录管理(下)</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2lw9001vafnrzc41ns9c/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2m1l006lafnrweuf90y5/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/cji1p2m1d006bafnrs4yb5ybj/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/cji1p2m150065afnrzlerx49r/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/cji1p2m120064afnr89qqeiqy/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/cji1p2m1f006eafnrxror6er9/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/cji1p2lzn003xafnrqvtc32sz/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m170067afnrrk2lapu6/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m1i006iafnr70idg355/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/cji1p2m0z0062afnrr7snnou7/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

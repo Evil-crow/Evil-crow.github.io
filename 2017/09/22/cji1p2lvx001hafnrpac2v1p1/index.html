@@ -1,0 +1,269 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第十篇 磁盘与文件系统管理 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第十篇 磁盘与文件系统管理</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第十篇 磁盘与文件系统管理</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Linux/">Linux</a></span></div><div class="post-content"><p><em>距离上一篇blog也有几天的时间了,一是偷懒了,二是这一篇的内容确实挺麻烦的..</em></p>
+<p><strong>那么,这一章的主要内容是什么呢?正如标题所言,磁盘与文件管理系统的内容,下面就听我一一道来吧</strong></p>
+<h5 id="一-相关的硬件知识"><a href="#一-相关的硬件知识" class="headerlink" title="一.相关的硬件知识"></a>一.相关的硬件知识</h5><table>
+<thead>
+<tr>
+<th>磁盘的组成</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>磁盘盘面</td>
+<td>记录数据的地方</td>
+</tr>
+<tr>
+<td>机械手臂与磁盘头</td>
+<td>用来读写磁盘内容的工具</td>
+</tr>
+<tr>
+<td>主轴马达</td>
+<td>使机械手臂转动</td>
+</tr>
+</tbody>
+</table>
+<p>既然盘面是其中最主要的部分,那就来谈谈盘面吧!</p>
+<p><strong>盘面 = 扇区 + 磁柱(由扇区组成一个圆)</strong></p>
+<p><strong>其中,第一个扇区最后重要:boot file (446 Bytes) + 分区表 (64 Bytes)</strong></p>
+<p><strong>关于SATA与IDE接口的磁盘:SATA为/dev/sd*   IDE为/dev/hd*</strong></p>
+<p>注:分区表为64bytes 所以,只能写入4组分区信息(主分区 + 扩展分区[逻辑分区] &lt;= 4)</p>
+<p>磁盘 = 硬盘 + 软盘</p>
+<hr>
+<h5 id="二-文件系统-filesystem-的知识"><a href="#二-文件系统-filesystem-的知识" class="headerlink" title="二,文件系统(filesystem)的知识"></a>二,文件系统(filesystem)的知识</h5><p>为什么会有文件系统这一说,不是所有的都是在硬盘上的吗?</p>
+<p><strong>最早,因为硬件及技术的原因,并不能使多个文件系统在一块硬盘上共存</strong></p>
+<p><strong>但是,随着技术的发展,LVM以及磁盘矩阵等一些新技术的发展,使得同一块磁盘系统,可以有多种文件系统</strong></p>
+<p><strong>,意即,可以对同一块磁盘进行分区,使其上不同的分区有着不同的文件系统</strong></p>
+<p>谈及文件系统,自然就要说说文件系统上到底保存了哪些数据?</p>
+<table>
+<thead>
+<tr>
+<th>数据类型</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SuperBlock</td>
+<td>用来记录文件系统的整体信息,block/inode的管理信息</td>
+</tr>
+<tr>
+<td>inode</td>
+<td>记录文件的属性和权限,其中存储着对应的Block号码</td>
+</tr>
+<tr>
+<td>Block</td>
+<td>记录文件的实际数据,文件数据过大时,会占用多个Block</td>
+</tr>
+</tbody>
+</table>
+<p><strong>文件系统中,使用以上的数据进行构建的便是”索引式文件系统”</strong></p>
+<p><strong>整体思路是,inode存储文件权限和属性意即对应的Block号码</strong></p>
+<p><strong>而实际的文件数据存储在Block中,通过inode进行Block的索引查找</strong></p>
+<p><strong>不同于,索引式文件系统,闪存盘里所使用的FAT文件格式(包括Win平台)则没有inode的设定</strong></p>
+<p><strong>仅使用Block进行文件数据的存储,同时Block记录着下一个Block的号码</strong></p>
+<p>相比之下,<strong>索引式文件系统的工作效率和可维护性更高</strong></p>
+<p>原因在于:</p>
+<blockquote>
+<p>索引式文件系统,block的号码都存在inode,可以一次性的把文件的Block号码全部获取,进而访问,快,高效</p>
+</blockquote>
+<blockquote>
+<p>相对的,FAT文件格式的文件系统,效率低,一次只能读取一个Block,</p>
+</blockquote>
+<p>注:<strong>关于磁盘整理的问题,FAT中,因为不断进行数据的读写,擦除,会使得同一个文件的Block零散化,</strong></p>
+<p><strong>最终的访问效率,不忍直视,所以有磁盘碎片整理的文件功能,但是,对于索引式文件系统,这个问题就不是很明显</strong></p>
+<p><strong>一般情况下,不需要对inode进行整理,除了特别的例外情况以外,Block号码过于复杂,也是需要进行整理的</strong></p>
+<p><strong>一般情况下,索引式文件系统是不需要进行磁盘碎片整理的</strong></p>
+<p>既然我们学习,使用Linux,那就重点看一看linux下的文件系统把!</p>
+<p>Linux下最早使用的便是Ext2文件系统(<strong>现在最新的已经是Ext4了!</strong>)</p>
+<p>而Ext2文件系统就是基于,索引式文件系统所建立的.</p>
+<p>接下来,详解Ext2文件系统:</p>
+<p><strong>注:因为特别大的文件磁盘里,inode与block是要进行分区的,不然会混乱的</strong></p>
+<p>所以,在Ext2文件系统里,划分出了多个blockgroup供用户使用</p>
+<p>每个blockgroup中所包含的内容有:</p>
+<p><strong>SuperBlock + Inode table + Datablock + Block bitmap + Inode bitmap + filesystem description</strong></p>
+<hr>
+<h5 id="Data-Block-数据块-实际存储数据的地方"><a href="#Data-Block-数据块-实际存储数据的地方" class="headerlink" title="Data Block:数据块,实际存储数据的地方"></a>Data Block:数据块,实际存储数据的地方</h5><p><strong>每个Block都存在编号,而且,每个Block的大小在文件系统建立时就已经确定 1K,2K,4K</strong></p>
+<table>
+<thead>
+<tr>
+<th>条目</th>
+<th>Block的限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.</td>
+<td>原则上,Block的大小和数目在文件系统建立后便不能再发生变动</td>
+</tr>
+<tr>
+<td>2.</td>
+<td>一个Block中只能存储一个文件</td>
+</tr>
+<tr>
+<td>3.</td>
+<td>接第二条,当存储不下时,会多分配Block</td>
+</tr>
+<tr>
+<td>4.</td>
+<td>接第三条,当存储空间有剩余时,保留空间,不能存储其他文件</td>
+</tr>
+</tbody>
+</table>
+<p>因为以上限制,所以,在进行block得分配时,需谨慎选择</p>
+<p>大:造成存储空间的浪费</p>
+<p>小:会造成过多的inode号码,降低读写效率</p>
+<hr>
+<h5 id="Inode-Table-inode-记录区域"><a href="#Inode-Table-inode-记录区域" class="headerlink" title="Inode Table:inode 记录区域"></a>Inode Table:inode 记录区域</h5><p>inode中存储的是文件的权限和属性,</p>
+<p>Inode Table中存储的内容:</p>
+<p><strong>权限 + 属性 + 容量 + ctime + atime + mtime + SetUID + 真正的Block指向</strong></p>
+<table>
+<thead>
+<tr>
+<th>条目</th>
+<th>inode的限制</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.</td>
+<td>每个inode站固定大小128bytes</td>
+</tr>
+<tr>
+<td>2.</td>
+<td>每个文件会占用一个inode</td>
+</tr>
+<tr>
+<td>3.</td>
+<td>filsystem能建立的文件数与inode有关</td>
+</tr>
+<tr>
+<td>4.</td>
+<td>读取时,先找到,inode,权限符合后,才能进行Block号码的读取</td>
+</tr>
+</tbody>
+</table>
+<p>因为 inode仅仅128bytes,并不能存储过多的Block号码,但有的时候又需要特别多的Block号码进行存储</p>
+<p>怎么办呢?大佬们,已经解决这个问题了</p>
+<p><strong>12 + 1 + 1 + 1,12直接,1间接,1二重间接,1三重间接进行inode号码的存储,即进行多次间接指向</strong></p>
+<hr>
+<h5 id="SuperBlock-用于存储文件系统的相关信息"><a href="#SuperBlock-用于存储文件系统的相关信息" class="headerlink" title="SuperBlock:用于存储文件系统的相关信息"></a>SuperBlock:用于存储文件系统的相关信息</h5><p>上面提到的inode,以及Block的内容,的相关信息,都是存储在SuperBlock当中的</p>
+<p>SuperBlock中存储的相关信息:</p>
+<p><strong>Block,inode的相关用量 + filesystem的挂载,最近一次写入文件的时间,valid bit的数值</strong></p>
+<p>SuperBlock中一般为1KB的信息</p>
+<p><strong>在一个文件系统中,一般第一个blockgruop中为整个filesystem中的superblock信息,而其他的blockgroup中的superblock信息都是其备份</strong></p>
+<hr>
+<h5 id="Filesystem-Description-文件系统的描述说明"><a href="#Filesystem-Description-文件系统的描述说明" class="headerlink" title="Filesystem Description :文件系统的描述说明"></a>Filesystem Description :文件系统的描述说明</h5><p>用于查看每个blockgroup,从开始到结束的号码,以及blockgroup中每个区段分别介于的号码</p>
+<h5 id="Block-Inode-bitmap-区块-索引节点-Block-Inode-对照表"><a href="#Block-Inode-bitmap-区块-索引节点-Block-Inode-对照表" class="headerlink" title="Block/Inode bitmap:区块/索引节点(Block/Inode]对照表"></a>Block/Inode bitmap:区块/索引节点(Block/Inode]对照表</h5><p>用来保存哪些Block(inode)非空,哪些为空的标记信息,在进行文件的读写时十分有用!</p>
+<hr>
+<h4 id="三-文件系统与目录树的关联"><a href="#三-文件系统与目录树的关联" class="headerlink" title="三,文件系统与目录树的关联"></a>三,文件系统与目录树的关联</h4><p>上面的便是文件系统(filesystem)的基本内容,那么这个东西如何与目录树有关联的呢?</p>
+<p><strong>一个目录,实际上也是一个文件,其中filesystem会给目录分配一个inode及一个(多个)block</strong></p>
+<p><strong>目录中所记录的是,文件名及其对应的inode号码</strong></p>
+<p>藉此进行文件的访问,也正式因为Ext系列文件系统的索引式结构,所以,才能有接下来软,硬连接两种方式</p>
+<hr>
+<p>此处,进行ls,知识的拓宽:(毕竟要自己实现一个ls)</p>
+<ol>
+<li><p>ls -i 用于显示inode号码的命令</p>
+</li>
+<li><p>ll后面的一行信息中数字4096,之类的表示目录的容量,连接数的含义:有多少个文件连接到这个inode号码上</p>
+</li>
+</ol>
+<p><strong>我来解释一下,为什么时4096这些数字,这与block的大小有关,都是默认大小4K的整倍数!</strong></p>
+<p><strong>问题又来了,为什么有的就不是4K的整倍数,因为,有的问就不是同一文件系统!使用<code>dumpe2fs</code>查看</strong></p>
+<p>例如/proc,swap,更甚,这些只是虚拟内存中东西,并不占实际的内存空间</p>
+<p><strong>之前说过Ext2/3/4 的filesystem基本不需要进行磁盘碎片整理,但如果非要整理该怎么办呢?</strong></p>
+<p><strong>正解:将所有文件拷贝出来,之后重新格式化磁盘,最后将文件重新写入!</strong></p>
+<hr>
+<p>继续上面的内容,</p>
+<p>在文件系统中,进行文件的存取时的步骤:</p>
+<ul>
+<li><p>用户对该目录是否具有w,x权限,目录的inode</p>
+</li>
+<li><p>inode bitmap,找到为使用的inode,写入为文件的权限和属性</p>
+</li>
+<li><p>block bitmap 找到未使用的block,写入数据,并更新inode中的,block指向</p>
+</li>
+<li><p>block bitmap,inode bitmap.superblock的数据更新</p>
+</li>
+</ul>
+<hr>
+<h4 id="四-日志式文件系统的出现"><a href="#四-日志式文件系统的出现" class="headerlink" title="四,日志式文件系统的出现"></a>四,日志式文件系统的出现</h4><p>众所周知,在使用电脑时,难免会出现一些意外情况,断电,死机,那么数据怎么办?</p>
+<p>肯定是开机后进行修复排查,但是,太过耗时,耗力,很费时间.</p>
+<p>所以,前辈们便开发出了,<strong>Ext3日志式文件系统</strong></p>
+<p><strong>其实现原理是,在filesystem在重新划出一个区块来,用来记录写入/修改的信息</strong></p>
+<p><strong>万一出现意外情况,那么,只检查journal中的记录日志,便可以迅速找出目标区块,大大提高了效率</strong></p>
+<p><strong>另外,可以通过异步处理sync,来解决这个问题.</strong></p>
+<p><strong>实际上,异步处理就是系统不定时的把编辑过的文件写入磁盘中,可以用sync强制写入</strong></p>
+<hr>
+<h4 id="五-关于Linux文件系统中的连接问题-软-硬连接"><a href="#五-关于Linux文件系统中的连接问题-软-硬连接" class="headerlink" title="五,关于Linux文件系统中的连接问题(软/硬连接)"></a>五,关于Linux文件系统中的连接问题(软/硬连接)</h4><h5 id="1-硬连接-Hard-Link"><a href="#1-硬连接-Hard-Link" class="headerlink" title="1.硬连接(Hard-Link)"></a>1.硬连接(Hard-Link)</h5><p>硬连接,需要与之前见到过的快捷方式(软连接有所区别)</p>
+<p>硬连接(Hard Linuk):</p>
+<p>在Ext4 filesystem中,这一类的索引式文件系统中,inode与block的关系正如上文所讲</p>
+<p>即,查找,访问一个文件,关键的是,先找到文件inode,便可以访问到文件</p>
+<p>所以,就有了这样的一种连接:硬连接</p>
+<p><strong>在目录信息中(block)所写入一条数据/关联数据,用来连接到目标文件的inode上</strong></p>
+<p><strong>这样下来,创建的硬连接,实际上便是源文件的别名,而文件的inode上便连接到了两个文件名与其关联</strong></p>
+<p><strong>所以,ll之后,文件的连接数都会加’1’,这两个文件名,是除了文件名(路径)之后,属性完全相同的数据</strong></p>
+<p>而且,因为硬连接,只是在其中block中,多写入了数据,并未分配inode,所以不能算是新建文件</p>
+<p>如下图</p>
+<p><img src="http://img.blog.csdn.net/20170719153607870?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>硬连接的优劣:</p>
+<p><strong>优: 硬连接因为不创建新的文件,所以相比较于软连接,不会占用大量的内存空间,</strong></p>
+<p><strong>同时,硬连接可以理解为给文件起别名,完全一致,所以,误删其中一个文件,不会影响文件的打开情况</strong></p>
+<p><strong>劣</strong></p>
+<p><strong>1.硬连接不能跨文件系统,因为不同的文件系统中inode可能会有重复,胡乱连接,会出错的</strong></p>
+<p><strong>2.硬连接不能连接目录,因为连接目录意味着,还要与目录下的每个文件建立连接,不仅任务量大,而且目录内容的更新,也会影响着硬连接内容的更新</strong></p>
+<h5 id="2-软连接-Symbolic-Link"><a href="#2-软连接-Symbolic-Link" class="headerlink" title="2.软连接(Symbolic-Link)"></a>2.软连接(Symbolic-Link)</h5><p>理解了上面的硬连接,下面软连接就比较好理解了</p>
+<p>访问文件是要去寻找文件的inode号码,而文件保存在目录中,目录的block保存着文件的inode信息</p>
+<p><strong>硬连接是连接文件在目录block中储存的inode号码</strong></p>
+<p><strong>而软连接,则是去连接文件名的inode,并非是与文件名对应的,储存实际数据的inode号码</strong></p>
+<p><strong>可以理解为,直接连接与间接连接</strong></p>
+<p>如下图:</p>
+<p><img src="http://img.blog.csdn.net/20170719153624176?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>软连接的优劣:</p>
+<p><strong>优:跨目录,跨文件系统,能力十分强大</strong></p>
+<p><strong>劣:在删除源文件后,便不能访问文件,基本上可以近似理解软连接为Win下的”快捷方式”</strong></p>
+<p><img src="http://img.blog.csdn.net/20170719153638233?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>而且,注意:软连接,实际上是分配了inode与block,十一个新建的文件</p>
+<hr>
+<h4 id="六-关于磁盘的操作知识"><a href="#六-关于磁盘的操作知识" class="headerlink" title="六,关于磁盘的操作知识"></a>六,关于磁盘的操作知识</h4><p><em>先说说我自己学习这部分的感受,这部分知识,学得快,忘得快,这部分的知识,其实更主要的是命令的操作,</em></p>
+<p><em>是要你能够熟练得运用名命令,便可以很好的处理这些磁盘问题</em></p>
+<p><em>但是,我自己是不喜欢这部分知识的,虽然很重要,但是,枯燥,乏味,而且好多东西用不到</em></p>
+<p><em>比如我自己挂载U盘时,从来都不给我机会,要不自动挂载,要不就,不挂载</em></p>
+<p><em>而且,也听了Hg_Yi的建议,上面中重要的知识,需要进行详细的记录,但是这些命令的操作,仅提供思路,功能</em></p>
+<p><em>实际上去man或者info命令,比我自己记录要来的更好</em></p>
+<p><strong>磁盘分区:fdisk,root权限,fdisk更像是一个程序,根据其中的help要求操作即可</strong></p>
+<p><strong>磁盘格式化:mkfs 即可设置文件系统,然后格式化对应的磁盘 , mke2fs提供更详细的设置</strong></p>
+<p><strong>磁盘检验:fsck 当文件系统遭遇一些可怕的情况时(停电,死机)时,用此命令进行检验修复</strong></p>
+<p><strong>磁盘的挂载与卸载:完全靠mount这个强大的命令,其详细使用方法,man mount</strong></p>
+<p><strong>磁盘参数的修改:mknod,修改磁盘的对应参数,使其成为指定的设备文件</strong></p>
+<p><strong>开机挂载:便是将挂载信息,写入指定文件中 /etc/fstab 与 /etc/mtab</strong></p>
+<p><strong>特殊的loop挂载:..</strong></p>
+<p><strong>Swap分区的构建:其中包括了DD建立大文件 + loop挂载两部分内容</strong></p>
+<hr>
+<h4 id="七-文件系统中得一些小问题"><a href="#七-文件系统中得一些小问题" class="headerlink" title="七,文件系统中得一些小问题"></a>七,文件系统中得一些小问题</h4><h5 id="1-boot-sector-与-super-block的关系"><a href="#1-boot-sector-与-super-block的关系" class="headerlink" title="1.boot sector 与 super block的关系"></a>1.boot sector 与 super block的关系</h5><p>这个要涉及block的大小</p>
+<p><strong>若为1K则,boot扇区在前,superblock在后,各占1K空间</strong></p>
+<p><strong>若为2K或者4K,则boot扇区内容占了0-1024号内容,superblock占了第二部分的内容</strong></p>
+<p><strong>之后,这个block的内容保留,不再存储其他文件数据</strong></p>
+<h5 id="2-磁盘空间的查看"><a href="#2-磁盘空间的查看" class="headerlink" title="2.磁盘空间的查看"></a>2.磁盘空间的查看</h5><p>du -s 与 du -S不同</p>
+<p>-s会记录子文件夹,所以,最后空间并不会十分准确</p>
+<h5 id="3-parted进行分区"><a href="#3-parted进行分区" class="headerlink" title="3.parted进行分区"></a>3.parted进行分区</h5><p>当单磁盘的空间达到2TB时,不适合继续用fdisk进行后续的处理,应该使用parted进行处理</p>
+<hr>
+<p>本篇的内容,到此告一段落,最近理完了系统操作中最复杂的磁盘与文件系统,就需要进行Linux_C的学习了</p>
+<p>下次会进行Linux中,十分有用的打包与压缩命令的学习</p>
+<p><strong>另外 @Hg_Yi,写Blog抓住重点很有用,但是在进行系统的学习时,我还是继续详尽的进行记录</strong></p>
+<p><strong>等到之后的编程学习时,便可以有效的进行总结</strong></p>
+<p>July 19, 2017 3:32 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/09/22/cji1p2lvx001hafnrpac2v1p1/" data-id="cji1p2lvx001hafnrpac2v1p1" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLklEQVR42u3aS3LCQAwFQO5/aXIAsHnSDCks96xSBdjTWaj0ezzi83w5R985+v7rp+dveXzjYGBgXJbxPD35C86vmzw5//TNTTAwMG7ASALo+a+SS+e/ze+GgYGBcf7iagpYvSIGBgZG73F7S9PzBBQDAwNjJXSev7haDOf/sg21OAYGxgUZedf9///+ynwDAwPjUoxn8SRBs1fK5kH2zVswMDBGM/IAl6do1ZI1KlCTwhgDA2M0ozqA7C1P9JLCfAiKgYExlZG3rlZaXTmgOiR4k+FiYGCMY1RDWx5Ak6J310IGBgbGfRi9hYlei209KcTAwLgzo7rukI8Q1ovYcmKKgYExiJGncStN/Dyg5z3Cw/kGBgbGIEYvsFbbYSuJY1QqY2BgjGbkF8qDbC/Vy+/wYc0CAwNjKKNXxPZK3HxRI2/VYWBgzGbkjbBe+6y6bNFrxmFgYMxmJInXenq3Ur5WV9AwMDDmMaqrXcniV3KJ/AnRCAEDA2M0Y1cIrj6hOv5cvwMGBsbVGb0wl4fgXk+svOqBgYFxA8bKSGDXaKE6NMXAwLgbIy8Oq4PJvRlrtDOCgYExiNFblVgJ00kwLQ9KMTAwRjN6LbM8yFYHDNuWLTAwMMYx8rWJ5HG9ZHFD+oiBgXEDxsq2VXXYuV7EYmBgYHyb0bvuzwVcDAyMn2dEM4diApoPAw7HAxgYGKMZ+UpEtYmWX706isDAwLgPY1eitmvZorpwhoGBMZrxB6r5+ghnNTP4AAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/OS/">OS</a><a href="/tags/File-system/">File system</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/cji1p2lvz001lafnrlk61m1vr/">第四篇 安装系统与多重引导</a><a class="next" href="/2017/09/22/cji1p2lvv001eafnri5ufp4cq/">第十一篇 文件的打包压缩与备份</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2lw9001vafnrzc41ns9c/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2m1l006lafnrweuf90y5/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/cji1p2m1d006bafnrs4yb5ybj/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/cji1p2m150065afnrzlerx49r/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/cji1p2m120064afnr89qqeiqy/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/cji1p2m1f006eafnrxror6er9/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/cji1p2lzn003xafnrqvtc32sz/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m170067afnrrk2lapu6/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m1i006iafnr70idg355/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/cji1p2m0z0062afnrr7snnou7/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

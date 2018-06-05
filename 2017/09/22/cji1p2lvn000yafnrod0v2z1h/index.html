@@ -1,0 +1,224 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第九篇 Linux文件与目录管理(下) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第九篇 Linux文件与目录管理(下)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第九篇 Linux文件与目录管理(下)</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Linux/">Linux</a></span></div><div class="post-content"><p><em>上一篇提到了LInux系统下文件/目录的基本操作,诸如:切换目录,</em></p>
+<p><em>对于目录/文件的新建,移动,拷贝,删除.</em></p>
+<p><em>以及对于文件的各种形式的查看</em></p>
+<p><em>那么这一篇所要谈到的就是,文件/目录的隐藏属性以及文件/目录的查询操作</em></p>
+<hr>
+<h3 id="1-文件-目录的默认权限和和隐藏权限"><a href="#1-文件-目录的默认权限和和隐藏权限" class="headerlink" title="1.文件/目录的默认权限和和隐藏权限"></a>1.文件/目录的默认权限和和隐藏权限</h3><p>进行了之前的了解,你应该已经自己动手创建过文件或者目录了吧?</p>
+<p>但是你有没有好奇过,每次新建文件/目录,他们的出生权限都是一致的.<br><img src="http://img.blog.csdn.net/20170617190716652?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>如上图所示,新建test1,test2,他们的权限都是664</p>
+<p>这就要牵扯到文件/目录的<strong>默认权限</strong>与<strong>隐藏权限</strong>了</p>
+<hr>
+<h4 id="1-1-文件默认权限-umask"><a href="#1-1-文件默认权限-umask" class="headerlink" title="1.1 文件默认权限:umask"></a>1.1 文件默认权限:umask</h4><p><strong>默认权限:当前用户在新建文件/目录时,文件/目录的默认权限</strong></p>
+<p>使用umask命令即可查看当前默认权限</p>
+<figure class="highlight plain"><figcaption><span>umask```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">或者</span><br><span class="line"></span><br><span class="line">```[Evilcrow@Evilcrow]$ umask -S</span><br></pre></td></tr></table></figure>
+<p>上图中的0002即为当前的默认权限</p>
+<p>看见这个0002你是不是也是一脸懵比?,没错,一开始我和你也差不多.</p>
+<p>对于0002默认权限的理解:</p>
+<p>首先需要明确的是,在新建文件/目录时,对于文件/目录的权限分配:</p>
+<blockquote>
+<p>对于文件,默认是没有X,可执行权限的,因为不确定文件是否可以执行</p>
+</blockquote>
+<blockquote>
+<p>即文件 -rw-rw-rw-,所以文件权限默认最大666</p>
+</blockquote>
+<blockquote>
+<p>对于目录,默认是权限全开,即目录 drwxrwxrwx,所以目录的默认权限最大为777</p>
+</blockquote>
+<p>接下来,再来理解umask,默认权限的数字0002,其中后三位,分别为user,group.others的rwx权限</p>
+<p><strong>所谓”默认权限”的意思是:在最大权限上减去默认的权限,即为目前的默认权限</strong></p>
+<p>举个例子:umask 0002</p>
+<p>对于文件:<strong>-rw-rw-rw-减去 ——–w-,则文件的默认权限为-rw-rw-r–,即664</strong></p>
+<p>对于目录:<strong>-rwxrwxrwx减去 ——–w-,则目录的默认权限为-rwxrwxr-x,即775</strong></p>
+<p>到这里,你就了解了umask以及它与默认权限的关系了吧!</p>
+<p>既然默认权限影响着我们进行工作配置时的快捷与否,那么该如何进行默认权限的修改呢?</p>
+<figure class="highlight plain"><figcaption><span>umask number```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">在**umask+数字**即可修改默认权限.</span><br><span class="line"></span><br><span class="line">**注:在未进行修改的时候,root用户的默认权限是022,一般用户的默认权限是002**</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### 1.2 文件的隐藏属性 lsattr,chattr命令</span><br><span class="line"></span><br><span class="line">在之前的内容中,你可能也曾注意到,文件的权限中有10个字符,9个为rwx权限,</span><br><span class="line"></span><br><span class="line">那么剩下的一个是什么呢?</span><br><span class="line"></span><br><span class="line">**剩下的一个,即为&quot;隐藏属性&quot;**</span><br><span class="line"></span><br><span class="line">隐藏属性,可以称之为文件的高级属性,隐藏属性有很多,其中有几个最常用的</span><br><span class="line"></span><br><span class="line">##### chattr 命令</span><br><span class="line"></span><br><span class="line">**chattr 用来进行隐藏属性的更改(change attr)**</span><br><span class="line"></span><br><span class="line">```[Evilcrow@Evilcrow]$ chattr [-+=] [ASacdisu]  文件/目录</span><br></pre></td></tr></table></figure>
+<p>chattr命令,也类似于chmod,使用-+=来赋予文件/目录以隐藏属性</p>
+<blockquote>
+<p>-A 访问文件时,atime不会发生改变(access time),可以避免过度访问磁盘,保护磁盘</p>
+</blockquote>
+<blockquote>
+<p>-S 一般文件是”异步”写入磁盘的,关机前才会有sync命令,使数据写入磁盘,-S可以”同步”写入磁盘</p>
+</blockquote>
+<blockquote>
+<p>-a (重要)设置此权限后,文件只能增加数据,不能修改数据,也不能删除数据,只有root才有此权限</p>
+</blockquote>
+<blockquote>
+<p>-c 此参数使得文件存储时自动压缩,读取时自动解压,方便存储大文件</p>
+</blockquote>
+<blockquote>
+<p>-d dump程序运行时,不会使文件被dump程序备份</p>
+</blockquote>
+<blockquote>
+<p>-i (重要),-i可以使文件”不能被改名,删除,设置连接也无法写入或者添加数据”只有root有此权限</p>
+</blockquote>
+<blockquote>
+<p>-s 设置s属性,当文件被删除时,完全被删除,并不会进行备份,(相当于shift+del)</p>
+</blockquote>
+<blockquote>
+<p>-u 与-s相反,删除文件后并没有被完全删除,可以通过一定方法找回数据</p>
+</blockquote>
+<p>以上即为chattr可以修改的隐藏属性,也是文件的所有隐藏属性</p>
+<p><strong>注:其中的-a,-i参数十分重要,对系统的安全也有极大的保护,但只有root才有此权限</strong></p>
+<p>chattr用来修改文件属性,那么修改后的文件属性如何查看?</p>
+<p><strong>使用lsattr命令</strong></p>
+<figure class="highlight plain"><figcaption><span>lsattr [-adR]  文件/目录```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">&gt; -a 将隐藏的文件属性也全部显示出来</span><br><span class="line"></span><br><span class="line">&gt; -d 如果接的是目录,则不显示其中的文件,而只是目录本身的隐藏属性</span><br><span class="line"></span><br><span class="line">&gt; -R 连同目录下的子文件隐藏属性也全部显示出来</span><br><span class="line"></span><br><span class="line">使用chattr命令修改隐藏属性,lsattr命令查看隐藏属性,系统管理效率事半功倍</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### 1.3 文件的特殊权限: SUID,SGID,SBIT</span><br><span class="line"></span><br><span class="line">当时现在umask查看默认权限的时候,你可能看到有四个数字,既然后面的是u,g,o的rwx权限</span><br><span class="line"></span><br><span class="line">那么,第一个是什么呢? 就是文件的特殊权限</span><br><span class="line"></span><br><span class="line">之前在目录树中也有几个特殊的目录,仔细观察</span><br><span class="line">![](http://img.blog.csdn.net/20170617191118232?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)</span><br><span class="line">![](http://img.blog.csdn.net/20170617190835263?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)</span><br><span class="line">上图中passwd的权限为-rwsr-xr-x,这个S即为&quot;特殊权限&quot;</span><br><span class="line"></span><br><span class="line">我们来考虑一个问题,如果对于某一类文件,他的权限属于root用户</span><br><span class="line"></span><br><span class="line">权限为&quot;-r--------&quot;</span><br><span class="line"></span><br><span class="line">但是一般用户又必须具有W的权限才能进行文件操作,</span><br><span class="line"></span><br><span class="line">这个时候特殊的文件权限就派上用场了</span><br><span class="line"></span><br><span class="line">有这种例子吗?</span><br><span class="line"></span><br><span class="line">**最常用的: 密码**</span><br><span class="line"></span><br><span class="line">一般用户明明不具有密码文件的W&quot;写&quot;权限,但是它却可以修改自己的密码,这就是特殊权限</span><br><span class="line"></span><br><span class="line">**实质上,特殊权限,相当于对于非权限内用户,特殊的执行权**</span><br><span class="line"></span><br><span class="line">特殊权限有三种:SUID,SGID,SBIT</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### SUID 特殊权限</span><br><span class="line"></span><br><span class="line">**当s出现在user上时,称为Set UID,即SUID**</span><br><span class="line"></span><br><span class="line">&gt; SUID权限仅对二进制程序有效,(即对shell script无效)</span><br><span class="line"></span><br><span class="line">&gt; 执行者对于此程序有X权限</span><br><span class="line"></span><br><span class="line">&gt; 这个特殊的执行权限仅仅在执行过程中生效</span><br><span class="line"></span><br><span class="line">&gt; 执行者将具有程序拥有者的权限</span><br><span class="line"></span><br><span class="line">上面的话很生硬对吗?</span><br><span class="line"></span><br><span class="line">我用自己的话帮大家总结:</span><br><span class="line"></span><br><span class="line">**权限外用户,(对此文件有x权限),在执行程序期间,获得程序所有者权限,仅对二进制程序生效**</span><br><span class="line"></span><br><span class="line">举个实际的例子:</span><br><span class="line"></span><br><span class="line">**密码文件属于root,但是一般用户在使用期间,却可以获得密码文件的使用权,以及修改权(仅限自己的)**</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### SGID 特殊权限</span><br><span class="line"></span><br><span class="line">**当s出现在group中时,称为 Set GID,即SGID**</span><br><span class="line"></span><br><span class="line">如上图</span><br><span class="line"></span><br><span class="line">**SGID不同于SUID权限,SGID可以使用在目录和文件上,但是SUID只能使用在二进制程序上**</span><br><span class="line"></span><br><span class="line">对于文件而言:</span><br><span class="line"></span><br><span class="line">&gt; SGID对二进制程序有效</span><br><span class="line"></span><br><span class="line">&gt; 程序执行者对文件需要具有x权限</span><br><span class="line"></span><br><span class="line">&gt; 执行者在执行过程中将获得用户组的支持</span><br><span class="line"></span><br><span class="line">对于目录而言:</span><br><span class="line"></span><br><span class="line">&gt; 用户需要对于该目录具有r与x权限,才能进入该目录</span><br><span class="line"></span><br><span class="line">&gt; 用户在此目录下的有效用户组,将会变成该目录的用户组</span><br><span class="line"></span><br><span class="line">&gt; 若用户对于改目录具有w&quot;写&quot;权限,那么新建的文件用户组与目录的用户组相同,而非用户的用户组</span><br><span class="line"></span><br><span class="line">对于SGID在目录上的应用,我总结一下:</span><br><span class="line"></span><br><span class="line">**当权限外用户,具有r,x权限(对目录)后,可获得目录用户组的支持,而且,W权限的操作,为目录用户组所为**</span><br><span class="line"></span><br><span class="line">**SGID这个特殊权限对于文件的作用不谈,但是对于目录的特殊权限太重要了**</span><br><span class="line"></span><br><span class="line">**尤其是在,进行项目目录的构建时,设置SGID权限,则项目成员所完成的项目文件同属一个用户组,方便管理**</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### SBIT 特殊权限</span><br><span class="line"></span><br><span class="line">**这个权限目前只对目录有效,当&quot;t&quot;出现在others中时,即为SBIT**</span><br><span class="line"></span><br><span class="line">&gt; 当用户对此目录具有w,x权限时,该用户便具有了写入的权限</span><br><span class="line"></span><br><span class="line">&gt; 当用户在该目录下创建文件或者目录时,只有自己和root用户才有权限进行删除操作</span><br><span class="line"></span><br><span class="line">那么，SBIT特殊权限意义何在呢？</span><br><span class="line"></span><br><span class="line">**同上理，在进行项目组的开发时，同一用户组的成员进行协作，在同一目录下进行工作**</span><br><span class="line"></span><br><span class="line">**任何用户都可以再次目录里进行新建和修改文件，但是只有文件创建者和root才有权限进行删除**</span><br><span class="line"></span><br><span class="line">**这样，是不是很方便呢？**</span><br><span class="line"></span><br><span class="line">##### 特殊权限的修改</span><br><span class="line"></span><br><span class="line">看过上面的内容,你应该了解特殊权限的巨大作用了吧?</span><br><span class="line"></span><br><span class="line">那么,特殊权限如何修改</span><br><span class="line"></span><br><span class="line">```[Evilcrow@Evilcrow]$ chmod abcd 文件```  abcd为文件权限的权值</span><br><span class="line"></span><br><span class="line">之前的权限修改是 chmod+xyz,那么现在再加上一个数字用于特殊权限的修改不就好了</span><br><span class="line"></span><br><span class="line">权值: SUID--4 , SGID--2 , SBIT--1</span><br><span class="line">![](http://img.blog.csdn.net/20170617190947715?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)</span><br><span class="line">如上图所示,给目录添加了SBIT权限,SUID,SGID权限的修改同理</span><br><span class="line"></span><br><span class="line">**有没有发现,第一次修改后,test目录的SBIT权限为&quot;T&quot;?**</span><br><span class="line"></span><br><span class="line">&gt; 这是因为,test的权限为1644,它没有可执行权限x,当修改特殊权限SBIT时,</span><br><span class="line"></span><br><span class="line">&gt; 没有可执行权限,t也就不复存在了,所以&quot;T&quot;含义是&quot;空&quot;</span><br><span class="line"></span><br><span class="line">&gt; SUID,SGID中的&quot;S&quot;同理,表示空</span><br><span class="line"></span><br><span class="line">当然进行特殊权限的修改时,也可以使用符号</span><br><span class="line"></span><br><span class="line">```[Evilcrow@Evilcrow]$ chmod u+s/g+s/o+t  文件</span><br></pre></td></tr></table></figure>
+<hr>
+<h4 id="查看文件类型"><a href="#查看文件类型" class="headerlink" title="查看文件类型"></a>查看文件类型</h4><p>对于一个文件,我们可以使用<figure class="highlight ls"><figcaption><span>-l 文件```来显示他的所有属性</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">但是,如果只是要知道文件类型,使用file命令更方便呢!</span><br><span class="line"></span><br><span class="line">```[EVilcrow@Evilcrow]$ file  文件/目录</span><br></pre></td></tr></table></figure></p>
+<p><img src="http://img.blog.csdn.net/20170617191046282?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>如上图所示,file命令可以清楚的知道每一个文件/目录的类型</p>
+<h3 id="2-命令与目录的查询"><a href="#2-命令与目录的查询" class="headerlink" title="2. 命令与目录的查询"></a>2. 命令与目录的查询</h3><p><em>前面提到的都是文件/目录的操作,查阅,修改权限.你首先要能做到的是查阅文件</em></p>
+<h4 id="2-1-脚本文件明的查询"><a href="#2-1-脚本文件明的查询" class="headerlink" title="2.1 脚本文件明的查询"></a>2.1 脚本文件明的查询</h4><h4 id="which-命令"><a href="#which-命令" class="headerlink" title="which 命令"></a>which 命令</h4><p>用于查找脚本文件(简单来讲,查找名令)</p>
+<figure class="highlight plain"><figcaption><span>which [-a] command```</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">which用于查找命令所在目录位置,当然这就扯到之前的PATH,which是在PATH中查找命令</span><br><span class="line"></span><br><span class="line">所以有时候需要进行更新内容才能显示出来,</span><br><span class="line"></span><br><span class="line">&gt; -a ,次参数,可以将command在PATH中的所有路径显示出来,并非只是最先找到路径</span><br><span class="line"></span><br><span class="line">**注:既然说了是在PATH中寻找路径,那么,不再路径中的目录肯定就是找不到的了!**</span><br><span class="line"></span><br><span class="line">**别惊讶,这样的command可是不少的呢!**</span><br><span class="line"></span><br><span class="line">_ _ _</span><br><span class="line"></span><br><span class="line">#### whereis与locate 命令</span><br><span class="line"></span><br><span class="line">上面的which是脚本命令的查找,那么接下来就是文件的查找了</span><br><span class="line"></span><br><span class="line">进行文件的查找,所需要的命令是whereis与locate命令</span><br><span class="line"></span><br><span class="line">```[Evilcrow@Evilcrow]$ whereis [-bmsu] 文件/目录名</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>-b 表示仅查找二进制的文件</p>
+</blockquote>
+<blockquote>
+<p>-m 仅查找再说明文件manual下的文件</p>
+</blockquote>
+<blockquote>
+<p>-s 仅查找source源文件</p>
+</blockquote>
+<blockquote>
+<p>-u 查找其他类型的文件</p>
+</blockquote>
+<p><code>[Eilcrow@Evilcrow]$ locate [-ir] keyword</code></p>
+<blockquote>
+<p>-i 忽略大小写的差异</p>
+</blockquote>
+<blockquote>
+<p>-r后面可接正则表达式的形式</p>
+</blockquote>
+<p>以上即为whereis与locate的用法</p>
+<p><strong>但是,请注意,whereis与locate查找的依据是各自的数据库!!!</strong></p>
+<p><strong>意即,有时你会查找到删除了的文件,有时也会查找不到新建的文件,这就</strong></p>
+<p><strong>需要更新数据库了 updatedb</strong></p>
+<p><code>updatedb</code>:根据/etc/updatedb.conf的设置进行数据库内容的更新</p>
+<p><code>locate</code>:依据/var/lib/mlocate内的数据记载,找出用户输入的关键字文件名</p>
+<p><strong>让我来理解,即wheris与locate的搜索很快,但是需要更新数据库</strong></p>
+<p>接下来,介绍find命令,</p>
+<hr>
+<h4 id="find-命令"><a href="#find-命令" class="headerlink" title="find 命令"></a>find 命令</h4><p>上面说的whereis与locate命令并非是在硬盘中查找数据,而是在各自得数据库中查找</p>
+<p><strong>然而,find命令,就是在硬盘中进行文件查找的命令</strong></p>
+<p><code>[Evilcrow@Evilcrow]$ find [PATH] [option] 文件/目录名</code> find命令</p>
+<p>这里为什么不再格式里写上find命令的参数呢?</p>
+<p><strong>因为find,功能强大,它的参数太多了 !</strong></p>
+<blockquote>
+<p>1.与时间有关的参数(atime,stime,mtime),下面以mtime进行说明</p>
+</blockquote>
+<blockquote>
+<p>-mtime n:n为数字,表示在n天之前的那个”一天之内”所修改过时间的文件名</p>
+</blockquote>
+<blockquote>
+<p>-mtime -n:列出n天之内(包括n天在内),修改过文件时间的文件名</p>
+</blockquote>
+<blockquote>
+<p>-mtime +n:列出n天以上(不含n天在内),修改过文件时间按的文件名</p>
+</blockquote>
+<p><strong>注:n = 0表示目前的时间</strong></p>
+<p><strong>其中,请切身体会,n,+n,-n三种不同时间限定所带来的文件搜索不同,</strong></p>
+<p><strong>并且,时间搜索,还有atime与stime,同mtime理</strong></p>
+<blockquote>
+<p>2.与用户和用户组有关的参数</p>
+</blockquote>
+<blockquote>
+<p>-uid n: 第四章详解</p>
+</blockquote>
+<blockquote>
+<p>-gid n: 同上</p>
+</blockquote>
+<blockquote>
+<p>-user name:  搜索特定目录下,name用户的文件</p>
+</blockquote>
+<blockquote>
+<p>-group name:  搜索特定目录下,name用户的文件</p>
+</blockquote>
+<blockquote>
+<p>-nouser   :寻找文件的所有者不在,系统文件中记录的内容</p>
+</blockquote>
+<blockquote>
+<p>-nogroup  :同上(用户组)</p>
+</blockquote>
+<p><strong>最后的两个参数很适合去查找一些不太正常的文件或者目录出来</strong></p>
+<blockquote>
+<p>3.与权限有关的参数</p>
+</blockquote>
+<blockquote>
+<p>-name filename :按照文件名查找文件</p>
+</blockquote>
+<blockquote>
+<p>-size [+-] SIZE:查找比SIZE大(+)小(-)的文件,SIZE的单位有,B,K</p>
+</blockquote>
+<blockquote>
+<p>-type TYPE :查找文件类型为TYPE的文件,-,d,l,s,p等</p>
+</blockquote>
+<blockquote>
+<p>-perm mode:查找文件权限恰好为mode的文件</p>
+</blockquote>
+<blockquote>
+<p>-perm -mode:”查找文件权限比需要全部包含mode的文件”</p>
+</blockquote>
+<blockquote>
+<p>例如:-perm -755,则777符合条件</p>
+</blockquote>
+<blockquote>
+<p>-perm +mode:”查找文件权限包含任一mode权限的文件”</p>
+</blockquote>
+<blockquote>
+<p>例如:perm +755,则701也符合要求</p>
+</blockquote>
+<p><strong>事前谈到过的,特殊权限SUID,SGID,SBIT,同样也是可以用在这里的,比如:4755</strong></p>
+<blockquote>
+<p>4.一些特别的参数:</p>
+</blockquote>
+<blockquote>
+<p>-exec command: command为其他的命令,-exec,接其他的命令用来处理查找的结果</p>
+</blockquote>
+<blockquote>
+<p>-print   ：将处理的结果打印到屏幕上</p>
+</blockquote>
+<p>举个例子：</p>
+<p><code>[Evilcrow@Evilcrow]$ find / -perm +7000 -exec ls -l { } \;</code>则</p>
+<p>这条命令表示在根目录下查找权限含任一7000的文件，并将它的文件信息ls -l显示出来</p>
+<p><strong>上例中，{}表示查找到的内容，－exec一直到＼都是关键字，在其中间的就是额外命令</strong></p>
+<p><strong>而且，重要的是，可以使用通配符进行查找操作，十分方便，同时，多重参数互相组合，更方便</strong></p>
+<p><strong>最后一点，不到最后时刻，find命令真的很费时，因为它是直接在硬盘中进行搜索</strong></p>
+<hr>
+<h3 id="3-权限与命令间的关系"><a href="#3-权限与命令间的关系" class="headerlink" title="3.权限与命令间的关系"></a>3.权限与命令间的关系</h3><p><em>此处的内容十分关键，请认真对待</em></p>
+<blockquote>
+<p>使用户拥有进入目录的权限，使用CD命令</p>
+</blockquote>
+<p><strong>至少需要对该目录有ｘ权限，如果需要读取目录中的文件，则必须要有ｒ的权限</strong></p>
+<blockquote>
+<p>使用户具有在目录内读取文件的权限，可使用cat,more,less命令</p>
+</blockquote>
+<p><strong>如果是读取目录，至少需要ｘ权限，对于文件，需要ｒ权限</strong></p>
+<blockquote>
+<p>使用户具有修改一个文件的权限vi,vim,nano,emacs</p>
+</blockquote>
+<p><strong>如果是目录，需要ｘ权限，如果是文件，至少需要ｒ，ｗ权限</strong></p>
+<blockquote>
+<p>使用户具有创建文件的权限，如mkdir,touch</p>
+</blockquote>
+<p><strong>对于目录需要有ｗ，ｘ权限，重要的是ｗ权限，因为没有ｘ权限，无法进入目录</strong></p>
+<blockquote>
+<p>使用户具有进入一个目录并执行目录下文件的权限</p>
+</blockquote>
+<p><strong>对目录，至少要有ｘ权限，对于文件至少要有ｘ权限，已知文件名的情况下，可以没有ｒ（目录）权限</strong></p>
+<p><strong>以后内容十分重要，需认真进行分析理解</strong></p>
+<hr>
+<p><em>这一篇的内容也到此为止了，到现在Linux系统中的文件/目录从配置到操作，到分析查阅就结束了</em></p>
+<p><em>从下一篇开始，就是磁盘与文件系统的管理了，下次再见　！</em></p>
+<p>06/17/2017</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/09/22/cji1p2lvn000yafnrod0v2z1h/" data-id="cji1p2lvn000yafnrod0v2z1h" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACNElEQVR42u3aS27DMAxFUe9/0+6ks9TKfaRdwNT1qECdSGfC8Hcc+Dk/nqt3rt7//O/6lOOJR4YMGa9lnMuHXOvqEvyd9Nw/qDJkyNiAQQLoOiyuj1+fuD5rfTcZMmTISN/h+LvOlSFDhgx+IV6a3kuVIUPGPoxag6zWaFsXt4/X4jJkyHghg3fd///vR+YbMmTIeBXjDJ/0UzxY177/91MyZMgYzeABjidn6UIGKlDJKTJkyBjNSAeQadnZSQr5EFSGDBk7MNJ07YliOB0SfLmJDBkyxjHS8rW2ckESwVb6KEOGjKEMkpCRQJk292sLHKh8lSFDxjhGernaagVvwPHvlyFDxj4MUhx2ytdackny2S/zDRkyZIxgdBI+EgrRkkQjPZUhQ8YOjFoLnrfPUhhvtH0ZCciQIWMQo7YQll4rXcjg4ViGDBl7MmphtxaC01Hl5X1kyJAxmsEXwvgCGQnH/WWLg/9KyJAhYxCDl5TpaJNfl488UUUuQ4aMQYxamcpHm52BaNCMkyFDxjaMexcm0gWyzhqHDBkydmCk6Von7evESRkyZOzM4E2xdDBZTPXSBp8MGTKGMmqrEjw08zI1pcqQIWMfRn8yyMNrpxiOly1kyJAxjkEux1cu7h0bBEFWhgwZGzDIMCAdSdYCcZpKypAhQ0YtpeOXQ03/5wKuDBkyRjPSFlgtcQw+K0OGjA0YfFG11mLrrKuioC9DhozRjFrpyNtkdw0MbhhkypAh432MH50Nk2F1wsnvAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/OS/">OS</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/cji1p2lvp0010afnrpkvd02qa/">第二篇 Linux基础知识</a><a class="next" href="/2017/09/22/cji1p2lvi000tafnrmx927utv/">第三篇 磁盘分区问题</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2lw9001vafnrzc41ns9c/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2m1l006lafnrweuf90y5/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/cji1p2m1d006bafnrs4yb5ybj/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/cji1p2m150065afnrzlerx49r/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/cji1p2m120064afnr89qqeiqy/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/cji1p2m1f006eafnrxror6er9/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/cji1p2lzn003xafnrqvtc32sz/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m170067afnrrk2lapu6/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m1i006iafnr70idg355/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/cji1p2m0z0062afnrr7snnou7/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

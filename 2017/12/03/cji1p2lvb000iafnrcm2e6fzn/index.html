@@ -1,0 +1,117 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>正则表达式 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">正则表达式</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">正则表达式</h1><div class="post-meta">Dec 3, 2017<span> | </span><span class="category"><a href="/categories/Linux/">Linux</a></span></div><div class="post-content"><p><em>的确是很强大的东西,之前也没有系统的学习过,在学习shell script前是必经之路,那么就系统的搞一搞吧</em></p>
+<p><strong>本节,所有的正则表达式的演示都是以grep为主</strong></p>
+<p><strong>而正则表达式在大多数语言中,都有者不同的实现,我们可以进行微调来适应语言的需要</strong></p>
+<h3 id="基础的正则表达式"><a href="#基础的正则表达式" class="headerlink" title="基础的正则表达式"></a>基础的正则表达式</h3><ul>
+<li><p>“ . “ 符号</p>
+<p>  “ . “ 表示匹配换行符外的任意一个字符,举个例子, ‘ r . t ‘ 可以匹配,rot,rut,ret等</p>
+</li>
+<li><p>“ * “ 符号</p>
+<p>  “ <em> “ 符号用于匹配前一个字符 0 ~ 任意 次. 比如 “r</em>t” 可以匹配,rt,rtt,rttt…</p>
+<p>  而” * “ 与 “ . “ 是经常在一起套用的, 比如</p>
+<p>  “ r . * t “ 表示匹配 “ r + 任意多个除换行符外的任意字符 + t “ 的文本内容</p>
+<p>  而 “ r * . t “ 表示匹配 “ 任意多个r + 任意除换行符外的字符 + t “ 的文本内容</p>
+</li>
+<li><p>“ \ { \ } “符号</p>
+<p>  虽然 “ * “ 很方便,但是并不能控制匹配的次数,也不是很好用,所以,使用 “ \ { \ } “ 控制匹配次数</p>
+<p>  常见用法有以下三种:</p>
+<ol>
+<li><p>\ { n \ } 表示匹配之前的字符n次</p>
+</li>
+<li><p>\ { n ,\ } 表示匹配之前的字符至少n次,包含n次</p>
+</li>
+<li><p>\ { n , m \ } 表示匹配之前的字符n~m次</p>
+</li>
+</ol>
+</li>
+<li><p>“ ^ “ 符号</p>
+<p>  这个符号,很好理解,就是用来匹配开头的,</p>
+<p>  如 ‘^root’ 表示匹配以root开头的行</p>
+</li>
+<li><p>“ $ “ 符号</p>
+<p>  既然有匹配开头的元字符,那么一定有用来匹配行尾的字符,那便是 “ $ “</p>
+<p>  如: ‘^$’便可以匹配空行</p>
+</li>
+<li><p>“[ ]” 符号</p>
+<p>  一对方括号,用于匹配出现在方括号中的任一字符 (<strong>并非任意字符</strong>)</p>
+<p>  同时,联动 “ ^ “ 在[ ] 中,尖角号表示取反,比如 [^ABCD] 表示不匹配ABCD任一字符</p>
+<p>  通过以上这些元字符,我们现在可以开始匹配电话号码了</p>
+<p>  ‘^1[38][0-9]{9}‘.即可进行匹配,(但是,一定是从行首开始的,如非行首,可以去掉尖角号)</p>
+</li>
+<li><p>“ \ “ 符号</p>
+<p>  这个符号,其实可以不用多介绍了,就是转义字符.</p>
+<p>  在将元字符作为一般的文本字符使用时,必须使用转义字符,否则是会造成歧义的.</p>
+</li>
+<li><p>“ \ &lt; \ &gt; “ 符号</p>
+<p>  emmmmmmmmmmm,</p>
+<p>  有的时候,我们固定要匹配某一个单词,比如要hello,而不要helloworld ,就要使用单词界定符</p>
+<p>  他会固定匹配指定的单词,不会造成误匹配</p>
+</li>
+</ul>
+<p>以上是8种常用的元字符,下面是一些一般用的元字符,都可以使用上面的常用元字符实现</p>
+<ul>
+<li><p>“ \ d “ 字符</p>
+<p>  是进行数字匹配的元字符 即: [0-9]</p>
+<p>  但是,是Perl兼容模式,所以在grep中使用时,必须加上 “ - P “ 才能成功匹配</p>
+</li>
+<li><p>“ \ b “ 字符</p>
+<p>  匹配单词的边界 boderland 即 “\ &lt; \ &gt; “</p>
+</li>
+<li><p>“ \ B, \ W,” 这些,我都觉得有点废…</p>
+</li>
+<li><p>“\ n , \ r , \ t , \ f , \ s , \S “ 便是匹配各种各样的 转义字符</p>
+</li>
+</ul>
+<h3 id="扩展的正则表达式"><a href="#扩展的正则表达式" class="headerlink" title="扩展的正则表达式"></a>扩展的正则表达式</h3><p>上面属于基础的元字符,以足够强大了,但是,还是不能满足某些需求,所以才有了扩展的正则表达式</p>
+<ul>
+<li><p>“ ? “ 匹配前一个字符 0 ~ 1 次</p>
+</li>
+<li><p>“ + “ 匹配前一个字符1次以上</p>
+</li>
+<li><p>“ | “ 或的关系,表示不同分支,用于多种不同情况的并列</p>
+</li>
+<li><p>“ ( )” 表示罗列多种可以进行替换的情况</p>
+</li>
+</ul>
+<p><strong>使用 “ ( ) “ + “ | “ 可以替换 “ [ ] “ ,实现同等效果</strong></p>
+<h3 id="通配符"><a href="#通配符" class="headerlink" title="通配符"></a>通配符</h3><p><strong>通配符并不是正则表达式的内容,通配符是用来匹配文件名的,正则表达式是用来匹配文本内容的</strong></p>
+<ul>
+<li><p>“ * “ 表示任意个任意字符</p>
+</li>
+<li><p>“ ? “ 表示任一个,任意字符</p>
+</li>
+<li><p>“｛　｝＂表示匹配花括号内，所有以逗号隔开的字符</p>
+</li>
+</ul>
+<p>-　＂＾与 ! “ 一般与［　］　同时使用，表示取反</p>
+<h3 id="正则表达式的模式"><a href="#正则表达式的模式" class="headerlink" title="正则表达式的模式"></a>正则表达式的模式</h3><p><del><em>主要进行贪婪模式和非贪婪模式的解析</em></del></p>
+<p><del>说到贪婪模式,就不得不提到三种量词,贪婪量词,逐步量词,独吐量词</del></p>
+<p><del>1.贪婪量词</del>~~</p>
+<p><del>即为<strong> “ . * “ </strong> ,表示匹配任意长度的任意字符,(换行符除外)</del></p>
+<p><del>贪婪量词的工作原理: 遇到贪婪量词,先将剩余的串吃干净,然后往出吐,遇到规则表达式即结束</del></p>
+<p><del><strong>即,贪婪量词,可以匹配到最长的符合要求的字串</strong></del></p>
+<p><del>看图</del></p>
+<p><del>2.逐步量词</del></p>
+<p><del>用起来很简单,即在贪婪量词后加上 “ ? “ 即可,表示逐步进行匹配.或者说,懒惰模式,尽可能少的匹配</del></p>
+<p><del>遇到逐步量词后,不会立即吞掉所有字符,而是会,一边吞入字符,一边进行匹配,一旦符合规则表达式,便停止</del></p>
+<p><del>看图</del></p>
+<p><strong>好吧,上面的东西基本废了,都是Java中规则表达式的内容,</strong></p>
+<p><strong>所以,各种语言的实现方式都是略有不同的,需要根据具体情况进行界定</strong></p>
+<h3 id="正则表达式的练习"><a href="#正则表达式的练习" class="headerlink" title="正则表达式的练习"></a>正则表达式的练习</h3><p><em>使用grep进行练习</em></p>
+<h3 id="Sed与Awk"><a href="#Sed与Awk" class="headerlink" title="Sed与Awk"></a>Sed与Awk</h3><p>这是两个很好用的命令行处理文本的工具,因为使用上按照 – help提示很方便</p>
+<p>所以,不再赘述</p>
+<p>December 4, 2017 9:07 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/12/03/cji1p2lvb000iafnrcm2e6fzn/" data-id="cji1p2lvb000iafnrcm2e6fzn" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACJ0lEQVR42u3aS24CMRAFwNz/0mSLRIa8ZxukscurKAxj16bpj39+4vV4Ws//eX3m9fnku1e7LF4YGBi3ZTzerqtn2uPOvOH9MxgYGOcwriJYe6AkgCbBOj8bBgYGRnLENuDO7IuBgYExz0i2XEvFwMA4hzFfjq5qtH28FsfAwLghI++6f//vj8w3MDAwbsV4lKsNlG2KOXgqDAyMrRl5gJsfBky10pJrGRgYGJsy8jA6U46uDcd/PImBgXEYI29mtWXn2IAzQWJgYOzNyAeZbcKXI/MBZ5Q+YmBgHMBIxpNtMB2jJiNSDAyMExh5039mqDkfrIvbIhgYGNsx2hK0fnVw0Lzp9s/JMTAwNmUkwTFPE5NwmR+0aM9hYGBszWgTvrFhQD7gbEek9dQCAwPjtozkdTMrL27b4I6BgXEOox0ctsFxVZOuvmyBgYGxEaMNnTNXNNpgmiSgGBgY5zDy7dsUsL1+kQ9WL+cbGBgY2zHaSxKfGCHkPwZ1EYuBgbEFIzlQm+rl76xTwKSIxcDAOIyRDwzmw3c+CsXAwDiTMf/qPICOXd2ILltgYGBsxxi7NrEqjI4ll1PDSwwMjBsy2nIxSdGShn7enqvvjGBgYGzKyEvWsYbaWIpZp48YGBgHMNow2uLXFrEYGBgYY4xiy7bp/82Ai4GBsRFjrK3WJo7FdzEwMA5g5Fcr3pe17aftsAEDA+NMRls6toceG0/O/AxgYGBsxPgFehtqmFnJB8wAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/RegExpression/">RegExpression</a></div><div class="post-nav"><a class="pre" href="/2017/12/05/cji1p2lws002iafnr1oqlehbt/">ShellScript(一)</a><a class="next" href="/2017/11/21/cji1p2lul0002afnrfxvevyzi/">汇编语言(二)_寄存器</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2lw9001vafnrzc41ns9c/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/cji1p2m1l006lafnrweuf90y5/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/cji1p2m1d006bafnrs4yb5ybj/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/cji1p2m150065afnrzlerx49r/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/cji1p2m120064afnr89qqeiqy/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/cji1p2m1f006eafnrxror6er9/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/cji1p2lzn003xafnrqvtc32sz/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m170067afnrrk2lapu6/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/cji1p2m1i006iafnr70idg355/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/cji1p2m0z0062afnrr7snnou7/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
