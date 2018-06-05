@@ -1,0 +1,125 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Ruby学习笔记(二) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Ruby学习笔记(二)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Ruby学习笔记(二)</h1><div class="post-meta">Feb 6, 2018<span> | </span><span class="category"><a href="/categories/Ruby/">Ruby</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-方法"><span class="toc-number">1.</span> <span class="toc-text">一 方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法的调用"><span class="toc-number">1.1.</span> <span class="toc-text"> 方法的调用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法的分类"><span class="toc-number">1.2.</span> <span class="toc-text"> 方法的分类</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-方法的定义"><span class="toc-number">2.</span> <span class="toc-text">二 方法的定义</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法的定义"><span class="toc-number">2.1.</span> <span class="toc-text"> 方法的定义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法的返回值"><span class="toc-number">2.2.</span> <span class="toc-text"> 方法的返回值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参数个数不确定时"><span class="toc-number">2.3.</span> <span class="toc-text"> 参数个数不确定时</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#关键字参数"><span class="toc-number">2.4.</span> <span class="toc-text"> 关键字参数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#小技巧"><span class="toc-number">2.5.</span> <span class="toc-text"> 小技巧</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-将数组作为参数传递"><span class="toc-number">2.5.1.</span> <span class="toc-text">1. 将数组作为参数传递</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-聊聊Ruby的格式"><span class="toc-number">3.</span> <span class="toc-text">三 聊聊Ruby的格式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#换行"><span class="toc-number">3.1.</span> <span class="toc-text"> 换行</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#缩进"><span class="toc-number">3.2.</span> <span class="toc-text"> 缩进</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#空白"><span class="toc-number">3.3.</span> <span class="toc-text"> 空白</span></a></li></ol></li></ol></div></div><div class="post-content"><p><em>之前一直不清楚OOP,对OOP最深的印象就是,所有的函数直接” . “进行调用</em></p>
+<p><em>那么,今天就来看看所谓的”函数”,即方法的相关内容</em></p>
+<h2 id="一-方法"><a href="#一-方法" class="headerlink" title="一 方法"></a>一 方法</h2><p>什么是方法?</p>
+<p><strong>由对象定义的与对象有关的操作,Ruby中将对对象的操作封装成为方法</strong></p>
+<p>从smartalk沿承下来的一个概念:<strong>发送消息</strong></p>
+<p>将对象作为消息的接收者,通过调用方法的形式,将消息(方法)发送给对象,</p>
+<p><strong>把参数和消息一起发送给对象的过程,叫方法的调用</strong></p>
+<p><strong>切记: Ruby中方法的调用,可以省略括号,(必要时刻避免不必要的理解错误)</strong></p>
+<h3 id="方法的调用"><a href="#方法的调用" class="headerlink" title=" 方法的调用"></a><1> 方法的调用</1></h3><p>分为以下三种:</p>
+<ol>
+<li><p>简单方法的调用</p>
+</li>
+<li><p>带块方法的调用</p>
+</li>
+<li><p>运算符形式的方法调用</p>
+</li>
+</ol>
+<p>此处仅为了解,之后会详解三种方法调用</p>
+<p>注意:</p>
+<p><strong>1. 带块的方法,像之前说的,do ~ end 与 { ~ }可以替换,但是,do ~ end可以省略参数列表的括号</strong></p>
+<p><strong>反之,{ ~ }只有在没有参数时,才可以省略括号,有一个以上都不能省略括号</strong></p>
+<p><strong>2. 运算符形式的方法可以重定义,有的可以,有的则不行</strong></p>
+<h3 id="方法的分类"><a href="#方法的分类" class="headerlink" title=" 方法的分类"></a><2> 方法的分类</2></h3><p>方法同时也可以根据接收对象来进行分类:</p>
+<ol>
+<li><p>实例方法</p>
+</li>
+<li><p>类方法</p>
+</li>
+<li><p>函数式方法</p>
+</li>
+</ol>
+<p><strong>实例方法: 就像表面含义一样,是给类的实例对象进行调用的方法,就是常见的函数调用</strong></p>
+<p><strong>类方法: 给类进行使用的方法</strong></p>
+<p>例如,我们常见的创建对象的方法,就是类方法</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Array.new</span><br><span class="line">File.open(filename)</span><br></pre></td></tr></table></figure>
+<p>同时,不直接对实例操作,而是通过所属的类进行属性的改变时,也使用类方法</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File.rename(old_name, new_name)</span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#实例方法:</span></span><br><span class="line">filename = ARGV[<span class="number">0</span>]</span><br><span class="line"><span class="comment"># file = File.open(filename)</span></span><br><span class="line">text = file.read</span><br><span class="line">file.close</span><br><span class="line"></span><br><span class="line"><span class="comment">#类方法:</span></span><br><span class="line">text = File.read(filename)</span><br></pre></td></tr></table></figure>
+<p><strong>同时,切记,类方法也可以这样调用 “::”,省得以后概念看不懂</strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">text = File::read(filename)</span><br></pre></td></tr></table></figure>
+<p><strong>函数式方法: 没有接受者的方法即为函数式方法,(其实到后面就知道,接受者是self)</strong></p>
+<p><strong>叫函数式方法,是因为此类方法不关心接受者是谁,反过来,就是没有接收者的方法为函数式方法</strong></p>
+<blockquote>
+<p>另外解释一个情况: Array#new, 这是Ruby文档中对方法名的标记形式</p>
+</blockquote>
+<h2 id="二-方法的定义"><a href="#二-方法的定义" class="headerlink" title="二 方法的定义"></a>二 方法的定义</h2><p><em>上面说了这么多,也该说说方法的定义了</em></p>
+<h3 id="方法的定义"><a href="#方法的定义" class="headerlink" title=" 方法的定义"></a><1> 方法的定义</1></h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> 方法名<span class="params">(参数列表)</span></span></span><br><span class="line">  进行的处理</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><strong>方法名可有下划线,字母,数字组成,不能以数字开头</strong></p>
+<p>下面看几个例子:</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(name)</span></span></span><br><span class="line">  puts <span class="string">"my name is <span class="subst">#&#123;name&#125;</span>"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello</span><span class="params">(name = <span class="string">"ruby"</span>)</span></span>    <span class="comment"># 指定无参数时的默认值</span></span><br><span class="line">  pust <span class="string">"my name is <span class="subst">#&#123;name&#125;</span>"</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><em>带块的方法,类方法,会在介绍了类之后进行接受到介绍</em></p>
+<h3 id="方法的返回值"><a href="#方法的返回值" class="headerlink" title=" 方法的返回值"></a><2> 方法的返回值</2></h3><p>下面有几条方法返回值的规则:</p>
+<p><strong>有return时:</strong></p>
+<ol>
+<li><p>reutrn的值即为返回值,且立刻返回</p>
+</li>
+<li><p>return后无从参数,则返回 nil 例如print返回值就为nil</p>
+</li>
+</ol>
+<p><strong>无return时</strong></p>
+<ol>
+<li><p>方法的最后一个表达式,即为返回值</p>
+</li>
+<li><p>上一条规则不一定正确,程序流结束处为返回值,</p>
+</li>
+</ol>
+<h3 id="参数个数不确定时"><a href="#参数个数不确定时" class="headerlink" title=" 参数个数不确定时"></a><3> 参数个数不确定时</3></h3><p>在C中,实现可变从参数,使用的便是&lt; stdarg.h &gt;中的宏,Ruby就没这么复杂了</p>
+<p>在参数列表中,<strong>*var(变量名)</strong>,则方法会把所有的参数封装为数组,</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">math</span><span class="params">(arg, *args)</span></span></span><br><span class="line">  [arg, args]</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">p math(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>) <span class="comment">#=&gt; [1, [2, 3, 4]]</span></span><br></pre></td></tr></table></figure>
+<p><strong>切记: 每个方法的参数列表中,不定参数列表,只能出现出现一次! ! !</strong></p>
+<p><strong>类似于多重赋值的用法</strong></p>
+<h3 id="关键字参数"><a href="#关键字参数" class="headerlink" title=" 关键字参数"></a><4> 关键字参数</4></h3><p>之前,提到了,Ruby方法中<strong>需要参数按顺序指定类型值进行调用</strong></p>
+<p>所以,有了关键字参数的用法(ruby2.0的新特性)</p>
+<p><strong>关键字参数: 将变量名与变量值,成对的传进方法中</strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">method_name</span><span class="params">(<span class="symbol">arg1:</span> value1, <span class="symbol">arg2:</span> value2, ...)</span></span></span><br><span class="line">  do_something</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p><strong>关键字从参数的好处: 参数可以不按照默认顺序调用, 而且可以省略其中的任意参数</strong></p>
+<p><strong>但是,将未定义的参数名传给方法时,会报错</strong></p>
+<p>因为上面提到了,未定义的参数名,所以我们有一个处理未定义参数名的方法: <strong>**args参数</strong></p>
+<p><strong>在方法定义中,使用此参数,用于回收未定义的参数名以及变量值,并以hash的形式保存</strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">meth</span><span class="params">(<span class="symbol">x:</span> <span class="number">1</span>, <span class="symbol">y:</span> <span class="number">2</span>, **args)</span></span></span><br><span class="line">  [x, y, args]</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">p meth(<span class="symbol">x:</span> <span class="number">5</span>, <span class="symbol">y:</span> <span class="number">9</span>, <span class="symbol">z:</span> <span class="number">0</span>) <span class="comment">#=&gt; [5, 9, &#123;:z=&gt;0&#125;]</span></span><br></pre></td></tr></table></figure>
+<p><strong>同时,可以直接将hash作为参数传递,会使用与关键字参数匹配的方法进行参数,变量名的核对</strong></p>
+<p><strong>因为,关键字参数的实现,就是参考传递hash作为参数而来的</strong></p>
+<p><strong>最后,建议大家,多多使用关键字参数,很方便</strong></p>
+<h3 id="小技巧"><a href="#小技巧" class="headerlink" title=" 小技巧"></a><5> 小技巧</5></h3><h4 id="1-将数组作为参数传递"><a href="#1-将数组作为参数传递" class="headerlink" title="1. 将数组作为参数传递"></a>1. 将数组作为参数传递</h4><p>之前,看到过,hash作为参数,我们也使用了,*args的形式,进行不定参数的封装</p>
+<p>所以,我们可以使用<strong>*args的形式</strong>,将数组作为参数传递</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span><span class="params">(x, y, z)</span></span></span><br><span class="line">  x + y + z</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">a = [<span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line">foo(<span class="number">1</span>, *a)</span><br></pre></td></tr></table></figure>
+<p><strong>但是,数组与参数列表的数目一定要核实,相等</strong></p>
+<blockquote>
+<p>区分: *args的不同用法</p>
+</blockquote>
+<blockquote>
+<p>在方法调用时,*args,表示将数组中的参数一一传递</p>
+</blockquote>
+<blockquote>
+<p>方法定义时,*args,表示接收不定参数</p>
+</blockquote>
+<h2 id="三-聊聊Ruby的格式"><a href="#三-聊聊Ruby的格式" class="headerlink" title="三 聊聊Ruby的格式"></a>三 聊聊Ruby的格式</h2><h3 id="换行"><a href="#换行" class="headerlink" title=" 换行"></a><1> 换行</1></h3><p>Ruby中以一行结束作为语句结束的标识</p>
+<p><strong>它也可以使用 ; 作为结束的标识</strong></p>
+<p>一般不建议用; ,用一行结束来表示语句的结束,简洁明了</p>
+<h3 id="缩进"><a href="#缩进" class="headerlink" title=" 缩进"></a><2> 缩进</2></h3><p>Ruby也有缩进,但是,使用的是软缩进(2个空格的Tab)</p>
+<p>同时,搭配上do ~ end使得程序结构清晰明了</p>
+<h3 id="空白"><a href="#空白" class="headerlink" title=" 空白"></a><3> 空白</3></h3><p>Ruby中针对于空白要求比较严格</p>
+<p>不能乱空白</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a + b   O</span><br><span class="line">a+b     O</span><br><span class="line">a +b    X</span><br><span class="line">a+ b    X</span><br></pre></td></tr></table></figure>
+<p><strong>上面第三种写法的问题很严重,意思时,调用名为+,参为b的方法 ！！！</strong></p>
+<p>最后，要想写出好看，优雅的代码，离不开参考别人的代码，推荐Rails的学习！</p>
+<p>(当然,我离那一步还有点距离)</p>
+<p><em>方法很重要,定义了对象的行为,下一篇的类与模块,可以说是Ruby的精华之一了</em></p>
+<p>February 6, 2018 2:58 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2018/02/06/Ruby/Ruby2/" data-id="cji1p4k7l002bgmnrkkzft9z1" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAK4AAACuCAAAAACKZ2kyAAABwklEQVR42u3aQY7DIAwF0N7/0h1ptqPQbxPcjPRYVSENL1lYxub1isf7d6yvr+/5e+fV/TcMXFzcbe57OdaUq9mrK1fPTAy4uLjz3CRIJQEoCVj558DFxX0+d71kMrsOZLi4uP+Rmyyfb3JwcXGfz002P/kWJX/awb0aLi7uBrdaMD3x+2B9FxcXt8h9F8e93Y3y6ri4uCPcvBGSlE3zIki+cWr2bXBxcTe4eZOjeme1KRt9FFxc3K9yq4erkvQluf5BhYuLO8jNE5pe8yP/14cAiouLO8LNU5AdRJ7EVA954OLinuNWix29670uSWVvhIuLew/3rkMV+wcpCqkMLi7uIDcvf+yEvF6J9rIsgouLe4zbS0SqxJ2CCC4u7jy310bdofQauri4uDPcXtDJk5jqYazkhXFxcU9z7y1w5O2WZBVcXNzvcvO2Sq/wWj5OsQ5kuLi4I9x8JG2PfLb8aXBxcUe41YCSpzW9omo+i4uLe5pbDV4nCqb5dggXF3eSW22UVhOjZgTdqdri4uKOcO99ch7IcHFxn8+tHqHIQVHbBhcXd5Dba4T0Nks7TVlcXNwZbjVZSZbMXzUPjri4uCPcH7NwvlV4TLApAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/编程语言/">编程语言</a></div><div class="post-nav"><a class="pre" href="/2018/02/06/Ruby/Ruby3/">Ruby学习笔记(三)</a><a class="next" href="/2018/02/01/Ruby/Ruby1/">Ruby学习笔记(一)</a></div><div id="lv-container" data-id="city" data-uid="MTAyMC8zNzA2OS8xMzYwNQ=="><script>(function(d, s) {
+   var j, e = d.getElementsByTagName(s)[0];
+   if (typeof LivereTower === 'function') { return; }
+   j = d.createElement(s);
+   j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+   j.async = true;
+   e.parentNode.insertBefore(j, e);
+})(document, 'script');
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/Other/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/C/Expert_C_Programming/error_jmp/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/C/Expert_C_Programming/c_link/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/C/Expert_C_Programming/array_pointer/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/C/Expert_C_Programming/c_technology/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/tools/size/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/C/Expert_C_Programming/c_statement/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/C/Expert_C_Programming/little_thing_of_C/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/C/Expert_C_Programming/C_origin/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
