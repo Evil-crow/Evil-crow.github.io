@@ -1,0 +1,461 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第七篇 Linux文件权限与目录配置(下) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第七篇 Linux文件权限与目录配置(下)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第七篇 Linux文件权限与目录配置(下)</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Linux/">Linux</a></span></div><div class="post-content"><p>看了上一篇的文件权限后是不是觉得Linux系统十分神奇呢？</p>
+<p>是不是感受到了被root账户支配的恐惧？！</p>
+<p>上一篇说了那么多关于文件/目录的权限知识，那么，文件/目录下到底存储了怎样的文件？</p>
+<p>你有没有兴趣了解呢？</p>
+<p>那么，本篇，第七篇就是介绍在Linux中的目录配置问题。</p>
+<p>其中有许多专业方面的文件，目前只做了解，以后会详细深入每一部分。</p>
+<hr>
+<p>首先来说说Linux下的文件种类和扩展名的问题</p>
+<p>像上一篇中所讲,可以用 ls -l命令列出文件所有属性,在10字符中,第一个极为即为文件类型</p>
+<p>文件类型分为, <strong>-,d,l,b,c,s,p,等</strong></p>
+<p>其中最多的,肯定就是一般文件了</p>
+<p><strong>普通文件</strong></p>
+<p>[-],又可以分为<em>纯文本文件</em> 与 <em>二进制文件</em></p>
+<p>纯文本文件中基本都是可以直接读出来的数字,字母等信息,可以使用cat命令</p>
+<p>如<code>cat .vimrc</code></p>
+<p>二进制文件,系统只认识二进制文件,比如你所使用的程序都是二进制文件,像上面的cat也是二进制文件</p>
+<p><strong>目录</strong></p>
+<p>[d],即为目录.接下来我们详述目录,可以近似的理解为”文件夹”</p>
+<p><strong>连接文件</strong></p>
+<p>[l],类似于Win中的”快捷方式”,有两种链接方式</p>
+<p><strong>设备及设备文件</strong></p>
+<p>因为在Linux中,一切皆为文件,所以设备也被抽象化为文件</p>
+<p>分为块设备文件与字符设备文件</p>
+<p>[b],表示系统随机访问的设备文件,sd<em>与hd</em></p>
+<p>[c],表示字符设备文件,为串行端口接口设备,例如鼠标,键盘都是.</p>
+<p><strong>套接字(sockets)</strong></p>
+<p>通常用于网络数据连接,目前不详述</p>
+<p><strong>管道(FIFO,pipe)</strong></p>
+<p>为一种特殊的文件类型,解决多个程序同时访问一个文件造成的错误上</p>
+<ul>
+<li>扩展名</li>
+</ul>
+<p>如上一篇所讲,<strong>扩展名在Linux系统中只是为了标明文件的属性,与文件能否执行无关!!!</strong></p>
+<p><strong>而-x也只是决定有无执行的可能,能否执行成功与能否执行无关</strong></p>
+<p>最后:Linux文件名的限制,</p>
+<p>一般情况下,建议不要使用* ? &gt; &lt; ; &amp; ! \ ‘ “ ` (  )  {  }等符号作文件名</p>
+<p><strong>因为这些符号,在命令行行中是有其他特殊意义的!</strong></p>
+<hr>
+<p>Linux下的目录配置</p>
+<p>之前说过，Linux只是Linus Torvalds先生所编写的系统内核，</p>
+<p>所谓的“Linux系统”实质上是<code>Linux内核 + 软件包 + 各种工具</code>的Linux Distribution。</p>
+<p>那么，问题来了，各种的Linux发行版系统差别有多大？</p>
+<p>每个人的Linux系统差这么多，怎么进行交流？</p>
+<p>就目前而言，Redhat与Debian系占比很高，另外还有Arch Linux独领风骚</p>
+<p>那么，这么多个系统的差别到底在哪里？</p>
+<hr>
+<p>当时进行开发的虚拟团队，肯定是考虑到这一点的，那么，他们是怎么处理的？</p>
+<p>这就要提到，<strong>Linux系统的目录配置标准：FHS</strong></p>
+<p>所谓“FHS”即是 <strong>Filesystem Hierarchy Standard</strong>(文件系统配置标准)</p>
+<p>因为进行Linux Distribution即开发的个人，团体太多了</p>
+<p>如果你更换一个版本的Linux系统，就需要重新学习Linux系统的目录配置，</p>
+<p>岂不是很麻烦？？？</p>
+<p>所以制定了FHS，这个Linux下，目录配置文件标准，以此来进行目录配置规范</p>
+<p>据FHS官方文件指出：</p>
+<blockquote>
+<p>其主要目的是，希望用户可以了解到已安装的软件通常放置在那个目录下，所以希望独立软件的开发商，操作系统的制作者，以及想要维护系统的用户，都能够遵循FHS的标准</p>
+</blockquote>
+<p>也即是，<strong>FHS实质上重点在于规范系统在什么样的目录下应该放置什么样的文件数据</strong></p>
+<p>这样做，真的十分便于进行Linux系统的其他工作</p>
+<p>FHS根据文件使用的频繁度和更新度，划分了下面四个标准</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">可分享的</th>
+<th style="text-align:center">不可分享的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">不变的</td>
+<td style="text-align:center">/usr(软件放置)</td>
+<td style="text-align:center">/etc(配置文件)</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">/opt(第三方软件)</td>
+<td style="text-align:center">/boot(开机与内核文件)</td>
+</tr>
+<tr>
+<td style="text-align:center">可变动的</td>
+<td style="text-align:center">/var/mail(邮件)</td>
+<td style="text-align:center">/var/run(程序相关)</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">/var/spool/news</td>
+<td style="text-align:center">/var/lock(程序相关)</td>
+</tr>
+</tbody>
+</table>
+<p>通过以上一览表，可以了解到Linux中文件的四种交互作用形态。</p>
+<p>其中所举例的，是其中比较特色，典型的目录文件，之后会详解。</p>
+<p>现在来分析那四个交互作用形态：</p>
+<p><strong>1.可分享的</strong></p>
+<p>所谓可分享的，之可以分享给其他系统挂载的目录，了解过“挂载”的概念，相信你能理解</p>
+<p>可分享的意思了吧，就是指这部分文件，是可以分享给他人看的。</p>
+<p>比如可以分享给网络上主机挂载的目录等。</p>
+<p><strong>2.不可分享的</strong></p>
+<p>所谓不可分享的，指的是与自己程序相关，这些都是只与你自己的电脑有关的东西</p>
+<p>当然也就不适合，也不方便拿出来分享了。</p>
+<p><strong>3.不变的</strong></p>
+<p>所谓不变的，指的是不会随着发行版的不同而发生改变的文件，比如函数库，/lib中的文件</p>
+<p>这些都是不随Linux发行版的改变而改变的文件，如内核文件。所以算作是不变的</p>
+<p><strong>４.可变动的</strong></p>
+<p>所谓可变动的指的是经常改变的文件，比如登录信息，新闻组等。</p>
+<hr>
+<p><strong>事实上，FHS标准对于Ｌinux系统的目录配置文件，只定义了三层目录配置：</strong></p>
+<blockquote>
+<p>/ (root)目录：与开机系统有关</p>
+</blockquote>
+<blockquote>
+<p>/usr目录：与软件安装/执行有关</p>
+</blockquote>
+<blockquote>
+<p>/var目录：与系统运作过程有关</p>
+</blockquote>
+<p>下面一个一个目录来详解：</p>
+<p>/ ：根目录，也可以叫做root目录　与开机系统有关的文件</p>
+<p>/,根目录，是Linux系统中最重要的一个目录了！</p>
+<p>所有的目录都是由根目录所衍生出来的，而且根目录还与机器的开机，还原，系统修复有关</p>
+<p>所以，</p>
+<blockquote>
+<p>FHS建议：<br>根目录/，所在的分区越小越好，而且应用程序安装的软件最好不要与根目录放在同一个分区下<br>，保证根目录越小越好。如此不但性能较好，根目录所在的文件系统也不容易发生问题。</p>
+</blockquote>
+<p>鉴于以上的建议：根目录下应该存在这样的目录：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">目录　　</th>
+<th style="text-align:center">　　　　　应放置的文件内容　　　　　</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/bin</td>
+<td style="text-align:center">/bin放置的是在单用户模式下还可以操作的命令</td>
+</tr>
+<tr>
+<td style="text-align:center">/boot</td>
+<td style="text-align:center">/boot中存放内核文件以及开机配置文件　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/dev</td>
+<td style="text-align:center">之前讲一切皆文件，/dev目录下都是设备文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/etc</td>
+<td style="text-align:center">系统的主要配置文件都存放在此处　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/home</td>
+<td style="text-align:center">home目录即为用户目录　　　　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/lib</td>
+<td style="text-align:center">系统开机时所用到的函数库　　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/media</td>
+<td style="text-align:center">“媒体”，指软盘，光盘等设备　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/mnt</td>
+<td style="text-align:center">用于暂时挂载的目录　　　　　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/opt</td>
+<td style="text-align:center">用于给第三方软件放置的目录　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/root</td>
+<td style="text-align:center">系统管理员目录　　　　　　　　　　　　　</td>
+</tr>
+<tr>
+<td style="text-align:center">/sbin</td>
+<td style="text-align:center">可以视为“service”，网络服务数据目录　</td>
+</tr>
+<tr>
+<td style="text-align:center">/tmp</td>
+<td style="text-align:center">　一般用户或者暂时放置数据的地方　　　　</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://img.blog.csdn.net/20170610190836877?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>上面只是大体上的目录介绍，现在进行详细的　/根目录　内容介绍，</p>
+<p><strong>/bin</strong>　  (binary)</p>
+<p>如上面所说，放置的是单用户模式下还可以被操作的命令，即指在一些特殊情况下，比如系统</p>
+<p>崩坏，出现故障时，还可以使用的命令,如，cat,chmod,chown,date,mv,mkdir,cp,bash等。</p>
+<p><strong>/boot</strong></p>
+<p>其中主要包括开机时会使用到的文件，包括内核文件</p>
+<p><strong>注意：内核文件夹名为vmlinuz，请谨慎对待！</strong></p>
+<p><strong>/etc</strong>     (etceteras)</p>
+<p>其中放置的是几乎所有主要的系统配置文件，例如个用户的账号信息，服务的起始文件，</p>
+<p>一般用户可以查阅，只有root可以修改这些文件！</p>
+<p><strong>FHS建议不要放置可执行文件在此目录！！！</strong></p>
+<p><strong>/dev</strong>  (device)</p>
+<p>其中一切的设备和接口都是以文件的形式存在的，通过访问文件来访问设备</p>
+<p>比较重要的有：/dev/null, /dev/tty, /dev/hd<em>, /dev/sd</em>.</p>
+<p><strong>/home</strong></p>
+<p>其中　～：表示本用户的主文件夹</p>
+<p>～XXXX:表示XXXX用户的主文件夹(非本用户进行访问)</p>
+<p><strong>/lib</strong></p>
+<p>放置开机和/bin, /sbin目录中的命令成功使用所需要的函数库，</p>
+<blockquote>
+<p>将函数库理解为”外挂“，只有调用他们，才能正常运行－－鸟哥</p>
+</blockquote>
+<p><strong>/opt</strong></p>
+<p>即放置第三方软件的地方</p>
+<p><strong>/root</strong></p>
+<p>根据之前的笔记,你应该对root这个名字不陌生了吧?</p>
+<p>那么,root文件夹为什么要放在根目录下呢? ? ?</p>
+<p>这是因为,一旦系统出现问题,保证还可以进入root管理员用户,来进行系统的修复.</p>
+<p><strong>/sbin</strong></p>
+<p>其中包括了<strong>开机,修复,还原系统所需要的命令</strong>,十分重要!</p>
+<p><strong>/tmp</strong></p>
+<p>此目录下放置的是任何人都可以查看的暂存数据,所以,重要数据不能放在此目录下</p>
+<p>而且FHS建议:在开机时,应该将/tmp目录下的数据全部删除!</p>
+<p><strong>FHS标准中,对于/root目录只定义了以上的几个目录,但是Linux系统中一般还会有下面的几个重要目录</strong></p>
+<p>这也是需要我们了解的:</p>
+<p><strong>/lost+found</strong></p>
+<p>此目录下是使用标准的ext2/ext3/ext4日志文件系统格式在会产生的一个目录</p>
+<p>目的在与文件系统发生错误时,将一些丢失的片段放在该目录下</p>
+<p><strong>/proc</strong></p>
+<p>该目录是一个虚拟的文件系统,他放置的数据都是在内存当中的,例如系统的内核,进程,</p>
+<p>外部设备的状态,网络状态等,</p>
+<p><strong>注:因为该目录是在内存中,所以不占据任何硬盘空间!</strong></p>
+<p><strong>/sys</strong></p>
+<p>这个目录类似于/proc,同样不占据硬盘空间! ,其中存放着已加载的内核模块和</p>
+<p>内核监测到的硬件设备信息等</p>
+<p>上图即为 / 根目录下的目录信息</p>
+<p><strong>注意:开机过程中,仅仅只有根目录会被挂载,其他的分区是在开机完成之后才挂载上去的</strong></p>
+<p><strong>所以,注定有一些目录是必须在/目录下的,不能分开!</strong></p>
+<p>这些目录是:</p>
+<ul>
+<li><p>/etc:配置文件</p>
+</li>
+<li><p>/bin:重要执行文件</p>
+</li>
+<li><p>/dev:所需要的设备文件</p>
+</li>
+<li><p>/lib:执行文件所需要的函数块与内核所需要的模块</p>
+</li>
+<li><p>/sbin:重要的系统执行文件</p>
+</li>
+</ul>
+<hr>
+<p>接下来介绍/usr目录,<strong>/usr目录是与软件的安装/执行有关的目录</strong></p>
+<p>/usr目录下所存放的是<strong>可分享的</strong>与<strong>不可变动的</strong>数据文件</p>
+<p>usr的缩写并非是”user”而是<strong>“UNIX Software Resource”</strong></p>
+<p>而且,建议,所有的软件应该合理的配置在/usr下的子目录里,而并非自行新建子目录</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">应放置的文件内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/usr/X11R6/</td>
+<td style="text-align:center">为X Windows系统重要数据放置目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/bin/</td>
+<td style="text-align:center">绝大部分的用户可使用命令都在此处</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/include/</td>
+<td style="text-align:center">C/C++的头文件,包含文件都在此处</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/lib/</td>
+<td style="text-align:center">各类应用软件的函数库,目标文件以及一些非惯用的执行文件或脚本</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/local/</td>
+<td style="text-align:center">用户自行安装的软件都在此处,区别于发行版自带的软件</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/sbin/</td>
+<td style="text-align:center">非系统正常运行所需要的系统命令</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/share/</td>
+<td style="text-align:center">放置共享文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/usr/src/</td>
+<td style="text-align:center">一般源码存放在这里,而内核源码存放在/usr/src/linux下</td>
+</tr>
+</tbody>
+</table>
+<p><img src="http://img.blog.csdn.net/20170610190900586?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>以上即为/usr下的配置目录</p>
+<p><strong>显然./usr与/下有不少相同的目录,接下来就看看他们的区别:</strong></p>
+<blockquote>
+<p>/bin 与 /usr/bin</p>
+</blockquote>
+<p>/bin是根目录下的目录,其与开机过程有关,所以要放在开机时就挂载的/目录下</p>
+<p>/usr/bin 中存放的也是一般用户所能用到的大多数命令,但是与开机过程不挂钩</p>
+<blockquote>
+<p>/lib 与 /usr/lib</p>
+</blockquote>
+<p>/lib中放置的是在开机时首先会用到的函数库</p>
+<p>/usr/lib中放置的则是各种应用软件的函数库,不一定开机时会用到!</p>
+<blockquote>
+<p>/sbin 与 /usr/sbin</p>
+</blockquote>
+<p>/sbin中存放的是超级用户 root一般使用的命令放置着系统管理所必须的程式</p>
+<p>/usr/sbin中放置的则不一定是系统正常运行所必须的系统指令</p>
+<blockquote>
+<p>/opt与 /usr/local</p>
+</blockquote>
+<p>/opt在根目录下,存放第三方软件,即并非发行版Linux安装时就装的软件</p>
+<p>/usr/local,系统管理员在本机的软件,<strong>是不是会想起每次安装软件,都要sudo yum/apt-get?</strong></p>
+<p>一般经由root安装的软件都放置于此,所以,实质上</p>
+<p><strong>你的软件大部分都是在/usr/local这个目录下的! ! !</strong></p>
+<hr>
+<p>接下来,谈谈最后一个FHS标准规定的配置目录/var (variable)</p>
+<p><strong>/usr是安装时会占据大空间的目录,/var是安装完系统后才会渐渐增大空间的目录</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">目录</th>
+<th style="text-align:center">放置的文件内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">/var/cache/</td>
+<td style="text-align:center">应用程序本身产生的缓存文件</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/lib</td>
+<td style="text-align:center">程序运行时需要的数据放置的目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/lock</td>
+<td style="text-align:center">程序锁,对于只能同时一个用户使用的程序上锁,防止两人同时使用</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/log</td>
+<td style="text-align:center">登录文件放置的目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/mail</td>
+<td style="text-align:center">个人信箱的目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/run</td>
+<td style="text-align:center">程序的PID放置目录</td>
+</tr>
+<tr>
+<td style="text-align:center">/var/spool</td>
+<td style="text-align:center">通常放置一些队列数据</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>　小建议，在读完基础篇之后，可以挑战FHS官方文档</p>
+</blockquote>
+<p><img src="http://img.blog.csdn.net/20170610190918758?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>FHS只规定了/，/usr，/var三个目录的标准，所以各个版本的Linux Distribution</p>
+<p>在一些小细节上有些差异，用户在使用前阅读说明文档即可。</p>
+<hr>
+<p>以上所介绍的即为FHS规定所制定的Linux系统目录配置标准,</p>
+<p>那么,有了这样一个目录,整个Linux中的文件系统是怎么样的呢?</p>
+<p><strong>目录树</strong></p>
+<p>目录树具有以下特性:</p>
+<ul>
+<li><p>目录树的起点是根目录(/,root)</p>
+</li>
+<li><p>没一个目录不只能使用本地的文件系统,还可以挂载网络上的主机</p>
+</li>
+<li><p>每一个文件在目录树在中的文件名(包括完整路径,4096个字符)<strong>是独一无二的!</strong></p>
+</li>
+</ul>
+<p>接下来,Linux文件系统的目录树结构如图:<br><img src="http://img.blog.csdn.net/20170610191204276?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>看了上图,就可以理解Linux中的文件系统了吧?</p>
+<p>接下来,我从Win与Linux的文件系统的差别来谈<strong>目录树结构</strong></p>
+<blockquote>
+<p>Win大家都使用过,磁盘有着明确的分区,分区有着明确的盘符,进入分区好的硬盘进行文件查找</p>
+</blockquote>
+<blockquote>
+<p> 十分方便,Win的文件系统更便于我们进行理解,</p>
+</blockquote>
+<blockquote>
+<p>硬盘 -&gt; 分区磁盘 -&gt; 文件数据</p>
+</blockquote>
+<blockquote>
+<p>但同时,Win这样处理不方便进行文件的管理,以后系统中的垃圾越来越多,杂乱</p>
+</blockquote>
+<p>相对的,再来看Linux文件系统的配置</p>
+<blockquote>
+<p>Linux中是,先存在一个<strong>虚拟文件系统</strong>,对没错,这个虚拟文件系统就是<strong>目录树</strong></p>
+</blockquote>
+<blockquote>
+<p>在Linux中进行文件查看是这样的</p>
+</blockquote>
+<blockquote>
+<p>虚拟文件系统 -&gt; 挂载硬盘 -&gt; 分区 -&gt;文件数据</p>
+</blockquote>
+<blockquote>
+<p>所有进行的操作都是基于虚拟的文件系统,</p>
+</blockquote>
+<p>看过上面的分析,你现在应该能理解目录树这个晦涩一点文件系统了吧!</p>
+<p>但是,问题又来了,<strong>目录树,硬盘哪个先,哪个后呢?</strong></p>
+<p>这个问题就像鸡,蛋到底先有哪个? !这如果继续分析下去,就……</p>
+<p>但是,Linux系统很巧妙地解决了这个问题,</p>
+<p><strong>就是,使用内存!,当你使用内存时,开机时,首先在内存中有这个虚拟的文件系统,之后的工作就好做了</strong></p>
+<p>现在,对于<strong>挂载</strong>,相信你也有更多的了解了吧,因为如果没有挂载,虚拟的文件系统是无法读出你的数据的! ! !</p>
+<hr>
+<p><strong>下面讨论一个问题,可以帮助你更透彻的了解Win与Linux系统文件系统区别</strong></p>
+<p>就是”FHS中明确建议,/目录尽可能的小,但是在目录树中,./是开始的目录,按理说,/不应该是最大的么”</p>
+<p>这个问题,可以这样理解</p>
+<blockquote>
+<p>之前提过,Linux系统使用虚拟的文件系统,就是说,无论怎样变,每个Linux系统都会</p>
+</blockquote>
+<blockquote>
+<p>有这样一个虚拟的文件系统,就像上面的图一样,而实际进行系统使用时,</p>
+</blockquote>
+<blockquote>
+<p>需要对,磁盘和目录进行匹配,挂钩,即<strong>挂载</strong>,</p>
+</blockquote>
+<blockquote>
+<p>FHS标准的意思是,对/根目录挂在载一个小的分区里面,尽可能小的容量</p>
+</blockquote>
+<blockquote>
+<p><strong>即可以这样理解,在Linux系统中,目录上有母子关系的东西,在实际硬盘上可能相差甚远</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>而这与Win下就是不同的,Win下,比如C:\Windows下存在system32文件夹</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>那么,Windows文件夹一定比System32所占内存大,即在Win中上下级目录</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>不仅仅只有目录层面上的包含,在物理内存方面也是包含的关系!</strong></p>
+</blockquote>
+<hr>
+<p>最后,在讲完了目录配置的内容后,你一定迫不及待的想试试了吧!</p>
+<p>让我来给你说说<strong>路径</strong>的内容</p>
+<p>路径分为<strong>绝对路径 ,相对路径</strong></p>
+<p>绝对路径:必须以/根目录开始,比如访问home中的test目录</p>
+<p>/home/Evilcrow/test</p>
+<p>相对路径:不以/根目录开始,而是相对于当前目录进行目录访问,比如进行test目录访问</p>
+<p>cd Evilcrow/test   (当前是在home目录下)</p>
+<p><strong>简单而言,开头不是/即为相对路径</strong></p>
+<p>绝对路径,不管你当前在哪一级目录下都可以进行访问</p>
+<p>另外,在每个目录下都存在:</p>
+<p><strong>. 表示当前目录</strong></p>
+<p><strong>.. 表示上一级目录</strong></p>
+<p>关于Linux系统下目录配置的内容至此结束,有不对的地方,请指正.</p>
+<p>PS:另外我有一个问题,</p>
+<p>在鸟哥的书中讲到/bin与/usr/bin中文件的区别,意即这是两个文件夹,</p>
+<p>但是我在ls -l根目录后,发现/bin为连接文件,即/bin与/usr/bin是为同一个目录<br><img src="http://img.blog.csdn.net/20170610191431853?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>这又怎么解释呢? ? ?</p>
+<p>June 10, 2017 7:04 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2017/09/22/Linux/第七篇 Linux的文件权限与目录配置(下)/" data-id="cji18m8w5000t31nry9ct6l8a" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADH0lEQVR42u3aS27jQAwFwNz/0p5tgIzt90gFiNqllRErUhe9IPj5+oqvx7fr9bc/7/z5+dmdz+7J33XxhY2NjX0T9uPl9ZqdB+LZPbOTPDtV8gRsbGzsU9mvj/U6SWyOkoSyfXsSYmxsbGzs5J5ZqZAHDhsbGxv7KlKSYPIn5IkTGxsbG3vWymn77W2bKS9s8vEDNjY29tnsvDz4+59/Zb6NjY2N/YfZj/K6ahMm/9+8dCkU2NjY2AexZ2VGWxK0zaZk6LsJKDY2Nvap7CRtXNVCaltCyTCjHjBjY2NjH8du/54fKx/oJsODBB+lN2xsbOwj2O0h9g2dGawthN6EABsbG/sg9ixpteDZYlAbplkyxsbGxr47Oy8kZt+2A9r9uCJaPMLGxsY+iN2OV9sHbUqazQJQvmCEjY2NfQa7feWmDXTVgHkmwsbGxj6bvR/x5qszbUprC6EigWFjY2PfnN2mkPZwm9C09xQ/ITY2NvYHsGeBmIVgM37IR8X/mYpgY2NjH8GeJaF2jWb27Wx9p/gWGxsb+zj27FhXLVy24LZA+mozJzY2NvZN2PtX7ltFSfe+XdYpxgPY2NjYN2e3aWx20NkSTx6CWZLDxsbGPomdDANmB0qes2oMBSPeYjyAjY2NfUN2WyqsMmSQ9tp3DRtk2NjY2AexZ2kgTy379Z3Xz/yVCQk2Njb2rdjtsk5eusyOdW258qZ/ho2NjX0E+9r2UJ5+2uAmQ4V69IuNjY19BDtnzMqDvBLa3Nm2qLCxsbFPYudjgPqhi6Wc32gwYWNjY38Ce9bQuazFMxpItGlseDhsbGzsW7HztZ5NGbMZDM8aW9FsBBsbG/vm7DZJtMPgPPnNfoY6KWJjY2MfwX6U174kyJtTSXBXgwFsbGzsI9irvHdRy2nGaBPtMPlhY2Nj34SdJK1Zsz5PZtcOdLGxsbE/k73HtCs+7eB5VlQ8VWBjY2NjX7SsM0t+yXPepEZsbGzsD2bPiopZwbMZ974JPTY2NvZx7ORA+5flDaPX/zsLBzY2Nvap7FVrZjHunbWK2gWg1eIONjY29l9n/wOE43LeBSwJGAAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/OS/">OS</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/Linux/第三篇  磁盘分区的问题/">第三篇 磁盘分区问题</a><a class="next" href="/2017/09/22/Linux/第一篇  计算机概论/">第一篇 计算机概论</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/Other/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/C/Expert_C_Programming/error_jmp/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/C/Expert_C_Programming/c_link/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/C/Expert_C_Programming/array_pointer/"><咸鱼书>_数组与指针</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/28/C/Expert_C_Programming/c_technology/"><咸鱼书>_一些常见的技巧</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/27/tools/size/">Binutils の size</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/C/Expert_C_Programming/c_statement/"><咸鱼书>_C声明问题</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/23/C/Expert_C_Programming/little_thing_of_C/"><咸鱼书>_C中的一些小细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/17/C/Expert_C_Programming/C_origin/"><咸鱼书>_C的本源</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
