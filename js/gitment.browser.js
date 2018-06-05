@@ -3359,8 +3359,10 @@ var Gitment = function () {
     this.defaultTheme = _default2.default;
     this.useTheme(_default2.default);
 
+    var str = window.location.pathname;
+    var _str = str.split("/");
     Object.assign(this, {
-      id: window.location.href,
+      id: _str[_str.length - 2],
       title: window.document.title,
       link: window.location.href,
       desc: '',
