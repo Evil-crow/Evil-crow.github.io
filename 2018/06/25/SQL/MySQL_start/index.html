@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>MySQL入门 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">MySQL入门</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">MySQL入门</h1><div class="post-meta">Jun 25, 2018<span> | </span><span class="category"><a href="/categories/Server/">Server</a><a href="/categories/Server/SQL/">SQL</a></span></div><div class="post-content"><h2 id="一-安装问题"><a href="#一-安装问题" class="headerlink" title="一,安装问题"></a>一,安装问题</h2><p>此处仅仅谈到Linux平台的安装方法,Win下可以通过现成安装包方式安装</p>
+<p>Mac没接触过,不了解.不过听说<code>brew</code>也挺好用?(反正我是<code>dnf</code>毒奶粉)</p>
+<p>下面的流程摘自MySQL官网,相当于间接翻译一下,(…), Fc的特化版本,其他发行版同理,有区别</p>
+<p>在官网中可以找到适合自己发行版的repo,按照说明选择的好,至于不对应版本,会有什么差错,我也不知道.</p>
+<p><a href="https://www.mysql.com/downloads/" target="_blank" rel="noopener">这是官网链接&gt;&gt;</a></p>
+<p>首先里面提供了三个版本</p>
+<p><code>MySQL Enterprise Edition</code><br><code>MySQL Cluster CGE</code><br><code>MySQL Community Edition</code></p>
+<p>如果你是个人用户,或者学习用,还是乖乖用社区版,完全足够了</p>
+<p><a href="https://dev.mysql.com/downloads/" target="_blank" rel="noopener">所以,这个才是真的链接&gt;&gt;</a></p>
+<p>左边侧栏,就可以选择合理的,安装方式,</p>
+<p>我们以MySQL Yum Repository安装为例来说明:</p>
+<h3 id="1-找到适合自己的repo"><a href="#1-找到适合自己的repo" class="headerlink" title="1. 找到适合自己的repo"></a>1. 找到适合自己的repo</h3><p>在下面的选择中进行repo下载:</p>
+<p>然后使用<code>sudo rpm -Uvh your-system-version.rpm</code></p>
+<p>(隔壁的dpkg同理,packman惹不起)</p>
+<h3 id="2-选择版本系列"><a href="#2-选择版本系列" class="headerlink" title="2. 选择版本系列"></a>2. 选择版本系列</h3><p>习惯使用repo的人会知道,同一个repo也会有不同的版本, 而MySQL经常比较的就是5.x和现在的8.x了</p>
+<p><em>6.x是留给告诉迭代的版本的, 也就是现在5.x的后继,7.x是留给集群版本的,提前插眼</em></p>
+<p><em>所以现在最新的就是8.x了,不用疑惑的</em></p>
+<p><code>shell&gt; yum repolist all | grep mysql</code> 查看现在支持的版本</p>
+<p><code>shell&gt; sudo dnf config-manager --disable mysql80-community</code><br><code>shell&gt; sudo dnf config-manager --enable mysql57-community</code></p>
+<p>进行指定版本的限制</p>
+<p><code>shell&gt; yum repolist all | grep mysql</code> 重新查看,即可,要使用5.7还是8.0随意</p>
+<h3 id="3-进行repo缓存"><a href="#3-进行repo缓存" class="headerlink" title="3. 进行repo缓存"></a>3. 进行repo缓存</h3><p><code>shell&gt; sudo dnf makecache</code></p>
+<h3 id="4-安装mysql"><a href="#4-安装mysql" class="headerlink" title="4. 安装mysql"></a>4. 安装mysql</h3><p><code>shell&gt; sudo yum install mysql-community-server</code></p>
+<p>会自动处理依赖的</p>
+<h3 id="5-启动服务"><a href="#5-启动服务" class="headerlink" title="5. 启动服务"></a>5. 启动服务</h3><p><code>shell&gt; sudo systemctl start mysqld</code> 启动服务</p>
+<p><code>shell&gt; sudo systemctl status mysqld</code> 查看服务状态</p>
+<h3 id="6-进行密码的设定"><a href="#6-进行密码的设定" class="headerlink" title="6. 进行密码的设定"></a>6. 进行密码的设定</h3><p>MySQL Server Initialization (as of MySQL 5.7): At the initial start up of the server, the following happens, given that the data directory of the server is empty:</p>
+<p>The server is initialized.</p>
+<p>An SSL certificate and key files are generated in the data directory.</p>
+<p>The validate_password plugin is installed and enabled.</p>
+<p>A superuser account ‘root‘@’localhost’ is created. A password for the superuser is set and stored in the error log file. To reveal it, use the following command:</p>
+<p><code>shell&gt; sudo grep &#39;temporary password&#39; /var/log/mysqld.log</code></p>
+<p>Change the root password as soon as possible by logging in with the generated, temporary password and set a custom password for the superuser account:</p>
+<p><code>shell&gt; mysql -uroot -p</code></p>
+<p><code>mysql&gt; ALTER USER &#39;root&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;MyNewPass4!&#39;;</code></p>
+<p>上面这段话的意思时: 启动服务,mysql已经默认创建了root@localhost用户</p>
+<p>同时给你吧密码安排到日志文件里面了,你运行第一条命令找出密码,然后进去改密码</p>
+<p>就这样就好了</p>
+<p>但是,<strong>我TM日志是空的…</strong></p>
+<p>所以还有下面的邪道方法:</p>
+<p>进入<code>/etc/my.cnf</code> 进行登录不需要密码的状态,具体是添加</p>
+<p><code>skip-grant-tables</code>,实现免密码登录</p>
+<p><code>mysql -uroot</code>  登入数据库</p>
+<p><code>update user set password=password(&#39;123456&#39;) where user=&#39;root&#39; and host=&#39;localhost&#39;;</code></p>
+<p>修改用户名密码</p>
+<p>记得完了修改文件,取消免密码登录,然后<strong>重启服务</strong>,就可以正常使用了</p>
+<h2 id="二-初始MySQL"><a href="#二-初始MySQL" class="headerlink" title="二,初始MySQL"></a>二,初始MySQL</h2><p>作为一个经典的SQL,这么多年来经久不衰还是由他的理由的</p>
+<p>有下面几个了解一下的:</p>
+<ol>
+<li><p>默认port –3306</p>
+</li>
+<li><p>有社区版和专业版</p>
+</li>
+<li><p>现属于Oracle公司</p>
+</li>
+</ol>
+<p>了解足够了</p>
+<h2 id="三-常用的最基础操作"><a href="#三-常用的最基础操作" class="headerlink" title="三,常用的最基础操作"></a>三,常用的最基础操作</h2><h3 id="1-启动和停止服务"><a href="#1-启动和停止服务" class="headerlink" title="1. 启动和停止服务"></a>1. 启动和停止服务</h3><p>这个就够了,有使用Linux经验的,谁还是不会撞墙去吧…</p>
+<h3 id="2-登录与退出"><a href="#2-登录与退出" class="headerlink" title="2. 登录与退出"></a>2. 登录与退出</h3><p>登录是这样的形式:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql [-option] [-arguments]</span><br></pre></td></tr></table></figure>
+<p>常用option:</p>
+<ol>
+<li><p>-p –passwd[] 指定密码</p>
+</li>
+<li><p>-P 指定端口</p>
+</li>
+<li><p>-u 指定用户</p>
+</li>
+<li><p>-H 指定主机</p>
+</li>
+<li><p>–prompt 设定提示符</p>
+</li>
+<li><p>-D 指定数据库</p>
+</li>
+</ol>
+<p>退出就比较简单了:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell&gt; quit;</span><br><span class="line">shell&gt; <span class="built_in">exit</span>;</span><br><span class="line">shell&gt; \q;</span><br></pre></td></tr></table></figure>
+<p>三种形式都可以</p>
+<h3 id="3-SQL命名规范"><a href="#3-SQL命名规范" class="headerlink" title="3. SQL命名规范"></a>3. SQL命名规范</h3><p>虽然网上说随个人习惯,不敏感大小写,但是还是遵循一下规范的好:</p>
+<p><strong>命令, 函数, 保留字一律使用大写</strong></p>
+<p><strong>数据库名, 表名, 索引名等一律使用小写</strong></p>
+<p><strong>SQL语句一律都是 ; 结尾</strong></p>
+<p>也就是说,出来是这种画风</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">DATABASES</span>;</span><br><span class="line"><span class="keyword">USE</span> mysql;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> k1;</span><br></pre></td></tr></table></figure>
+<h3 id="4-常用操作"><a href="#4-常用操作" class="headerlink" title="4. 常用操作"></a>4. 常用操作</h3><h4 id="1-gt-显式-切换-创建数据库"><a href="#1-gt-显式-切换-创建数据库" class="headerlink" title="1&gt; 显式,切换,创建数据库"></a>1&gt; 显式,切换,创建数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] K2 [<span class="keyword">DEFAULT</span>] <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> [=] charset_name;</span><br></pre></td></tr></table></figure>
+<p>花括号为必选项, 方括号为可选项. 后面是设置编码, [IF NOT EXISTS], 可以免除一个WARNING</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">DATABASES</span>;    // 显示数据库</span><br><span class="line"><span class="keyword">USE</span> <span class="keyword">database</span>;      // 切换数据库</span><br></pre></td></tr></table></figure>
+<h4 id="2-gt-修改数据库属性"><a href="#2-gt-修改数据库属性" class="headerlink" title="2&gt; 修改数据库属性"></a>2&gt; 修改数据库属性</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [db_name] [<span class="keyword">DEFAULT</span>] <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> [=] charset_name</span><br></pre></td></tr></table></figure>
+<p>比如:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">DATABASE</span> K2 <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> utf8;   //修改K2数据库编码为utf-8</span><br></pre></td></tr></table></figure>
+<h4 id="3-gt-删除数据库"><a href="#3-gt-删除数据库" class="headerlink" title="3&gt; 删除数据库"></a>3&gt; 删除数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [<span class="keyword">IF</span> <span class="keyword">EXISTS</span>] db_name</span><br></pre></td></tr></table></figure>
+<p>IF EXISTS 的用法同上</p>
+<h4 id="4-gt-闲杂命令"><a href="#4-gt-闲杂命令" class="headerlink" title="4&gt; 闲杂命令"></a>4&gt; 闲杂命令</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">VERSION</span>();    // 显示版本</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">DATE</span>();       // 显示日期;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">USER</span>();       // 显示用户;</span><br></pre></td></tr></table></figure>
+<p>(PS: 数据库操作还是挺好玩的,我都是跑路了,当个数据库管理员也不错,开玩笑的,还是写C/C++舒服)</p>
+<hr>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2018/06/25/SQL/MySQL_start/" data-id="cjit6dd3o002gmenrrtoen1r7" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACM0lEQVR42u3awU4DMQxFUf7/pweJbWm4z54B4tysKlolPiwsx87HB17X13r9TH75ut7t8/qbm5cMGTK2ZVzLtT7g3ZHv9uGn89hkyJBxDqOfOmtJeZ1wSWwyZMiQwcNap9cLLH6uDBkyZKy34+Hyv/xBwpUhQ8aGjLQ1tm6ZkbDWpeeDd3EZMmRsyOgMBp7+/EvzDRkyZPxjxhWuNLGmwV2lJUOGjNkMUpalAwMeKLlI8x1kyJAxldFp6KfBpW24IFnLkCHjGEaaQGu/Iak2HnDKkCHjAMYTjba0lV8bCciQIeMERjqMTEeYPIHypIzKRBkyZAxipM13nvjS63GrwSdDhozRjH5DrVYy3jUKlSFDxjmMWjLl/4J+kg1SuQwZMsYxasPIWqJMn4LxU2TIkDGb0Q+Rp1deGpJTiiMBGTJkbMhIC7U0FD6kJG27+M2IDBkyRjBIEGnCTfP9VVrBqxAZMmSMYNQePZAmHb+U9hO6DBkyZjPShhdP08+NOeNJrAwZMrZlxE8ZSlfNtJWWlq0yZMg4h0HKu9pgklSm653jdyIyZMgYxCChpM39dE90w8ZFpAwZMuYx+u148m2tiIyHlzJkyBjKeKK+4hfRWrgtjAwZMrZlkCR774OwGq84wpQhQ8YgRtqUT0Pkg1LeyPsm4cqQIeN4Bn8kwceTaRL/oTSUIUOGDNyA4/ga+4aEK0OGjA0ZtYcXncKuD5AhQ8Y5jM5goPWaI72m9veXIUPGfoxP5kX1G2pQfuEAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/MySQL/">MySQL</a></div><div class="post-nav"><a class="next" href="/2018/06/20/C++/C_C++_expr/">C/C++坑点总结</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/">Binutils</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Binutils/man/">man</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/编程语言/">编程语言</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/CSAPP/">CSAPP</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Linux/">Linux</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Server/">Server</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Server/SQL/">SQL</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Shellscript/">Shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/System-Programming/">System Programming</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/VimScript/">VimScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/git/">git</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/shellscript/">shellscript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/一些经验/">一些经验</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/文档/">文档</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Coding/" style="font-size: 15px;">Coding</a> <a href="/tags/编程语言/" style="font-size: 15px;">编程语言</a> <a href="/tags/C/" style="font-size: 15px;">C++</a> <a href="/tags/力量的源泉/" style="font-size: 15px;">力量的源泉</a> <a href="/tags/Computer/" style="font-size: 15px;">Computer</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/OS/" style="font-size: 15px;">OS</a> <a href="/tags/File-system/" style="font-size: 15px;">File system</a> <a href="/tags/装机/" style="font-size: 15px;">装机</a> <a href="/tags/Linux-C/" style="font-size: 15px;">Linux_C</a> <a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/tools/" style="font-size: 15px;">tools</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/TLPI/" style="font-size: 15px;">TLPI</a> <a href="/tags/项目文档/" style="font-size: 15px;">项目文档</a> <a href="/tags/English/" style="font-size: 15px;">English</a> <a href="/tags/总结/" style="font-size: 15px;">总结</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/计算机系统/" style="font-size: 15px;">计算机系统</a> <a href="/tags/Exprt-C-Programming/" style="font-size: 15px;">Exprt_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/06/25/SQL/MySQL_start/">MySQL入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/20/C++/C_C++_expr/">C/C++坑点总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/12/Linux/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/10/C++/pointer_and_reference/">指针与引用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/TLPI/syscall/">Linux x86_64系统调用的实现过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/Other/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/05/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/C/Expert_C_Programming/error_jmp/">聊一聊C中的异常处理</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/30/C/Expert_C_Programming/c_link/"><咸鱼书>_链接那点事</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/05/29/C/Expert_C_Programming/array_pointer/"><咸鱼书>_数组与指针</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
