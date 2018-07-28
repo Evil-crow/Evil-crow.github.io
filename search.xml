@@ -3,33 +3,35 @@
   
     
     <entry>
-      <title>一个C语言指针的问题让我翻车</title>
-      <link href="/2018/07/28/C/two_level_array/"/>
-      <url>/2018/07/28/C/two_level_array/</url>
-      <content type="html"><![CDATA[<p><em>现在真的是水的不行.一天天的,混不下去了,以后还是转业算了,当个肥宅最TM开心了</em></p><p>起因是小伙伴问了我一个需求实现: 函数中分配二维数组,返回值又已经被使用.</p><p>那么,<strong>自然而然就是指针的指针了,传参数三维指针(不然改个锤子)</strong></p><p>以往的代码实现:</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">char</span> **<span class="title">foo</span><span class="params">(<span class="keyword">char</span> **p, <span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    foo = (<span class="keyword">char</span> **)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span> *) * <span class="keyword">sizeof</span>(m));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">        p[i] = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * n);</span><br><span class="line"><span class="comment">// *(p + i) = (char *)malloc(sizeof(char) * n);</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>上面是一般的二维数组的分配实现.</p><p>改用指针的指针传递,实际上至需要修改其中几个小地方就好了</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">char</span> ***p, <span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    (*p) = (<span class="keyword">char</span> **)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span> *) * <span class="keyword">sizeof</span>(m));</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</span><br><span class="line">        (*p)[i] = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * n);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>那么问题来了,不使用数组下标语法糖的形式,使用原生指针怎么写?</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*(*p + i) = (<span class="keyword">char</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">char</span>) * n);</span><br></pre></td></tr></table></figure><p>而之前的错误形式是这样的:</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(**p + i) = ....       <span class="comment">// x</span></span><br></pre></td></tr></table></figure><p>究其本质,还是自大,不扎实.</p><p>不过想了一下,主要是这些没考虑到:</p><ul><li><p>简便写法 <code>(*p)[i]</code>, 没错,这样解引用就和原来一样了</p></li><li><p>为什么可以写成<code>*(*p + i)</code>？</p><p>同理，想想之前的下标语法糖，　这里只不过解引用了一下，还原为二维指针，然后进行移动</p><p>到了其他的位置，　当然是一个维度中，也就是<code>int a[m][n]</code>,m层次上的移动.从(*p)[0][n]到</p><p>(*p)[1][n], 之后解引用不就是对应一维指针,(指向字符串的),然后该咋来咋来,该咋用咋用.</p><p><strong>这其中有一个很重要的点: 数组名就是数组首元素地址,进行与整型的计算时,就是数组元素移动</strong></p><p><strong>我特么把</strong><code>*(*p + i)</code>和<code>*(&amp;(*p) + i)</code><strong>混淆了,后面的才是下一个指向二维数组的指针</strong></p><p><code>arr[index] = *(arr + index)</code><strong>这么简单的问题都凉了,GG算了</strong></p></li><li><p>为什么不能写<code>(**p + i)</code></p><p>为什么,这到是个锤子! <code>(char **)p =&gt; (char) **p</code>,此时加上整型的计算结果,是整型.</p><p>我们要获取可使用的指针,或去糖之后,都是有解引用的,这个简直不能看.而且此时<code>(**p) =&gt; char *</code></p><p>内存并没有分配,是未定义的值,求得的结果是nil +　index的值.. </p></li><li><p>另外再扯一点</p><p>事实上, 分清数组和指针,多看两眼</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *str = <span class="string">"hello world"</span>;        <span class="comment">// str中保存了字符串字面量的地址</span></span><br><span class="line"><span class="keyword">char</span> sstr[<span class="number">100</span>] = <span class="string">"..."</span>;           <span class="comment">// sstr中存的就是值,sstr地址值与sstr[0]一致</span></span><br></pre></td></tr></table></figure></li></ul><p>好了,就说这么多吧.后面的自己在想想就好了.</p><p>有兴趣了,看看这几个就可以了:</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a[<span class="number">12</span>];</span><br><span class="line">a[<span class="number">1</span>];        <span class="comment">// *(a + 1)</span></span><br><span class="line">&amp;a;          <span class="comment">// value: &amp;a == &amp;a[0]; &amp;a + 1 == &amp;a[0] + sizeof(int) * array_length;</span></span><br><span class="line">&amp;a+<span class="number">1</span>;        <span class="comment">// &amp;a[0] + sizeof(int) * array_length</span></span><br><span class="line">*(a+<span class="number">1</span>);      <span class="comment">// a[1], a=&gt; &amp;a[0], *(&amp;a[0] + 1) = a[1]</span></span><br><span class="line">(<span class="keyword">int</span> *)(&amp;a + <span class="number">1</span>)[<span class="number">-1</span>];  <span class="comment">//a[12];</span></span><br></pre></td></tr></table></figure><p><em>PS: 今天看到了很多牛皮的博客,牛皮的人怎么这么多,我有想了想我,唉,垃圾一个,脑子疼</em></p><p><em>我觉得,以后不能再把心情这种写在技术总结里面了,太消极,别人看见也不好</em></p><p><em>而且,我文笔并不好啊,就是个看漫画,打游戏的死肥宅.</em></p><p><strong>如果有机会了,准备写写漫画或者游戏的简评,</strong></p><p><em>再说吧,太远了,还是先弄好C++了.(逃</em></p><p>July 28, 2018 11:41 AM</p>]]></content>
+      <title>关于github绿点的常见问题--邮箱</title>
+      <link href="/2018/07/28/Other/git_tool/"/>
+      <url>/2018/07/28/Other/git_tool/</url>
+      <content type="html"><![CDATA[<p><em>正如前面所说,今天遇到的问题就是github的绿点提交有问题,提交后并没有找到记录,很苦恼(不好装逼)</em></p><p><strong>首先,声明本文只是解决常见的问题,便是邮箱绑定不符的问题</strong></p><p>若是其他的问题, 请参考: <a href="https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/" target="_blank" rel="noopener">传送门</a></p><p>解决方法有以下两种:</p><ol><li><p>进行新的邮箱绑定 如下图:</p><p> <img src="http://p8pmsq2a4.bkt.clouddn.com/git_name_email.png" alt=""></p><p> 先查看本地上进行git-push时的用户名和邮箱</p><p> <img src="http://p8pmsq2a4.bkt.clouddn.com/git_email_addition.png" alt=""></p><p> 可以通过添加多个邮箱的方式来追回记录</p></li><li><p>通过修改提交repo的方式来进行修改</p><p> 参考资料: <a href="https://help.github.com/articles/changing-author-info/" target="_blank" rel="noopener">git_help</a></p><p> 我们可以按照下面几步来进行操作</p><p> 一, 得到需要修改的commit的repo</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --bare https://github.com/user/repo.git</span><br><span class="line"></span><br><span class="line"><span class="comment"># user 为用户名</span></span><br><span class="line"><span class="comment"># repo为commit的仓库名</span></span><br></pre></td></tr></table></figure><p> 二, 使用script文件来进行repo的修改</p><p> sh文件内容如下:</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">git filter-branch --env-filter <span class="string">'</span></span><br><span class="line"><span class="string">OLD_EMAIL="旧的Email地址"</span></span><br><span class="line"><span class="string">CORRECT_NAME="正确的用户名"</span></span><br><span class="line"><span class="string">CORRECT_EMAIL="正确的邮件地址"</span></span><br><span class="line"><span class="string">if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]</span></span><br><span class="line"><span class="string">then</span></span><br><span class="line"><span class="string">export GIT_COMMITTER_NAME="$CORRECT_NAME"</span></span><br><span class="line"><span class="string">export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]</span></span><br><span class="line"><span class="string">then</span></span><br><span class="line"><span class="string">export GIT_AUTHOR_NAME="$CORRECT_NAME"</span></span><br><span class="line"><span class="string">export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">'</span> --tag-name-filter cat -- --branches --tags</span><br></pre></td></tr></table></figure><p> 三, 使用脚本文件修改repo,重新提交</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> repo.git</span><br><span class="line">bash script.sh</span><br><span class="line"></span><br><span class="line">git push --force --tags origin <span class="string">'refs/heads/*'</span>   <span class="comment"># 提交新修改的repo</span></span><br></pre></td></tr></table></figure><p> 四, 删除旧repo</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -rf repo.git</span><br></pre></td></tr></table></figure><p> 至此,便完成了追回提交记录的工作了.</p><p> 我们不得不感叹git作为一个版本控制工具的强大. git需要学习的东西还有很多.</p><p> 好(努)好(力)学(装)习(逼)</p><p> May 14, 2018 4:42 PM</p></li></ol>]]></content>
       
       <categories>
           
-          <category> C </category>
+          <category> Tool </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> hole </tag>
+            <tag> git </tag>
             
         </tags>
       
     </entry>
     
     <entry>
-      <title>VI Function</title>
-      <link href="/2018/07/14/C++/C3P_VI/"/>
-      <url>/2018/07/14/C++/C3P_VI/</url>
-      <content type="html"><![CDATA[<h2 id="一-返回数组的指针-引用"><a href="#一-返回数组的指针-引用" class="headerlink" title="一.返回数组的指针/引用"></a>一.返回数组的指针/引用</h2><p>有以下四种形式的操作:</p><h3 id="1-直接撸"><a href="#1-直接撸" class="headerlink" title="1.直接撸"></a>1.直接撸</h3><p>这个就需要扎实一点的C声明基础了,(PS: 不清楚的可以翻我之前写过的东西)</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Type (*/&amp; function(arguments))[<span class="built_in">array</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> (*func())[<span class="number">10</span>];</span><br></pre></td></tr></table></figure><h3 id="2-使用类型别名"><a href="#2-使用类型别名" class="headerlink" title="2.使用类型别名"></a>2.使用类型别名</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> arr[<span class="number">10</span>];</span><br><span class="line"><span class="keyword">using</span> arr = <span class="keyword">int</span>[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="function">arr *<span class="title">func</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure><h3 id="3-使用后置类型-C-11新特性"><a href="#3-使用后置类型-C-11新特性" class="headerlink" title="3.使用后置类型 (C++11新特性)"></a>3.使用后置类型 (C++11新特性)</h3><p>这个特性十分好用, 前面使用auto做返回类型占位符, 后面使用’-&gt;’进行标识</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto func() -&gt; Type;</span><br><span class="line"></span><br><span class="line">auto func() -&gt; int(*)[10];</span><br></pre></td></tr></table></figure><p>不过要注意的是: 后面的Type,一定是类型,也就是说,没有变量名,复杂类型时好用,简单类型没必要</p><h3 id="4-使用decltype-类型说明符"><a href="#4-使用decltype-类型说明符" class="headerlink" title="4.使用decltype()类型说明符"></a>4.使用decltype()类型说明符</h3><p>既然上面用了auto, decltype肯定也是可以用的</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">decltype</span>(variable) */&amp; func();</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> a[<span class="number">10</span>];</span><br><span class="line">descltype(a) *func();</span><br></pre></td></tr></table></figure><p><strong>不过,其中要注意的是,decltype(), 仅仅能获取类型,并不能转换为指针/引用,所以*/&amp;还是必不可少的</strong></p><p>下面通过一个例子来进行展示用法:</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 声明一个函数原型,返回数组的引用,且数组中包含10个string对象</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#incldue <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> (&amp;func())[<span class="number">10</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2</span></span><br><span class="line"><span class="keyword">using</span> str_arr = <span class="built_in">std</span>::<span class="built_in">string</span>[<span class="number">10</span>];</span><br><span class="line"><span class="function">str_arr &amp;<span class="title">func_</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3</span></span><br><span class="line">auto func__() -&gt; std::string (&amp;)[10];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> a[<span class="number">10</span>];</span><br><span class="line"><span class="keyword">decltype</span>(a) &amp;func___();</span><br></pre></td></tr></table></figure><p><strong>返回数组这样写,所以,返回函数指针大家也懂了吧,也就是 [ ] 与 ( ) 的区别</strong></p><p><em>当然, C/C++禁止返回函数类型(C++11目前不清楚),只能返回函数指针</em></p><h2 id="二-函数原型-签名-声明"><a href="#二-函数原型-签名-声明" class="headerlink" title="二,函数原型,签名,声明"></a>二,函数原型,签名,声明</h2><p>这其实是几个混淆的概念,不过也差不多,不同的叫法罢了</p><p>以后,规定代码习惯</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func1</span><span class="params">(<span class="keyword">void</span>)</span></span>;       <span class="comment">// 显式说明无参</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func2</span><span class="params">()</span></span>;<span class="comment">// 隐式说明无参</span></span><br></pre></td></tr></table></figure><p>以后约定, <strong>除了函数定义,以外其他部分使用隐式无参说明</strong></p><p><em>不然太难看了</em></p><p>也就是下面这种结果:</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Temp</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">Temp();</span><br><span class="line">~Temp();</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line"><span class="keyword">int</span> data;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">Temp::Temp(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="三-关于传参"><a href="#三-关于传参" class="headerlink" title="三, 关于传参"></a>三, 关于传参</h2><p><em>既然,我们写了C++, 就要写C++风格的C++, 毕竟不是竞赛选手, C风格的C++还是算了吧</em></p><p>有以下两个要求:</p><h3 id="1-尽量使用引用"><a href="#1-尽量使用引用" class="headerlink" title="1. 尽量使用引用"></a>1. 尽量使用引用</h3><p><em>区别于C中大量使用指针,C++建议摒弃指针,在尽可能的情况下,多用引用</em></p><ul><li><p>指针不安全,引用一定是经过初始化的</p></li><li><p>指针会引起大程度的拷贝,引用可以避免类类型,大数组的拷贝开销</p></li></ul><h3 id="2-尽量使用常量引用"><a href="#2-尽量使用常量引用" class="headerlink" title="2. 尽量使用常量引用"></a>2. 尽量使用常量引用</h3><p><em>将对常量的引用变量定义为普通引用是常见的错误,对没错, 是错误.</em></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">is_string</span><span class="params">(<span class="keyword">const</span> <span class="built_in">string</span>&amp;str)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// flag = is_string("Hello, world");</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 若为普通引用,则不能这样调用</span></span><br></pre></td></tr></table></figure><p><strong>其中,关键的就是,const在不同程度上赋值时的相容性,顶层无意义, 底层需注意</strong></p><p>上面只是其中一个问题, 另一方面,更重要的是:</p><p><strong>大型程序开发时, 多层函数嵌套,可能就传递了一个参数</strong></p><p>但是,上层是const string&amp;, 内层是普通引用,那就不能直接使用</p><p>有以下,三个办法:</p><ul><li><p>实现一个新的版本,overloaded, 去你妈的, 累死了</p></li><li><p>在其中,做一个副本拷贝, string str为s 的副本</p></li><li><p>根本上解决,修改普通引用为常量引用, 对的没错,是这样.</p></li></ul><p>总结:</p><p><strong>1. 尽量用引用,避免使用指针</strong></p><p><strong>2. 在确定不会发生修改变量的时候, 一定传递参数为对常量的引用, 即 const引用</strong></p><p>update: July 13, 2018 11:57 PM</p><h2 id="四-可变参数"><a href="#四-可变参数" class="headerlink" title="四, 可变参数"></a>四, 可变参数</h2><p>这个东西,大家平时摸得最多的函数,—启蒙函数 printf(“%s”,…);</p><p>C++中三种实现可变参数的方法:</p><h3 id="1-initializer-list"><a href="#1-initializer-list" class="headerlink" title="1. initializer_list"></a>1. initializer_list</h3><p>对于相同类型可变参,使用initializer_list类模板</p><p>其基本操作如下:</p><table><thead><tr><th>操作</th><th>含义</th></tr></thead><tbody><tr><td>initializer_list&lt; T &gt; lt</td><td>初始化</td></tr><tr><td>initializer_list&lt; string &gt; lt = {a, b, c…}</td><td>初始化</td></tr><tr><td>lt2(lt)</td><td>复制初始化(构造函数重载),两个initializer_list, 共享同一组元素</td></tr><tr><td>lt2 = lt</td><td>同上,(C++对C复制的兼容)</td></tr><tr><td>lt.size()</td><td>lt的元素个数</td></tr><tr><td>lt.begin()</td><td>容器通用操作, 头迭代器</td></tr><tr><td>lt.end()</td><td>容器通用操作, 尾迭代器</td></tr></tbody></table><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 示例</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;initializer_list&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="built_in">initializer_list</span>&lt;<span class="built_in">string</span>&gt; init)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i : init)</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> *argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">initializer_list</span>&lt;<span class="built_in">string</span>&gt; lt = &#123;<span class="string">"1"</span>, <span class="string">"2"</span>, <span class="string">"3"</span>&#125;;</span><br><span class="line">    func(lt);</span><br><span class="line">    func(&#123;<span class="string">"haha"</span>, <span class="string">"Bloodbore"</span>, <span class="string">"The last of US"</span>&#125;);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>注意: initializer_list中的元素,是const只读的, 所以说,不能用头尾指针迭代,懂我意思吧</strong></p><h3 id="2-使用可变参模板"><a href="#2-使用可变参模板" class="headerlink" title="2. 使用可变参模板"></a>2. 使用可变参模板</h3><p>后面在&lt; 模板 &gt; 模块会详细分析的</p><h3 id="3-省略形参符"><a href="#3-省略形参符" class="headerlink" title="3. 省略形参符"></a>3. 省略形参符</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(parm_list, ...)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(...)</span></span>;</span><br></pre></td></tr></table></figure><p>还是那句话,写C++风格的C++, 这个做法,是留给与C接口的C++函数的</p><p>就像<code>extern &quot;C&quot;</code>一样</p><h2 id="五-返回的二三事"><a href="#五-返回的二三事" class="headerlink" title="五, 返回的二三事"></a>五, 返回的二三事</h2><h3 id="1-引用返回是左值"><a href="#1-引用返回是左值" class="headerlink" title="1. 引用返回是左值"></a>1. 引用返回是左值</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// global array</span></span><br><span class="line"><span class="keyword">int</span> a[] = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// not-reference return value</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">func1</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a[<span class="number">3</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// return value: reference</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> &amp;<span class="title">func2</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a[<span class="number">3</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> temp = func1();</span><br><span class="line">    func2() = <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i : a)</span><br><span class="line">        <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">" "</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><strong>是的,一般函数返回值都是用来接收, 但是引用返回就是左值</strong></p><p><strong>不过,符合左值,那就给他放左边呗, 很正常的, 当然得是非常量引用,即非const引用</strong></p><h3 id="2-使用列表初始化返回值"><a href="#2-使用列表初始化返回值" class="headerlink" title="2. 使用列表初始化返回值"></a>2. 使用列表初始化返回值</h3><p><strong>注意, 使用列表初始化时, 内置类型只能包含一个值,(这不废话么)</strong></p><p><strong>其他类型,由其构造函数决定放回的列表如何用来初始化返回类型</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; func()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">"Bloodbore"</span>, <span class="string">"The Last Of US"</span>, <span class="string">"Final Fansty X/X-2"</span>&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; vec = func();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i = vec.begin(); i != vec.end(); ++i)</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *i &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="六-函数重载-Overloaded"><a href="#六-函数重载-Overloaded" class="headerlink" title="六, 函数重载(Overloaded)"></a>六, 函数重载(Overloaded)</h2><p><em>不由得,想起了,某老师的, 函数重(zhong)载, 大家懂得都懂, 还有下学期的爪哇也是他 \摊手</em></p><h3 id="1-为什么要有函数重载"><a href="#1-为什么要有函数重载" class="headerlink" title="1. 为什么要有函数重载"></a>1. 为什么要有函数重载</h3><p><em>肯定是有硬性需求呗,</em></p><p>工程量越来越大,起名字越来越难. 另一方面,就是有些功能类似,只是参数/返回类型略有区别的函数</p><p><del>另外起名字占位,岂不是很丑陋 ?</del></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// C style</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">abs_int</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">abs_double</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// C++ style</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">abs</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">double</span> <span class="title">abs</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br></pre></td></tr></table></figure><p>那么,函数重载根据什么来区分?</p><p><strong>函数传入参数的类型或者个数, 其中必须要有差异, 编译器才能进行正确的重载选择</strong></p><p><strong>切记: 返回类型是不能进行区分的, 因为函数执行后,才能获取到返回类型</strong></p><h3 id="2-函数重载的坑"><a href="#2-函数重载的坑" class="headerlink" title="2. 函数重载的坑"></a>2. 函数重载的坑</h3><p>主要有三个方面会出现函数重载失败的情况: (当然重载失败有语法上的,也有运行时的,这里指语法上的)</p><ul><li>省略形参名</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> &amp;num)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> &amp;)</span></span>;       <span class="comment">// 语法上,重载失败, 同一函数</span></span><br></pre></td></tr></table></figure><ul><li>类型别名</li></ul><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> funck = <span class="keyword">int</span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(fuck)</span></span>;</span><br></pre></td></tr></table></figure><ul><li>const的情况</li></ul><p>这里<code>const</code>怎么会插上一脚呢?, 因为进行赋值时, const的特点: <strong>顶层无意义(可忽略), 底层需注意</strong></p><p>赋值时, 顶层const属性丢失,所以是一样的,底层对常量的指针和引用,都是不一样的,可进行函数重载</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> *)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span> *)</span></span>;          <span class="comment">// 重载失败, 顶层const属性丢失</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> <span class="keyword">int</span> &amp;)</span></span>;</span><br><span class="line"><span class="function">viud <span class="title">foo</span><span class="params">(<span class="keyword">int</span> &amp;)</span></span>;           <span class="comment">// success, 对常量的引用和常量引用的确是不同的</span></span><br></pre></td></tr></table></figure><h3 id="3-const-cast到底怎么玩"><a href="#3-const-cast到底怎么玩" class="headerlink" title="3. const_cast到底怎么玩?"></a>3. const_cast到底怎么玩?</h3><p>之前说过,基本上是在overloaded中使用这个显式的转换</p><p><strong>const_cast&lt;&gt;, 基本上用于进行const形参接收普通形参是的情况</strong></p><p><strong>简单地说,我们使用const形参,他可以相容普通形参,的那是我们要让其优先选择非常量形参</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> <span class="built_in">string</span>&amp; <span class="title">is_string</span><span class="params">(cosnt <span class="built_in">string</span> &amp;s1, <span class="keyword">const</span> stirng &amp;s2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="built_in">string</span> &amp;<span class="title">is_stirng</span><span class="params">(<span class="built_in">string</span> &amp;s1, <span class="built_in">string</span> &amp;s2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"><span class="keyword">auto</span> i = is_string(cosnt_cast&lt;<span class="keyword">const</span> <span class="built_in">string</span>&amp;&gt;(s1),</span><br><span class="line"><span class="keyword">const_cast</span>&lt;<span class="keyword">const</span> <span class="built_in">string</span>&amp;&gt;(s2));</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> <span class="keyword">const_cast</span>&lt;<span class="built_in">string</span> &amp;&gt;(i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>如上面的实现一般, (C++在之后面向对象的时候,我们更倾向于用已经实现的函数去实现新的功能)</p><p><code>const&lt;Type&gt;(var)</code> 实现从<code>const &lt;=&gt; non-const</code>的转换</p><p>根据我们的需要进行转换, 同时,这个转换只是进行<code>const</code>属性的改变</p><p>若用其实现<code>static_cast</code>的功能,肯定就错了.</p><p><strong>注意: <code>const &lt;=&gt; non-const</code>之间进行转换的时候,我们要自己保证转换的可行性,别乱j8给人修改</strong></p><h2 id="来深层次的分析Overloaded"><a href="#来深层次的分析Overloaded" class="headerlink" title="来深层次的分析Overloaded"></a>来深层次的分析Overloaded</h2><h3 id="1-编译器实现"><a href="#1-编译器实现" class="headerlink" title="1. 编译器实现"></a>1. 编译器实现</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 据说, 经过编译后,是这个名字</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> _func_int(<span class="keyword">int</span>);</span><br><span class="line"><span class="keyword">void</span> _func_double(<span class="keyword">double</span>);</span><br></pre></td></tr></table></figure><p>这样,直接检索名字不就行了.</p><h3 id="2-Overloaded的过程"><a href="#2-Overloaded的过程" class="headerlink" title="2. Overloaded的过程"></a>2. Overloaded的过程</h3><p>首先从结果上来说,有这样三种结果:</p><p>最佳匹配, 重载失败, 二义性错误</p><p>来看过程:</p><ul><li><p>1.首先确定本次调用的函数集,成为<strong>候选函数</strong></p><p><em>候选函数的条件, 函数名符合, 且作用域内可见</em></p></li><li><p>2.在候选函数中,选择出,<strong>可行函数</strong></p><p><em>可行函数的条件, 函数参数个数符合, 每个实参类型符合,或者可以发生转换</em></p></li><li><p>3.寻找<strong>最佳匹配</strong></p><p>如果能够找到,则存在最佳匹配,进行调用.</p><p>如果还存在多个可行函数,无法抉择,则产生二义性错误</p></li></ul><p><strong>那么,如何选择最佳函数?</strong></p><p>首先, 之后一个参数的函数, 很简单: 是就是, 不是就不是</p><p>那么,多个参数的函数呢?</p><p>要求符合下面两个要求:</p><p><strong>1. 任何一个参数的匹配都不劣于其他可行函数</strong></p><p><strong>2. 至少有一个参数的匹配优于其他可行函数的对应参数匹配</strong></p><p><em>通俗点说, 各方面表现不差于别人,还有其他亮点, 就被录取了</em></p><p>如下图:</p><p> <img src="http://p8uroi1uf.bkt.clouddn.com/overloaded.png" alt=""></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">int</span>, <span class="keyword">int</span>)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">func</span><span class="params">(<span class="keyword">double</span>, <span class="keyword">double</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">main()</span><br><span class="line">&#123;</span><br><span class="line">func(<span class="number">1</span>, <span class="number">2.3</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 1. 候选函数</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * void func(int);</span></span><br><span class="line"><span class="comment"> * void func(int, int);</span></span><br><span class="line"><span class="comment"> * void func(double, double);</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* 2. 可行函数</span></span><br><span class="line"><span class="comment"> * void func(int, int);</span></span><br><span class="line"><span class="comment"> * void func(double, double);</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">/* 3. 最佳匹配</span></span><br><span class="line"><span class="comment"> * 两个函数,都分别在其中一个参数上最佳匹配</span></span><br><span class="line"><span class="comment"> * 又在另一个参数上,有转换</span></span><br><span class="line"><span class="comment"> * 所以,结果是 二义性错误</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure><h3 id="3-C-类型转换层次"><a href="#3-C-类型转换层次" class="headerlink" title="3. C++类型转换层次"></a>3. C++类型转换层次</h3><p>为了适合函数重载(当然还有其他地方)</p><p>C++将类型转换分为下唉面这么几个层次:</p><ul><li><p>精确匹配</p><ol><li><p>实参类型与形参匹配 (精确匹配)</p></li><li><p>array-to-pointer, function-to-pointer ,在传参过程中</p></li><li><p>顶层cosnt的添加与删除</p></li></ol></li><li><p>const转换实现的匹配</p></li><li><p>类型提升带来的匹配</p></li><li><p>算术类型转换或指针转换</p></li><li><p>类类型的转换.</p></li></ul><p><strong>根据上面5个层次的不同,来分析函数重载的最佳匹配即可</strong></p><p>update: July 14, 2018 11:53 AM</p>]]></content>
+      <title>&lt;咸鱼书&gt;_运行时数据结构与内存</title>
+      <link href="/2018/07/28/C/Expert_C_Programming/data_mem/"/>
+      <url>/2018/07/28/C/Expert_C_Programming/data_mem/</url>
+      <content type="html"><![CDATA[<h2 id="一-a-out及其传说"><a href="#一-a-out及其传说" class="headerlink" title="一, a.out及其传说"></a>一, a.out及其传说</h2><p><em>我们大家接触Linux都是从C语言开始,那么每个人第一个可运行程序都是a.out</em></p><p><em>好奇过为什么用这个东西,做缺省名吗? 哈哈,我其实之前也没有仔细考虑过,现在就来聊一聊</em></p><p>a.out指的是汇编器输出文件,<strong>但实际上,a.out不是链接器的结果吗? ? ?</strong></p><p>哈哈,这是个历史遗留问题,PDP-11汇编器输出结果为a.out,而当年最正统的UNIX机器便是PDP-11,所以</p><p>你懂得,又是个历史遗留问题 !</p><h2 id="二-a-out与C文件内容之间的关系"><a href="#二-a-out与C文件内容之间的关系" class="headerlink" title="二, a.out与C文件内容之间的关系"></a>二, a.out与C文件内容之间的关系</h2><p>C文件的内容如何映射到a.out文件中呢? 那部分填充到哪里呢? 来看看下面的图:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/src_aout.png" alt="源文件-&gt;可执行文件"></p><p>如何上图所示,首先我们要强调的是:<strong>段(segement)的概念</strong>, 此段非彼段,与Intel内存模型中的段不同</p><p>此处的段是文件中的段,大小为64KB, 最小的控制单位是section</p><p><strong>另外,对于可执行文件,有许多种格式,COSS, ELF, PE格式,我们此处以GNU使用的x86_64elf为查看对象</strong></p><p>其中a.out中有这样几个段:</p><ol><li><p>a.out的神奇数字, 用来标识a.out文件的,我们可以通过readelf来查看</p></li><li><p>BSS段, 用来存储未初始化的变量,因为未初始化,所以这个段实际上是不占空间的,他只保存了大小</p></li><li><p>数据段, 用来存储初始化的数据,(其中还有只读区等小区,不细说),而BSS段 + 数据段即为数据区</p></li><li><p>文本段, 用来储存代码的,也有叫代码段的说法,一般为.text</p></li></ol><p>这些部分是,<strong>从C源文件 -&gt; 可执行文件的部分(a.out)</strong>,一会儿我们要说到的是:</p><p><strong>从可执行文件 -&gt; 内存映像的问题, 别混淆了呦</strong></p><p>我们在此处可以玩玩这几个命令: size, readelf, objdump ,nm下面我一一来演示:</p><p>首先来看看源文件</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @filename:    1.c</span></span><br><span class="line"><span class="comment"> * @author:      Crow</span></span><br><span class="line"><span class="comment"> * @date:        06/04/2018 21:08:09</span></span><br><span class="line"><span class="comment"> * @description:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">5</span>;    <span class="comment">// read_only</span></span><br><span class="line"><span class="keyword">int</span> b;              <span class="comment">// BSS</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = <span class="number">4</span>;       <span class="comment">// stack_heap a.out中看不出来(堆栈毕竟是运行时数据结构)</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello World! %d\n"</span>, c);</span><br><span class="line">    foo();           <span class="comment">// .text</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="http://p8uroi1uf.bkt.clouddn.com/size_aout.png" alt="size a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/readelf_aout.png" alt="readelf -a a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/objdump_aout.png" alt="odjdump -d a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/nm_aout.png" alt=""><br><img src="http://p8uroi1uf.bkt.clouddn.com/nm_aout2.png" alt="nm -n --format=sysv a.out"></p><p><strong>注意,我们的图是从高地址-&gt;低地址, 然而我们的试验结果是地址升序排序</strong></p><p><strong>从中,我们可以证明,a.out中的顺序的确是,文本段(.text),数据段(.data),BSS段(.bss)</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/usr/include/<span class="keyword">asm</span>/a.out.h</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _ASM_X86_A_OUT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _ASM_X86_A_OUT_H</span></span><br><span class="line">                                                                                          </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">exec</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> a_info;    <span class="comment">/* Use macros N_MAGIC, etc for access */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_text;    <span class="comment">/* length of text, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_data;    <span class="comment">/* length of data, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_bss;     <span class="comment">/* length of uninitialized data area for file, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_syms;    <span class="comment">/* length of symbol table data in file, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_entry;   <span class="comment">/* start address */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_trsize;  <span class="comment">/* length of relocation info for text, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_drsize;  <span class="comment">/* length of relocation info for data, in bytes */</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_TRSIZE(a) ((a).a_trsize)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_DRSIZE(a) ((a).a_drsize)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_SYMSIZE(a)    ((a).a_syms)</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* _ASM_X86_A_OUT_H */</span></span></span><br></pre></td></tr></table></figure><h2 id="三-到底为什么要如此组织a-out文件"><a href="#三-到底为什么要如此组织a-out文件" class="headerlink" title="三, 到底为什么要如此组织a.out文件"></a>三, 到底为什么要如此组织a.out文件</h2><p><strong>其实很简单,就是为了可执行文件装入内存中方便</strong>, 来看这张图:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/aout_mem.png" alt="a.out到内存映像"></p><p>对于上面这张图: 我们着重说一下这样几点:</p><p><strong>1. 数据段,文本段直接映射</strong></p><p><strong>2. BSS段,根据它保存的大小进行扩展</strong></p><p><strong>3. BSS段与数据段实际上会进行合并, 统称数据区,而数据区往往就是一个程序中最大的段了</strong></p><p><strong>4. 最后我们再添加上为函数调用准备的堆栈区, 其中具体为stack + heap</strong></p><p><strong>5. 最下面地委映射区域一般是留给程序扩展,防止跑飞的</strong></p><p><strong>6. 如果有动态链接库(共享库)之类的,就直接忘堆栈上面怼</strong></p><h2 id="四-堆栈段有什么用-过程活动记录又是什么"><a href="#四-堆栈段有什么用-过程活动记录又是什么" class="headerlink" title="四, 堆栈段有什么用? 过程活动记录又是什么?"></a>四, 堆栈段有什么用? 过程活动记录又是什么?</h2><p>之前其实和很多学长也都聊过,操作系统中提到的堆栈是栈,数据结构中堆是堆,栈是栈,OK?</p><p>堆栈是一种FILO的数据结构,它很适合用于进行函数调用,为什么?</p><p><strong>尤其是我们进行递归调用的时候,需要同时维持多组函数(多个实例)的存在,同时还要保证他们一定的顺序</strong></p><p><strong>这就很符合堆栈的定义,所以堆栈段的存在很有必要于递归调用</strong></p><p><strong>也就意味着函数递归调用以外的其他作用,并非是堆栈段存在的必要意义,可以通过其他方式实现</strong></p><p>最最核心的作用就是维护了过程活动记录,CSAPP中也提到过这个东西,就是进行函数调用是的必要信息</p><p>以及调用结束之后,我们到底应该如何返回?</p><p>那么,我们就来看看过程活动记录吧</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/process.png" alt="过程活动记录"></p><p><strong>上面这个其实就是一个函数在堆栈中的内容了</strong></p><p><strong>1. 局部变量(local varibales) 即为函数内保存的自动变量(auto)缺省属性</strong></p><p><strong>2. 参数(arguments) 这其实是,形式参数,用于函数调用的</strong></p><p><strong>3. 静态链接(static link) 这个与C无关,其实是Pascal,Ada提供的特性,即函数的嵌套声明</strong></p><p><strong>我们可以通过这个静态链接指针来进行上层函数的访问,从而减少函数之间的通信</strong></p><p><strong>4. 指向先前结构的指针,很明显,就是指向上层函数(非静态链接),是说上一个过程活动记录</strong></p><p><strong>5. 返回地址(return address) 不多说了,就是函数调用结束后,返回的位置</strong></p><p><strong>过程活动记录清晰地阐述了堆栈区的实际意义,以及函数调用的实现</strong></p><p>我们的程序在运行的时候,维护一个指针fp,它指向最靠近堆栈顶端的过程活动记录,之后的全靠指针串起来</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/usr/src/.../arch/x86/include/<span class="keyword">asm</span>/frame.h</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FRAME_POINTER                                                                                                              </span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ASSEMBLY__</span></span><br><span class="line"> </span><br><span class="line">.macro FRAME_BEGIN</span><br><span class="line">    push %_ASM_BP</span><br><span class="line">    _ASM_MOV %_ASM_SP, %_ASM_BP</span><br><span class="line">.endm</span><br><span class="line">   </span><br><span class="line">.macro FRAME_END</span><br><span class="line">    pop %_ASM_BP</span><br><span class="line">.endm</span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span> <span class="comment">/* !__ASSEMBLY__ */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_BEGIN             \</span></span><br><span class="line">    <span class="string">"push %"</span> _ASM_BP <span class="string">"\n"</span>           \</span><br><span class="line">    _ASM_MOV <span class="string">"%"</span> _ASM_SP <span class="string">", %"</span> _ASM_BP <span class="string">"\n"</span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_END <span class="meta-string">"pop %"</span> _ASM_BP <span class="meta-string">"\n"</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* __ASSEMBLY__ */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_OFFSET __ASM_SEL(4, 8)</span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span> <span class="comment">/* !CONFIG_FRAME_POINTER */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_BEGIN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_END</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_OFFSET 0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* CONFIG_FRAME_POINTER */</span></span></span><br></pre></td></tr></table></figure><p><strong>另外哦我们要注意的一点就是: 过程活动记录很有可能不在堆栈中</strong></p><p>有两方面的原因:</p><ol><li><p>可能是编译器优化,对于依赖程度不高的,我们将过程活动记录储存在寄存器中</p></li><li><p>对于其他的架构,比如Sun的SPARC,就是使用链表进行过程活动记录的串联,并非存在堆栈中</p></li></ol><p><strong>时刻记住: 虽然我们常用x86_64架构,但是架构不止这么一种,你去看看linux目录下的Arch目录就懂了</strong></p><p>Arch–Architecture 架构</p><h2 id="五-两类内存问题"><a href="#五-两类内存问题" class="headerlink" title="五, 两类内存问题"></a>五, 两类内存问题</h2><p>最后,我们在介绍两种C语言有关却经常会出问题的内存问题:</p><p><strong>首先,说说内存分配的问题,我们可以使用malloc(),free()以及brk(), sbrk()来处理</strong></p><p><strong>具体的内容,大家下来自行进行了解</strong></p><h3 id="1-内存泄漏"><a href="#1-内存泄漏" class="headerlink" title="1. 内存泄漏"></a>1. 内存泄漏</h3><p>再没有GC(垃圾回收机制)的语言实现中,内存泄漏是个永恒的话题,C中需要谨慎的进行处理</p><p>在C++中,有RAII的支持,但是内存泄漏还是个不容忽视的问题</p><p>主要是两类原因:</p><p><strong>释放或者改写正在使用的内存</strong></p><p><strong>未释放不再使用的内存</strong></p><p>我们唯一能做的就是: 慎之又慎的进行内存管理,避免内存泄漏</p><p><strong>另一方面,对于局部对象,我们可以使用alloca()来进行内存分配,这样可以避免退出函数后没有释放内存</strong></p><p><strong>但是, 局限性很大,对,出了这个函数就凉凉,所以还是好好谨慎的玩吧</strong></p><p>那么,既然它这么危险,我们有没有可以检测内存泄漏的方法?</p><p><strong>有,下米诺安就简单地介绍几个工具: swap(好像只有Sun能用), free, vmstat来查看</strong></p><p>这是最基础的方法,而我们着重介绍的就是: </p><p>Valgrind + kcachegrind</p><p>我们使用Valgrind中的工具集- callgrind进行内存泄漏的分析,然后通过kcachegrind进行图形化</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// code.c</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mem_alloc</span><span class="params">(<span class="keyword">int</span> size)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mem_free</span><span class="params">(<span class="keyword">void</span> *mem_ptr)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Please input the size to allocate memory: "</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;size);</span><br><span class="line">    <span class="keyword">int</span> *ptr = (<span class="keyword">int</span> *)mem_alloc(size);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mem_alloc</span><span class="params">(<span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *ptr = <span class="built_in">malloc</span>(size);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ptr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mem_free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>上面的代码很明显的内存泄漏,我们通过valgrind的memcheck工具进行检测</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/valgrind--full_check.png" alt="valgrind --tool=memcheck --leak-check=full ./a.out "></p><p>另外我们还可以进行代码分析,如下:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/valgrind_kcachegrind.png" alt="valgrind --tool=callgrind ./a.out &amp;&amp; kcachegrind callgrind.out.*"></p><h3 id="2-总线错误-Bus-Error"><a href="#2-总线错误-Bus-Error" class="headerlink" title="2. 总线错误(Bus Error)"></a>2. 总线错误(Bus Error)</h3><p>这个错误,当时被很多人调侃过,说是”公交车错误”</p><p><em>其实,我也就是在学校的OJ上见过那么一次,</em></p><p>事实上,<strong>这是RISC架构最容易出现的问题,内存的非对齐访问,会造成总线堵塞,进而引发此错误</strong></p><p><strong>然而,沃尔玛能通常是用的都是CISC的x86_64架构,事实上通过修正电路,降低一点效率,避免这个错误</strong></p><p><strong>但是,无论如何,我们都是时刻关心内存对齐,很关键</strong></p><p>在这个之外其实还有一种错误,”Segement fault” #=&gt; “段错误”</p><p>在了解内存管理之前我对这个没有一点映像</p><p><strong>不过,现在看来,还是很关键的,这就是严重缺页错误,在分页机制中有三种映射错误</strong></p><p><strong>次要,严重,以及段错误,另外两种不多说,段错误就是映射失败,访问到不能访问的区域</strong></p><p><strong>不仅仅是TLB中没有要访问的页,内存中也没有,非法访问所造成的就是段错误,会造成程序中断进行</strong></p><p><strong>其实就是这么简单,Haha,多看点书还是有用的</strong></p><hr><p>June 5, 2018 12:43 AM</p><p><em>上面这些之后,就算咸鱼书彻底了结,C也了结了,当然kangkang的Esential C++看的也差不多,</em></p><p><em>就等C++ Primer(PS: 本来想叫C3P的,想像还是算了)就绪了.</em></p><p><em>虽然已经很晚了,不过,我有信心肝下去,干他妈的</em></p><p><em>想想后面的书: 6E, Server + Kernel 哇,脑子疼</em></p><p><em>但是,干他妈的总没错,溜了,溜了</em></p>]]></content>
       
       <categories>
+          
+          <category> 编程语言 </category>
           
           <category> C/C++ </category>
           
@@ -38,7 +40,7 @@
       
         <tags>
             
-            <tag> C++ </tag>
+            <tag> Expert_C_Programming </tag>
             
         </tags>
       
@@ -51,8 +53,6 @@
       <content type="html"><![CDATA[<h2 id="一-安装问题"><a href="#一-安装问题" class="headerlink" title="一,安装问题"></a>一,安装问题</h2><p>此处仅仅谈到Linux平台的安装方法,Win下可以通过现成安装包方式安装</p><p>Mac没接触过,不了解.不过听说<code>brew</code>也挺好用?(反正我是<code>dnf</code>毒奶粉)</p><p>下面的流程摘自MySQL官网,相当于间接翻译一下,(…), Fc的特化版本,其他发行版同理,有区别</p><p>在官网中可以找到适合自己发行版的repo,按照说明选择的好,至于不对应版本,会有什么差错,我也不知道.</p><p><a href="https://www.mysql.com/downloads/" target="_blank" rel="noopener">这是官网链接&gt;&gt;</a></p><p>首先里面提供了三个版本</p><p><code>MySQL Enterprise Edition</code><br><code>MySQL Cluster CGE</code><br><code>MySQL Community Edition</code></p><p>如果你是个人用户,或者学习用,还是乖乖用社区版,完全足够了</p><p><a href="https://dev.mysql.com/downloads/" target="_blank" rel="noopener">所以,这个才是真的链接&gt;&gt;</a></p><p>左边侧栏,就可以选择合理的,安装方式,</p><p><img src="http://p8pmsq2a4.bkt.clouddn.com/website.png" alt="左侧边栏"></p><p>我们以MySQL Yum Repository安装为例来说明:</p><h3 id="1-找到适合自己的repo"><a href="#1-找到适合自己的repo" class="headerlink" title="1. 找到适合自己的repo"></a>1. 找到适合自己的repo</h3><p>在下面的选择中进行repo下载:</p><p>然后使用<code>sudo rpm -Uvh your-system-version.rpm</code></p><p><img src="http://p8pmsq2a4.bkt.clouddn.com/repoi.png" alt="repo"></p><p>(隔壁的dpkg同理,packman惹不起)</p><h3 id="2-选择版本系列"><a href="#2-选择版本系列" class="headerlink" title="2. 选择版本系列"></a>2. 选择版本系列</h3><p>习惯使用repo的人会知道,同一个repo也会有不同的版本, 而MySQL经常比较的就是5.x和现在的8.x了</p><p><em>6.x是留给告诉迭代的版本的, 也就是现在5.x的后继,7.x是留给集群版本的,提前插眼</em></p><p><em>所以现在最新的就是8.x了,不用疑惑的</em></p><p><code>shell&gt; yum repolist all | grep mysql</code> 查看现在支持的版本</p><p><code>shell&gt; sudo dnf config-manager --disable mysql80-community</code><br><code>shell&gt; sudo dnf config-manager --enable mysql57-community</code></p><p>进行指定版本的限制</p><p><code>shell&gt; yum repolist all | grep mysql</code> 重新查看,即可,要使用5.7还是8.0随意</p><h3 id="3-进行repo缓存"><a href="#3-进行repo缓存" class="headerlink" title="3. 进行repo缓存"></a>3. 进行repo缓存</h3><p><code>shell&gt; sudo dnf makecache</code></p><h3 id="4-安装mysql"><a href="#4-安装mysql" class="headerlink" title="4. 安装mysql"></a>4. 安装mysql</h3><p><code>shell&gt; sudo yum install mysql-community-server</code></p><p>会自动处理依赖的</p><h3 id="5-启动服务"><a href="#5-启动服务" class="headerlink" title="5. 启动服务"></a>5. 启动服务</h3><p><code>shell&gt; sudo systemctl start mysqld</code> 启动服务</p><p><code>shell&gt; sudo systemctl status mysqld</code> 查看服务状态</p><h3 id="6-进行密码的设定"><a href="#6-进行密码的设定" class="headerlink" title="6. 进行密码的设定"></a>6. 进行密码的设定</h3><p>MySQL Server Initialization (as of MySQL 5.7): At the initial start up of the server, the following happens, given that the data directory of the server is empty:</p><p>The server is initialized.</p><p>An SSL certificate and key files are generated in the data directory.</p><p>The validate_password plugin is installed and enabled.</p><p>A superuser account ‘root‘@’localhost’ is created. A password for the superuser is set and stored in the error log file. To reveal it, use the following command:</p><p><code>shell&gt; sudo grep &#39;temporary password&#39; /var/log/mysqld.log</code></p><p>Change the root password as soon as possible by logging in with the generated, temporary password and set a custom password for the superuser account:</p><p><code>shell&gt; mysql -uroot -p</code></p><p><code>mysql&gt; ALTER USER &#39;root&#39;@&#39;localhost&#39; IDENTIFIED BY &#39;MyNewPass4!&#39;;</code></p><p>上面这段话的意思时: 启动服务,mysql已经默认创建了root@localhost用户</p><p>同时给你吧密码安排到日志文件里面了,你运行第一条命令找出密码,然后进去改密码</p><p>就这样就好了</p><p>但是,<strong>我TM日志是空的…</strong></p><p>所以还有下面的邪道方法:</p><p>进入<code>/etc/my.cnf</code> 进行登录不需要密码的状态,具体是添加</p><p><code>skip-grant-tables</code>,实现免密码登录</p><p><code>mysql -uroot</code>  登入数据库</p><p><code>update user set password=password(&#39;123456&#39;) where user=&#39;root&#39; and host=&#39;localhost&#39;;</code></p><p>修改用户名密码</p><p>记得完了修改文件,取消免密码登录,然后<strong>重启服务</strong>,就可以正常使用了</p><h2 id="二-初始MySQL"><a href="#二-初始MySQL" class="headerlink" title="二,初始MySQL"></a>二,初始MySQL</h2><p>作为一个经典的SQL,这么多年来经久不衰还是由他的理由的</p><p>有下面几个了解一下的:</p><ol><li><p>默认port –3306</p></li><li><p>有社区版和专业版</p></li><li><p>现属于Oracle公司</p></li></ol><p>了解足够了</p><h2 id="三-常用的最基础操作"><a href="#三-常用的最基础操作" class="headerlink" title="三,常用的最基础操作"></a>三,常用的最基础操作</h2><h3 id="1-启动和停止服务"><a href="#1-启动和停止服务" class="headerlink" title="1. 启动和停止服务"></a>1. 启动和停止服务</h3><p>这个就够了,有使用Linux经验的,谁还是不会撞墙去吧…</p><h3 id="2-登录与退出"><a href="#2-登录与退出" class="headerlink" title="2. 登录与退出"></a>2. 登录与退出</h3><p>登录是这样的形式:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql [-option] [-arguments]</span><br></pre></td></tr></table></figure><p>常用option:</p><ol><li><p>-p –passwd[] 指定密码</p></li><li><p>-P 指定端口</p></li><li><p>-u 指定用户</p></li><li><p>-H 指定主机</p></li><li><p>–prompt 设定提示符</p></li><li><p>-D 指定数据库</p></li></ol><p>退出就比较简单了:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">shell&gt; quit;</span><br><span class="line">shell&gt; <span class="built_in">exit</span>;</span><br><span class="line">shell&gt; \q;</span><br></pre></td></tr></table></figure><p>三种形式都可以</p><h3 id="3-SQL命名规范"><a href="#3-SQL命名规范" class="headerlink" title="3. SQL命名规范"></a>3. SQL命名规范</h3><p>虽然网上说随个人习惯,不敏感大小写,但是还是遵循一下规范的好:</p><p><strong>命令, 函数, 保留字一律使用大写</strong></p><p><strong>数据库名, 表名, 索引名等一律使用小写</strong></p><p><strong>SQL语句一律都是 ; 结尾</strong></p><p>也就是说,出来是这种画风</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">DATABASES</span>;</span><br><span class="line"><span class="keyword">USE</span> mysql;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">DATABASE</span> <span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> k1;</span><br></pre></td></tr></table></figure><h3 id="4-常用操作"><a href="#4-常用操作" class="headerlink" title="4. 常用操作"></a>4. 常用操作</h3><h4 id="1-gt-显式-切换-创建数据库"><a href="#1-gt-显式-切换-创建数据库" class="headerlink" title="1&gt; 显式,切换,创建数据库"></a>1&gt; 显式,切换,创建数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [<span class="keyword">IF</span> <span class="keyword">NOT</span> <span class="keyword">EXISTS</span>] K2 [<span class="keyword">DEFAULT</span>] <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> [=] charset_name;</span><br></pre></td></tr></table></figure><p>花括号为必选项, 方括号为可选项. 后面是设置编码, [IF NOT EXISTS], 可以免除一个WARNING</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">DATABASES</span>;    // 显示数据库</span><br><span class="line"><span class="keyword">USE</span> <span class="keyword">database</span>;      // 切换数据库</span><br></pre></td></tr></table></figure><h4 id="2-gt-修改数据库属性"><a href="#2-gt-修改数据库属性" class="headerlink" title="2&gt; 修改数据库属性"></a>2&gt; 修改数据库属性</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [db_name] [<span class="keyword">DEFAULT</span>] <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> [=] charset_name</span><br></pre></td></tr></table></figure><p>比如:</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ALTER</span> <span class="keyword">DATABASE</span> K2 <span class="built_in">CHARACTER</span> <span class="keyword">SET</span> utf8;   //修改K2数据库编码为utf-8</span><br></pre></td></tr></table></figure><h4 id="3-gt-删除数据库"><a href="#3-gt-删除数据库" class="headerlink" title="3&gt; 删除数据库"></a>3&gt; 删除数据库</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DROP</span> &#123;<span class="keyword">DATABASE</span> | <span class="keyword">SCHEMA</span>&#125; [<span class="keyword">IF</span> <span class="keyword">EXISTS</span>] db_name</span><br></pre></td></tr></table></figure><p>IF EXISTS 的用法同上</p><h4 id="4-gt-闲杂命令"><a href="#4-gt-闲杂命令" class="headerlink" title="4&gt; 闲杂命令"></a>4&gt; 闲杂命令</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="keyword">VERSION</span>();    // 显示版本</span><br><span class="line"><span class="keyword">SELECT</span> <span class="built_in">DATE</span>();       // 显示日期;</span><br><span class="line"><span class="keyword">SELECT</span> <span class="keyword">USER</span>();       // 显示用户;</span><br></pre></td></tr></table></figure><p>(PS: 数据库操作还是挺好玩的,我都是跑路了,当个数据库管理员也不错,开玩笑的,还是写C/C++舒服)</p><hr>]]></content>
       
       <categories>
-          
-          <category> Server </category>
           
           <category> SQL </category>
           
@@ -77,16 +77,14 @@
           
           <category> C/C++ </category>
           
-          <category> 一些经验 </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> C </tag>
-            
-            <tag> C++ </tag>
+            <tag> hole </tag>
             
         </tags>
       
@@ -100,7 +98,9 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
+          
+          <category> EvilCrow </category>
           
       </categories>
       
@@ -115,16 +115,16 @@
       
       <categories>
           
-          <category> C/C++ </category>
-          
           <category> 编程语言 </category>
+          
+          <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> C++ </tag>
+            <tag> C++Primer </tag>
             
         </tags>
       
@@ -138,62 +138,14 @@
       
       <categories>
           
-          <category> System Programming </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> C </tag>
-            
-            <tag> TLPI </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>关于github绿点的常见问题--邮箱</title>
-      <link href="/2018/06/05/Other/git_tool/"/>
-      <url>/2018/06/05/Other/git_tool/</url>
-      <content type="html"><![CDATA[<p><em>正如前面所说,今天遇到的问题就是github的绿点提交有问题,提交后并没有找到记录,很苦恼(不好装逼)</em></p><p><strong>首先,声明本文只是解决常见的问题,便是邮箱绑定不符的问题</strong></p><p>若是其他的问题, 请参考: <a href="https://help.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile/" target="_blank" rel="noopener">传送门</a></p><p>解决方法有以下两种:</p><ol><li><p>进行新的邮箱绑定 如下图:</p><p> <img src="http://p8pmsq2a4.bkt.clouddn.com/git_name_email.png" alt=""></p><p> 先查看本地上进行git-push时的用户名和邮箱</p><p> <img src="http://p8pmsq2a4.bkt.clouddn.com/git_email_addition.png" alt=""></p><p> 可以通过添加多个邮箱的方式来追回记录</p></li><li><p>通过修改提交repo的方式来进行修改</p><p> 参考资料: <a href="https://help.github.com/articles/changing-author-info/" target="_blank" rel="noopener">git_help</a></p><p> 我们可以按照下面几步来进行操作</p><p> 一, 得到需要修改的commit的repo</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git <span class="built_in">clone</span> --bare https://github.com/user/repo.git</span><br><span class="line"></span><br><span class="line"><span class="comment"># user 为用户名</span></span><br><span class="line"><span class="comment"># repo为commit的仓库名</span></span><br></pre></td></tr></table></figure><p> 二, 使用script文件来进行repo的修改</p><p> sh文件内容如下:</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">git filter-branch --env-filter <span class="string">'</span></span><br><span class="line"><span class="string">OLD_EMAIL="旧的Email地址"</span></span><br><span class="line"><span class="string">CORRECT_NAME="正确的用户名"</span></span><br><span class="line"><span class="string">CORRECT_EMAIL="正确的邮件地址"</span></span><br><span class="line"><span class="string">if [ "$GIT_COMMITTER_EMAIL" = "$OLD_EMAIL" ]</span></span><br><span class="line"><span class="string">then</span></span><br><span class="line"><span class="string">export GIT_COMMITTER_NAME="$CORRECT_NAME"</span></span><br><span class="line"><span class="string">export GIT_COMMITTER_EMAIL="$CORRECT_EMAIL"</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">if [ "$GIT_AUTHOR_EMAIL" = "$OLD_EMAIL" ]</span></span><br><span class="line"><span class="string">then</span></span><br><span class="line"><span class="string">export GIT_AUTHOR_NAME="$CORRECT_NAME"</span></span><br><span class="line"><span class="string">export GIT_AUTHOR_EMAIL="$CORRECT_EMAIL"</span></span><br><span class="line"><span class="string">fi</span></span><br><span class="line"><span class="string">'</span> --tag-name-filter cat -- --branches --tags</span><br></pre></td></tr></table></figure><p> 三, 使用脚本文件修改repo,重新提交</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> repo.git</span><br><span class="line">bash script.sh</span><br><span class="line"></span><br><span class="line">git push --force --tags origin <span class="string">'refs/heads/*'</span>   <span class="comment"># 提交新修改的repo</span></span><br></pre></td></tr></table></figure><p> 四, 删除旧repo</p> <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -rf repo.git</span><br></pre></td></tr></table></figure><p> 至此,便完成了追回提交记录的工作了.</p><p> 我们不得不感叹git作为一个版本控制工具的强大. git需要学习的东西还有很多.</p><p> 好(努)好(力)学(装)习(逼)</p><p> May 14, 2018 4:42 PM</p></li></ol>]]></content>
-      
-      <categories>
-          
-          <category> git </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> tools </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    <entry>
-      <title>&lt;咸鱼书&gt;_运行时数据结构与内存</title>
-      <link href="/2018/06/05/C/Expert_C_Programming/data_mem/"/>
-      <url>/2018/06/05/C/Expert_C_Programming/data_mem/</url>
-      <content type="html"><![CDATA[<h2 id="一-a-out及其传说"><a href="#一-a-out及其传说" class="headerlink" title="一, a.out及其传说"></a>一, a.out及其传说</h2><p><em>我们大家接触Linux都是从C语言开始,那么每个人第一个可运行程序都是a.out</em></p><p><em>好奇过为什么用这个东西,做缺省名吗? 哈哈,我其实之前也没有仔细考虑过,现在就来聊一聊</em></p><p>a.out指的是汇编器输出文件,<strong>但实际上,a.out不是链接器的结果吗? ? ?</strong></p><p>哈哈,这是个历史遗留问题,PDP-11汇编器输出结果为a.out,而当年最正统的UNIX机器便是PDP-11,所以</p><p>你懂得,又是个历史遗留问题 !</p><h2 id="二-a-out与C文件内容之间的关系"><a href="#二-a-out与C文件内容之间的关系" class="headerlink" title="二, a.out与C文件内容之间的关系"></a>二, a.out与C文件内容之间的关系</h2><p>C文件的内容如何映射到a.out文件中呢? 那部分填充到哪里呢? 来看看下面的图:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/src_aout.png" alt="源文件-&gt;可执行文件"></p><p>如何上图所示,首先我们要强调的是:<strong>段(segement)的概念</strong>, 此段非彼段,与Intel内存模型中的段不同</p><p>此处的段是文件中的段,大小为64KB, 最小的控制单位是section</p><p><strong>另外,对于可执行文件,有许多种格式,COSS, ELF, PE格式,我们此处以GNU使用的x86_64elf为查看对象</strong></p><p>其中a.out中有这样几个段:</p><ol><li><p>a.out的神奇数字, 用来标识a.out文件的,我们可以通过readelf来查看</p></li><li><p>BSS段, 用来存储未初始化的变量,因为未初始化,所以这个段实际上是不占空间的,他只保存了大小</p></li><li><p>数据段, 用来存储初始化的数据,(其中还有只读区等小区,不细说),而BSS段 + 数据段即为数据区</p></li><li><p>文本段, 用来储存代码的,也有叫代码段的说法,一般为.text</p></li></ol><p>这些部分是,<strong>从C源文件 -&gt; 可执行文件的部分(a.out)</strong>,一会儿我们要说到的是:</p><p><strong>从可执行文件 -&gt; 内存映像的问题, 别混淆了呦</strong></p><p>我们在此处可以玩玩这几个命令: size, readelf, objdump ,nm下面我一一来演示:</p><p>首先来看看源文件</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * @filename:    1.c</span></span><br><span class="line"><span class="comment"> * @author:      Crow</span></span><br><span class="line"><span class="comment"> * @date:        06/04/2018 21:08:09</span></span><br><span class="line"><span class="comment"> * @description:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> a = <span class="number">5</span>;    <span class="comment">// read_only</span></span><br><span class="line"><span class="keyword">int</span> b;              <span class="comment">// BSS</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c = <span class="number">4</span>;       <span class="comment">// stack_heap a.out中看不出来(堆栈毕竟是运行时数据结构)</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello World! %d\n"</span>, c);</span><br><span class="line">    foo();           <span class="comment">// .text</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p><img src="http://p8uroi1uf.bkt.clouddn.com/size_aout.png" alt="size a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/readelf_aout.png" alt="readelf -a a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/objdump_aout.png" alt="odjdump -d a.out"></p><p><img src="http://p8uroi1uf.bkt.clouddn.com/nm_aout.png" alt=""><br><img src="http://p8uroi1uf.bkt.clouddn.com/nm_aout2.png" alt="nm -n --format=sysv a.out"></p><p><strong>注意,我们的图是从高地址-&gt;低地址, 然而我们的试验结果是地址升序排序</strong></p><p><strong>从中,我们可以证明,a.out中的顺序的确是,文本段(.text),数据段(.data),BSS段(.bss)</strong></p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/usr/include/<span class="keyword">asm</span>/a.out.h</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _ASM_X86_A_OUT_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _ASM_X86_A_OUT_H</span></span><br><span class="line">                                                                                          </span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">exec</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> a_info;    <span class="comment">/* Use macros N_MAGIC, etc for access */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_text;    <span class="comment">/* length of text, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_data;    <span class="comment">/* length of data, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_bss;     <span class="comment">/* length of uninitialized data area for file, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_syms;    <span class="comment">/* length of symbol table data in file, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_entry;   <span class="comment">/* start address */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_trsize;  <span class="comment">/* length of relocation info for text, in bytes */</span></span><br><span class="line">    <span class="keyword">unsigned</span> a_drsize;  <span class="comment">/* length of relocation info for data, in bytes */</span></span><br><span class="line">&#125;;</span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_TRSIZE(a) ((a).a_trsize)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_DRSIZE(a) ((a).a_drsize)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> N_SYMSIZE(a)    ((a).a_syms)</span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* _ASM_X86_A_OUT_H */</span></span></span><br></pre></td></tr></table></figure><h2 id="三-到底为什么要如此组织a-out文件"><a href="#三-到底为什么要如此组织a-out文件" class="headerlink" title="三, 到底为什么要如此组织a.out文件"></a>三, 到底为什么要如此组织a.out文件</h2><p><strong>其实很简单,就是为了可执行文件装入内存中方便</strong>, 来看这张图:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/aout_mem.png" alt="a.out到内存映像"></p><p>对于上面这张图: 我们着重说一下这样几点:</p><p><strong>1. 数据段,文本段直接映射</strong></p><p><strong>2. BSS段,根据它保存的大小进行扩展</strong></p><p><strong>3. BSS段与数据段实际上会进行合并, 统称数据区,而数据区往往就是一个程序中最大的段了</strong></p><p><strong>4. 最后我们再添加上为函数调用准备的堆栈区, 其中具体为stack + heap</strong></p><p><strong>5. 最下面地委映射区域一般是留给程序扩展,防止跑飞的</strong></p><p><strong>6. 如果有动态链接库(共享库)之类的,就直接忘堆栈上面怼</strong></p><h2 id="四-堆栈段有什么用-过程活动记录又是什么"><a href="#四-堆栈段有什么用-过程活动记录又是什么" class="headerlink" title="四, 堆栈段有什么用? 过程活动记录又是什么?"></a>四, 堆栈段有什么用? 过程活动记录又是什么?</h2><p>之前其实和很多学长也都聊过,操作系统中提到的堆栈是栈,数据结构中堆是堆,栈是栈,OK?</p><p>堆栈是一种FILO的数据结构,它很适合用于进行函数调用,为什么?</p><p><strong>尤其是我们进行递归调用的时候,需要同时维持多组函数(多个实例)的存在,同时还要保证他们一定的顺序</strong></p><p><strong>这就很符合堆栈的定义,所以堆栈段的存在很有必要于递归调用</strong></p><p><strong>也就意味着函数递归调用以外的其他作用,并非是堆栈段存在的必要意义,可以通过其他方式实现</strong></p><p>最最核心的作用就是维护了过程活动记录,CSAPP中也提到过这个东西,就是进行函数调用是的必要信息</p><p>以及调用结束之后,我们到底应该如何返回?</p><p>那么,我们就来看看过程活动记录吧</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/process.png" alt="过程活动记录"></p><p><strong>上面这个其实就是一个函数在堆栈中的内容了</strong></p><p><strong>1. 局部变量(local varibales) 即为函数内保存的自动变量(auto)缺省属性</strong></p><p><strong>2. 参数(arguments) 这其实是,形式参数,用于函数调用的</strong></p><p><strong>3. 静态链接(static link) 这个与C无关,其实是Pascal,Ada提供的特性,即函数的嵌套声明</strong></p><p><strong>我们可以通过这个静态链接指针来进行上层函数的访问,从而减少函数之间的通信</strong></p><p><strong>4. 指向先前结构的指针,很明显,就是指向上层函数(非静态链接),是说上一个过程活动记录</strong></p><p><strong>5. 返回地址(return address) 不多说了,就是函数调用结束后,返回的位置</strong></p><p><strong>过程活动记录清晰地阐述了堆栈区的实际意义,以及函数调用的实现</strong></p><p>我们的程序在运行的时候,维护一个指针fp,它指向最靠近堆栈顶端的过程活动记录,之后的全靠指针串起来</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">/usr/src/.../arch/x86/include/<span class="keyword">asm</span>/frame.h</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> CONFIG_FRAME_POINTER                                                                                                              </span></span><br><span class="line"> </span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __ASSEMBLY__</span></span><br><span class="line"> </span><br><span class="line">.macro FRAME_BEGIN</span><br><span class="line">    push %_ASM_BP</span><br><span class="line">    _ASM_MOV %_ASM_SP, %_ASM_BP</span><br><span class="line">.endm</span><br><span class="line">   </span><br><span class="line">.macro FRAME_END</span><br><span class="line">    pop %_ASM_BP</span><br><span class="line">.endm</span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span> <span class="comment">/* !__ASSEMBLY__ */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_BEGIN             \</span></span><br><span class="line">    <span class="string">"push %"</span> _ASM_BP <span class="string">"\n"</span>           \</span><br><span class="line">    _ASM_MOV <span class="string">"%"</span> _ASM_SP <span class="string">", %"</span> _ASM_BP <span class="string">"\n"</span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_END <span class="meta-string">"pop %"</span> _ASM_BP <span class="meta-string">"\n"</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* __ASSEMBLY__ */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_OFFSET __ASM_SEL(4, 8)</span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span> <span class="comment">/* !CONFIG_FRAME_POINTER */</span></span></span><br><span class="line">   </span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_BEGIN</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_END</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> FRAME_OFFSET 0</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* CONFIG_FRAME_POINTER */</span></span></span><br></pre></td></tr></table></figure><p><strong>另外哦我们要注意的一点就是: 过程活动记录很有可能不在堆栈中</strong></p><p>有两方面的原因:</p><ol><li><p>可能是编译器优化,对于依赖程度不高的,我们将过程活动记录储存在寄存器中</p></li><li><p>对于其他的架构,比如Sun的SPARC,就是使用链表进行过程活动记录的串联,并非存在堆栈中</p></li></ol><p><strong>时刻记住: 虽然我们常用x86_64架构,但是架构不止这么一种,你去看看linux目录下的Arch目录就懂了</strong></p><p>Arch–Architecture 架构</p><h2 id="五-两类内存问题"><a href="#五-两类内存问题" class="headerlink" title="五, 两类内存问题"></a>五, 两类内存问题</h2><p>最后,我们在介绍两种C语言有关却经常会出问题的内存问题:</p><p><strong>首先,说说内存分配的问题,我们可以使用malloc(),free()以及brk(), sbrk()来处理</strong></p><p><strong>具体的内容,大家下来自行进行了解</strong></p><h3 id="1-内存泄漏"><a href="#1-内存泄漏" class="headerlink" title="1. 内存泄漏"></a>1. 内存泄漏</h3><p>再没有GC(垃圾回收机制)的语言实现中,内存泄漏是个永恒的话题,C中需要谨慎的进行处理</p><p>在C++中,有RAII的支持,但是内存泄漏还是个不容忽视的问题</p><p>主要是两类原因:</p><p><strong>释放或者改写正在使用的内存</strong></p><p><strong>未释放不再使用的内存</strong></p><p>我们唯一能做的就是: 慎之又慎的进行内存管理,避免内存泄漏</p><p><strong>另一方面,对于局部对象,我们可以使用alloca()来进行内存分配,这样可以避免退出函数后没有释放内存</strong></p><p><strong>但是, 局限性很大,对,出了这个函数就凉凉,所以还是好好谨慎的玩吧</strong></p><p>那么,既然它这么危险,我们有没有可以检测内存泄漏的方法?</p><p><strong>有,下米诺安就简单地介绍几个工具: swap(好像只有Sun能用), free, vmstat来查看</strong></p><p>这是最基础的方法,而我们着重介绍的就是: </p><p>Valgrind + kcachegrind</p><p>我们使用Valgrind中的工具集- callgrind进行内存泄漏的分析,然后通过kcachegrind进行图形化</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// code.c</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mem_alloc</span><span class="params">(<span class="keyword">int</span> size)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mem_free</span><span class="params">(<span class="keyword">void</span> *mem_ptr)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Please input the size to allocate memory: "</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>,&amp;size);</span><br><span class="line">    <span class="keyword">int</span> *ptr = (<span class="keyword">int</span> *)mem_alloc(size);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">mem_alloc</span><span class="params">(<span class="keyword">int</span> size)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *ptr = <span class="built_in">malloc</span>(size);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ptr;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">mem_free</span><span class="params">(<span class="keyword">void</span> *ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>上面的代码很明显的内存泄漏,我们通过valgrind的memcheck工具进行检测</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/valgrind--full_check.png" alt="valgrind --tool=memcheck --leak-check=full ./a.out "></p><p>另外我们还可以进行代码分析,如下:</p><p><img src="http://p8uroi1uf.bkt.clouddn.com/valgrind_kcachegrind.png" alt="valgrind --tool=callgrind ./a.out &amp;&amp; kcachegrind callgrind.out.*"></p><h3 id="2-总线错误-Bus-Error"><a href="#2-总线错误-Bus-Error" class="headerlink" title="2. 总线错误(Bus Error)"></a>2. 总线错误(Bus Error)</h3><p>这个错误,当时被很多人调侃过,说是”公交车错误”</p><p><em>其实,我也就是在学校的OJ上见过那么一次,</em></p><p>事实上,<strong>这是RISC架构最容易出现的问题,内存的非对齐访问,会造成总线堵塞,进而引发此错误</strong></p><p><strong>然而,沃尔玛能通常是用的都是CISC的x86_64架构,事实上通过修正电路,降低一点效率,避免这个错误</strong></p><p><strong>但是,无论如何,我们都是时刻关心内存对齐,很关键</strong></p><p>在这个之外其实还有一种错误,”Segement fault” #=&gt; “段错误”</p><p>在了解内存管理之前我对这个没有一点映像</p><p><strong>不过,现在看来,还是很关键的,这就是严重缺页错误,在分页机制中有三种映射错误</strong></p><p><strong>次要,严重,以及段错误,另外两种不多说,段错误就是映射失败,访问到不能访问的区域</strong></p><p><strong>不仅仅是TLB中没有要访问的页,内存中也没有,非法访问所造成的就是段错误,会造成程序中断进行</strong></p><p><strong>其实就是这么简单,Haha,多看点书还是有用的</strong></p><hr><p>June 5, 2018 12:43 AM</p><p><em>上面这些之后,就算咸鱼书彻底了结,C也了结了,当然kangkang的Esential C++看的也差不多,</em></p><p><em>就等C++ Primer(PS: 本来想叫C3P的,想像还是算了)就绪了.</em></p><p><em>虽然已经很晚了,不过,我有信心肝下去,干他妈的</em></p><p><em>想想后面的书: 6E, Server + Kernel 哇,脑子疼</em></p><p><em>但是,干他妈的总没错,溜了,溜了</em></p>]]></content>
-      
-      <categories>
-          
-          <category> C/C++ </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
-            
-            <tag> Exprt_C_Programming </tag>
+            <tag> Syscall </tag>
             
         </tags>
       
@@ -207,6 +159,8 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
@@ -214,9 +168,7 @@
       
         <tags>
             
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
+            <tag> Expert_C_Programming </tag>
             
         </tags>
       
@@ -230,6 +182,8 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
@@ -237,11 +191,7 @@
       
         <tags>
             
-            <tag> C </tag>
-            
-            <tag> C++ </tag>
-            
-            <tag> 计算机系统 </tag>
+            <tag> Expert_C_Programming </tag>
             
         </tags>
       
@@ -255,16 +205,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
             
             <tag> Expert_C_Programming </tag>
             
@@ -280,16 +228,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
             
             <tag> Expert_C_Programming </tag>
             
@@ -305,18 +251,14 @@
       
       <categories>
           
-          <category> Binutils </category>
-          
-          <category> man </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> tools </tag>
-            
-            <tag> English </tag>
+            <tag> Binuntils </tag>
             
         </tags>
       
@@ -330,16 +272,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
             
             <tag> Expert_C_Programming </tag>
             
@@ -355,16 +295,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
             
             <tag> Expert_C_Programming </tag>
             
@@ -380,16 +318,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
             
             <tag> Expert_C_Programming </tag>
             
@@ -405,6 +341,8 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
@@ -412,9 +350,7 @@
       
         <tags>
             
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
+            <tag> hole </tag>
             
         </tags>
       
@@ -428,6 +364,8 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
@@ -435,9 +373,7 @@
       
         <tags>
             
-            <tag> 编程语言 </tag>
-            
-            <tag> C </tag>
+            <tag> experience </tag>
             
         </tags>
       
@@ -451,14 +387,14 @@
       
       <categories>
           
-          <category> shellscript </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Shellscript </tag>
             
         </tags>
       
@@ -472,6 +408,8 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
@@ -479,9 +417,7 @@
       
         <tags>
             
-            <tag> 编程语言 </tag>
-            
-            <tag> C++ </tag>
+            <tag> C++Primer </tag>
             
         </tags>
       
@@ -495,14 +431,14 @@
       
       <categories>
           
-          <category> Shellscript </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Shellscript </tag>
             
         </tags>
       
@@ -516,14 +452,14 @@
       
       <categories>
           
-          <category> Ruby </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Ruby </tag>
             
         </tags>
       
@@ -537,14 +473,14 @@
       
       <categories>
           
-          <category> Ruby </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Ruby </tag>
             
         </tags>
       
@@ -558,14 +494,14 @@
       
       <categories>
           
-          <category> Ruby </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Ruby </tag>
             
         </tags>
       
@@ -579,14 +515,14 @@
       
       <categories>
           
+          <category> 编程语言 </category>
+          
           <category> C/C++ </category>
           
       </categories>
       
       
         <tags>
-            
-            <tag> C </tag>
             
             <tag> CTrapsAndPitfalls </tag>
             
@@ -602,14 +538,14 @@
       
       <categories>
           
-          <category> CSAPP </category>
+          <category> 力量的源泉 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 力量的源泉 </tag>
+            <tag> CSAPP </tag>
             
         </tags>
       
@@ -623,14 +559,14 @@
       
       <categories>
           
-          <category> CSAPP </category>
+          <category> 力量的源泉 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 力量的源泉 </tag>
+            <tag> CSAPP </tag>
             
         </tags>
       
@@ -644,14 +580,14 @@
       
       <categories>
           
-          <category> Shellscript </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Shellscript </tag>
             
         </tags>
       
@@ -665,14 +601,14 @@
       
       <categories>
           
-          <category> Shellscript </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Shellscript </tag>
             
         </tags>
       
@@ -686,14 +622,14 @@
       
       <categories>
           
-          <category> Shellscript </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Shellscript </tag>
             
         </tags>
       
@@ -707,7 +643,7 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
@@ -728,14 +664,14 @@
       
       <categories>
           
-          <category> Assembly </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Assembly </tag>
             
         </tags>
       
@@ -756,7 +692,7 @@
       
         <tags>
             
-            <tag> Coding </tag>
+            <tag> standard </tag>
             
         </tags>
       
@@ -770,14 +706,14 @@
       
       <categories>
           
-          <category> Assembly </category>
+          <category> 编程语言 </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> Assembly </tag>
             
         </tags>
       
@@ -791,14 +727,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -812,14 +750,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -833,14 +773,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -854,14 +796,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -875,14 +819,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -896,14 +842,16 @@
       
       <categories>
           
-          <category> VimScript </category>
+          <category> Tools </category>
+          
+          <category> Vim </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> 编程语言 </tag>
+            <tag> VimScript </tag>
             
         </tags>
       
@@ -917,16 +865,10 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> Computer </tag>
-            
-        </tags>
       
     </entry>
     
@@ -938,16 +880,10 @@
       
       <categories>
           
-          <category> 文档 </category>
+          <category> Documents </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> 项目文档 </tag>
-            
-        </tags>
       
     </entry>
     
@@ -959,16 +895,10 @@
       
       <categories>
           
-          <category> 一些经验 </category>
+          <category> Documents </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> 项目文档 </tag>
-            
-        </tags>
       
     </entry>
     
@@ -980,16 +910,10 @@
       
       <categories>
           
-          <category> 文档 </category>
+          <category> Documents </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> 项目文档 </tag>
-            
-        </tags>
       
     </entry>
     
@@ -1001,16 +925,10 @@
       
       <categories>
           
-          <category> 一些经验 </category>
+          <category> Documents </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> 总结 </tag>
-            
-        </tags>
       
     </entry>
     
@@ -1022,14 +940,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Linux_C </tag>
+            <tag> LinuxC </tag>
             
         </tags>
       
@@ -1043,14 +961,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Linux_C </tag>
+            <tag> LinuxC </tag>
             
         </tags>
       
@@ -1064,14 +982,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Linux_C </tag>
+            <tag> LinuxC </tag>
             
         </tags>
       
@@ -1085,16 +1003,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
-            
-            <tag> 装机 </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1108,16 +1024,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
-            
-            <tag> File system </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1131,14 +1045,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> tools </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1152,16 +1066,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
-            
-            <tag> File system </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1175,14 +1087,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1196,14 +1108,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1217,14 +1129,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1238,14 +1150,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1259,14 +1171,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Computer </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1280,14 +1192,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> OS </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1301,14 +1213,14 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
       
         <tags>
             
-            <tag> Computer </tag>
+            <tag> vbird </tag>
             
         </tags>
       
@@ -1322,16 +1234,10 @@
       
       <categories>
           
-          <category> Linux </category>
+          <category> Unix/Linux </category>
           
       </categories>
       
-      
-        <tags>
-            
-            <tag> Computer </tag>
-            
-        </tags>
       
     </entry>
     
