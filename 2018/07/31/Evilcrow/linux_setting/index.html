@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Linux的常用配置 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Linux的常用配置</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Linux的常用配置</h1><div class="post-meta">Jul 31, 2018<span> | </span><span class="category"><a href="/categories/Unix-Linux/">Unix/Linux</a><a href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-基础内容"><span class="toc-number">1.</span> <span class="toc-text">一, 基础内容</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-添加自己的sudo权限"><span class="toc-number">1.1.</span> <span class="toc-text">1. 添加自己的sudo权限</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-添加合理的软件源"><span class="toc-number">1.2.</span> <span class="toc-text">2. 添加合理的软件源</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-快捷键的设置"><span class="toc-number">1.3.</span> <span class="toc-text">3. 快捷键的设置</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-关闭神油SElinux"><span class="toc-number">1.4.</span> <span class="toc-text">4. 关闭神油SElinux</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-善用alias"><span class="toc-number">1.5.</span> <span class="toc-text">5. 善用alias</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-KDE的一些设置"><span class="toc-number">2.</span> <span class="toc-text">二, KDE的一些设置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Appearance"><span class="toc-number">2.1.</span> <span class="toc-text">Appearance</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Workspce-Theme"><span class="toc-number">2.1.1.</span> <span class="toc-text">Workspce Theme</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Look-And-Feel"><span class="toc-number">2.1.1.1.</span> <span class="toc-text">Look And Feel</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Desktop-Theme"><span class="toc-number">2.1.1.2.</span> <span class="toc-text">Desktop Theme</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Cursor-Theme"><span class="toc-number">2.1.1.3.</span> <span class="toc-text">Cursor Theme</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Splash-Screen"><span class="toc-number">2.1.1.4.</span> <span class="toc-text">Splash Screen</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Colors"><span class="toc-number">2.1.2.</span> <span class="toc-text">Colors</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Fonts"><span class="toc-number">2.1.3.</span> <span class="toc-text">Fonts</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Icons"><span class="toc-number">2.1.4.</span> <span class="toc-text">Icons</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Application-Style"><span class="toc-number">2.1.5.</span> <span class="toc-text">Application Style</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Widget-Style"><span class="toc-number">2.1.5.1.</span> <span class="toc-text">Widget Style</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Window-Decorations"><span class="toc-number">2.1.5.2.</span> <span class="toc-text">Window Decorations</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#GNOME-Application-Style-GTK"><span class="toc-number">2.1.5.3.</span> <span class="toc-text">GNOME Application Style(GTK)</span></a></li></ol></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Workspace"><span class="toc-number">2.2.</span> <span class="toc-text">Workspace</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Window-Management"><span class="toc-number">2.2.1.</span> <span class="toc-text">Window Management</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Task-Switcher"><span class="toc-number">2.2.1.1.</span> <span class="toc-text">Task Switcher</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Startup-and-Shutdown"><span class="toc-number">2.2.2.</span> <span class="toc-text">Startup and Shutdown</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#Login-Screen-SDDM"><span class="toc-number">2.2.2.1.</span> <span class="toc-text">Login Screen(SDDM)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#Autostart"><span class="toc-number">2.2.2.2.</span> <span class="toc-text">Autostart</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#啊啊啊啊啊啊啊-找到了"><span class="toc-number">2.2.3.</span> <span class="toc-text">啊啊啊啊啊啊啊 ! ! ! 找到了 !</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Double-click-open-file"><span class="toc-number">2.2.4.</span> <span class="toc-text">Double-click open file</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Software"><span class="toc-number">3.</span> <span class="toc-text">Software</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Vim"><span class="toc-number">3.1.</span> <span class="toc-text">Vim</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#gcc套件"><span class="toc-number">3.2.</span> <span class="toc-text">gcc套件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Google-chrome"><span class="toc-number">3.3.</span> <span class="toc-text">Google-chrome</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Visual-Studio-Code"><span class="toc-number">3.4.</span> <span class="toc-text">Visual Studio Code</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Atom"><span class="toc-number">3.5.</span> <span class="toc-text">Atom</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Sublime-Text"><span class="toc-number">3.6.</span> <span class="toc-text">Sublime Text</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Qt-Creator"><span class="toc-number">3.7.</span> <span class="toc-text">Qt Creator</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CLion"><span class="toc-number">3.8.</span> <span class="toc-text">CLion</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Haroopad"><span class="toc-number">3.9.</span> <span class="toc-text">Haroopad</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#netease-cloud-music"><span class="toc-number">3.10.</span> <span class="toc-text">netease-cloud-music</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Shadowsocks-qt5"><span class="toc-number">3.11.</span> <span class="toc-text">Shadowsocks-qt5</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fcitx小企鹅输入法"><span class="toc-number">3.12.</span> <span class="toc-text">fcitx小企鹅输入法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#文字编辑"><span class="toc-number">3.13.</span> <span class="toc-text">文字编辑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#valgrind"><span class="toc-number">3.14.</span> <span class="toc-text">valgrind</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IntelliJ-IDEA／RubyMime等"><span class="toc-number">3.15.</span> <span class="toc-text">IntelliJ IDEA／RubyMime等</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Latte-Dock"><span class="toc-number">3.16.</span> <span class="toc-text">Latte Dock</span></a></li></ol></li></ol></div></div><div class="post-content"><p><em>这是一篇自己给自己看的使用指南, 还是认真的记录一下比较好</em></p>
+<h2 id="一-基础内容"><a href="#一-基础内容" class="headerlink" title="一, 基础内容"></a>一, 基础内容</h2><p>这一部分是每一个Linux安装成功之后,所要进行的合理操作</p>
+<p>这里,针对我的机型,我用Fedora来举例子, 当然基本上是通用的redhat配置</p>
+<h3 id="1-添加自己的sudo权限"><a href="#1-添加自己的sudo权限" class="headerlink" title="1. 添加自己的sudo权限"></a>1. 添加自己的sudo权限</h3><p>作为Redhat系的传统,不提供sudo权限的添加,需要自己去进行修改.</p>
+<p>Debian系设置好sudo权限,之后自行passwd</p>
+<p>具体操作:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/sudoers</span><br><span class="line">/ALL</span><br><span class="line">(多按几次n, 找到ALL,有root的地方)</span><br><span class="line">a</span><br><span class="line">(仿照上面进行自己用户名的添加)</span><br><span class="line">Esc -&gt; :wq!</span><br><span class="line"></span><br><span class="line">退出终端(刷新一下, OK!)</span><br></pre></td></tr></table></figure>
+<h3 id="2-添加合理的软件源"><a href="#2-添加合理的软件源" class="headerlink" title="2. 添加合理的软件源"></a>2. 添加合理的软件源</h3><p>作为Fedora用户,着重推荐这两个源, FDZH以及RPMFusion的源</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">dnf install https://repo.fdzh.org/FZUG/free/27/x86_64/noarch/fzug-release-27-0.2.noarch.rpm</span><br><span class="line">RPM Fusion的源需要去官网下载repo,之后使用rpm安装即可</span><br></pre></td></tr></table></figure>
+<p><a href="https://rpmfusion.org" target="_blank" rel="noopener">RPMFusion&gt;&gt;</a></p>
+<p><a href="https://github.com/FZUG/repo/wiki/添加-FZUG-源" target="_blank" rel="noopener">FDZH&gt;&gt;</a></p>
+<p>其他的源,根据自己的使用情况进行配置</p>
+<p>添加好源之后,进行软件源的获取缓存</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo dnf makecache</span><br></pre></td></tr></table></figure>
+<h3 id="3-快捷键的设置"><a href="#3-快捷键的设置" class="headerlink" title="3. 快捷键的设置"></a>3. 快捷键的设置</h3><p>此处,对于gnome可以按照这样的顺序:</p>
+<ul>
+<li>setting -&gt; device -&gt; keyboard -&gt; add shortcuts</li>
+</ul>
+<p>对于KDE,可以这样来设置</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/kde_shortcuts.png" alt="setting shortcuts"></p>
+<h3 id="4-关闭神油SElinux"><a href="#4-关闭神油SElinux" class="headerlink" title="4. 关闭神油SElinux"></a>4. 关闭神油SElinux</h3><p>我基本也没用过, 反正就是个神油玩意</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo vi /etc/selinux/config</span><br><span class="line"><span class="string">"SELINUX=enabled"</span> -&gt; <span class="string">"SELINUX=disabled"</span></span><br><span class="line">:wq!</span><br></pre></td></tr></table></figure>
+<h3 id="5-善用alias"><a href="#5-善用alias" class="headerlink" title="5. 善用alias"></a>5. 善用alias</h3><p>在~/.bashrc中善于添加命令别名</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> aliyun_Crow=<span class="string">'ssh Crow@ww.xxx.yyy.zzz'</span></span><br></pre></td></tr></table></figure>
+<p>上面的命令别名配上,ssh免密码登录简直不要太nice</p>
+<p>另外就是自己写的几个小脚本,在其他地方也使用了,做些合理性判断,挺好用的</p>
+<h2 id="二-KDE的一些设置"><a href="#二-KDE的一些设置" class="headerlink" title="二, KDE的一些设置"></a>二, KDE的一些设置</h2><blockquote>
+<p>目前最期待KDE plasma 5.13了,终于可以方便的改屏保,加速进入桌面的速度,减少内存开销</p>
+</blockquote>
+<blockquote>
+<p>不过说好的6.12正式版推送,Fedora目前也没有啥动静,心累.(不过一段时间内,是不会更新28了)</p>
+</blockquote>
+<blockquote>
+<p>(还好,说这话的时候,29的Alpha版还没出,差点打脸)</p>
+</blockquote>
+<p>这部分就是专门针对于KDE的设置了,用gnome的同学,我可能提供不了多少帮助了</p>
+<p>不过有两点:</p>
+<ol>
+<li><p>gnome使用 <code>sudo dnf install gnome-tweak-tool</code> 超级好用</p>
+</li>
+<li><p>gnome下IDE字体显示还是很好看的,KDE简直看不了,逼得我用Vim + VSCode</p>
+</li>
+</ol>
+<p>下面是对于KDE的完整配置方案,包括了Konsole呦(就那个初始丑的不像样子的终端)</p>
+<p>… (挖个坑,保证一周内填上去)</p>
+<hr>
+<p>update: July 31, 2018 11:33 AM</p>
+<p><del>好吧,汪汪汪…</del></p>
+<p>首先,我们从setting界面来入手</p>
+<h3 id="Appearance"><a href="#Appearance" class="headerlink" title="Appearance"></a>Appearance</h3><h4 id="Workspce-Theme"><a href="#Workspce-Theme" class="headerlink" title="Workspce Theme"></a>Workspce Theme</h4><h5 id="Look-And-Feel"><a href="#Look-And-Feel" class="headerlink" title="Look And Feel"></a>Look And Feel</h5><p>使用Fedora主题, Breeze(<em>emmm,其实区别不大,但是我们毕竟是使用Fedora嘛</em>),</p>
+<p>Breeze Dark则是暗色调, 个人不习惯.</p>
+<p>这一处,Fedora基本符合我的口味,主要影响plasma, 颜色主题, 窗口和鼠标主题,</p>
+<p>,喜欢的话,右下角还有 <code>Get New Looks...</code>按钮,可以自行挑选,商店就那样子…</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/LookAndFeel.png" alt="Look And Feel"></p>
+<h5 id="Desktop-Theme"><a href="#Desktop-Theme" class="headerlink" title="Desktop Theme"></a>Desktop Theme</h5><p>这部分设置主要体现在任务栏的显示上. 见下:</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/air.png" alt="Air"></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/dark.png" alt="Dark"></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/breeze.png" alt="breeze"></p>
+<h5 id="Cursor-Theme"><a href="#Cursor-Theme" class="headerlink" title="Cursor Theme"></a>Cursor Theme</h5><p>这部分设置主要是鼠标指针的设置,自行适配即可.</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/CursorTheme.png" alt="Cursor Theme"></p>
+<h5 id="Splash-Screen"><a href="#Splash-Screen" class="headerlink" title="Splash Screen"></a>Splash Screen</h5><p>这个很简单,就是开机进入的动画</p>
+<p><em>不是开机的壁纸,仅仅只是输入密码后,KDE Loading期间显示的东西.</em></p>
+<p><em>但是,5.13听说会加速进入桌面的时间…</em></p>
+<h4 id="Colors"><a href="#Colors" class="headerlink" title="Colors"></a>Colors</h4><p>此处没有子选项,而且变化不大.这里的颜色选项.主要是用来控制Dialog的色彩的.还可以自行再进行编辑</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/ColorScheme.png" alt="Color Scheme"></p>
+<h4 id="Fonts"><a href="#Fonts" class="headerlink" title="Fonts"></a>Fonts</h4><p>不过说了,<strong>就是控制字体的地方</strong></p>
+<p>其中主要影响的是: </p>
+<ul>
+<li><p><strong>General(Software中的字体)</strong></p>
+</li>
+<li><p><strong>Small(鼠标放上去的浮动字体)</strong></p>
+</li>
+<li><p><strong>Toolbar(工具栏字体)</strong></p>
+</li>
+<li><p><strong>Menu(菜单栏字体)</strong></p>
+</li>
+<li><p><strong>Window title(窗口标题字体)</strong></p>
+</li>
+</ul>
+<p><strong>Warning:</strong> 虽然我是KDE粉丝,但是<strong>KDE的字体真的难看到模糊,尤其是软件中,IDEA,Pychrm,CLion</strong></p>
+<p>这些都是重灾区,反观,不套用系统字体的编辑器玩的好好的,<strong>Consolas,在KDE中默认渲染不是等宽</strong></p>
+<p><em>不过也不是没有办法,我们后面再聊</em></p>
+<p><em>我的字体设置也不是很好看,但是还凑合能看,诸君可做参考</em></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/Fonts.png" alt="Fonts"></p>
+<h4 id="Icons"><a href="#Icons" class="headerlink" title="Icons"></a>Icons</h4><p>简单粗暴,就是进行图标的设置,怎么说呢,这个看个人喜好了.推荐去: </p>
+<ol>
+<li><p><a href="https://store.kde.org/" target="_blank" rel="noopener">KDE Store &gt;&gt;</a></p>
+</li>
+<li><p><a href="https://www.gnome-look.org/browse/ord/latest/" target="_blank" rel="noopener">Gnome-look &gt;&gt;</a></p>
+</li>
+</ol>
+<p>虽然两个不是同一家,这些个性化内容都是通用的.</p>
+<p>个人比较推荐 <a href="https://store.kde.org/p/1178976/" target="_blank" rel="noopener">plane&gt;&gt;</a> 这一套图标的,(<em>VSC很好看,除了chrome中间的空洞勉强接受,其他完美</em>)</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/WindowsDescl.png" alt="Window Decorations"></p>
+<h4 id="Application-Style"><a href="#Application-Style" class="headerlink" title="Application Style"></a>Application Style</h4><p>其中还有另外三个子选项:</p>
+<h5 id="Widget-Style"><a href="#Widget-Style" class="headerlink" title="Widget Style"></a>Widget Style</h5><h5 id="Window-Decorations"><a href="#Window-Decorations" class="headerlink" title="Window Decorations"></a>Window Decorations</h5><h5 id="GNOME-Application-Style-GTK"><a href="#GNOME-Application-Style-GTK" class="headerlink" title="GNOME Application Style(GTK)"></a>GNOME Application Style(GTK)</h5><p>第一个没啥意思,基本不管,第三个是处理GTK系列应用程序在KDE上的应用风格(有需要的童鞋摸索一下)</p>
+<p>我一般用原生的KDE应用,不需要GTK应用,\滑稽.</p>
+<p>我们重点来看第二个,Window Decoration</p>
+<p><strong>主要是用来进行窗口按钮图案,扁平化风格的.同时,要十分注意右下角的,Border Size谁用谁知道</strong></p>
+<p>我十分推荐这么几款: </p>
+<p>Breezemite(模仿Mac OS X的红绿灯)</p>
+<p>Winux (Win10一模一样的窗口风格)</p>
+<p>PlainJane(是因为我的红绿灯有问题,但是简洁好看)</p>
+<h3 id="Workspace"><a href="#Workspace" class="headerlink" title="Workspace"></a>Workspace</h3><p>这里不是我们配置的重点,所以大致挑一些来说.大部分维持默认即可</p>
+<h4 id="Window-Management"><a href="#Window-Management" class="headerlink" title="Window Management"></a>Window Management</h4><h5 id="Task-Switcher"><a href="#Task-Switcher" class="headerlink" title="Task Switcher"></a>Task Switcher</h5><p>任务切换者,是在进行任务切换的时候.选择的方式,有多种.推荐<code>Flip Switch</code>,不过还是看个人喜好了</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/TaskSwitcher.png" alt="Task Switcher"></p>
+<h4 id="Startup-and-Shutdown"><a href="#Startup-and-Shutdown" class="headerlink" title="Startup and Shutdown"></a>Startup and Shutdown</h4><h5 id="Login-Screen-SDDM"><a href="#Login-Screen-SDDM" class="headerlink" title="Login Screen(SDDM)"></a>Login Screen(SDDM)</h5><p>选择登录界面,其中比较重要的就是,选择screen之后,可以自行设置Backgroud.</p>
+<h5 id="Autostart"><a href="#Autostart" class="headerlink" title="Autostart"></a>Autostart</h5><p>开机自启动的软件,不多说,latte神器,这个我们后面会提到.</p>
+<h4 id="啊啊啊啊啊啊啊-找到了"><a href="#啊啊啊啊啊啊啊-找到了" class="headerlink" title="啊啊啊啊啊啊啊 ! ! ! 找到了 !"></a>啊啊啊啊啊啊啊 ! ! ! 找到了 !</h4><p>如何设置锁屏壁纸,在<code>Desktop Behavior -&gt; Screen Locking</code>中修改即可</p>
+<h4 id="Double-click-open-file"><a href="#Double-click-open-file" class="headerlink" title="Double-click open file"></a>Double-click open file</h4><p>很多上手KDE国人,最不适应的一点就是: 单击打开文件,点击 + 号进行选中</p>
+<p>那么,没有办法解决吗? 有的,见下图</p>
+<p><code>设备管理 -&gt; 鼠标设置 -&gt; 一般设置 -&gt; icons,图标设置(包含打开方式)</code></p>
+<p><em>KDE的基础配置差不多这么多,还有很多等待我们去发掘,如有其他有意思的设置,可以分享出来</em></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/OpenFIle.png" alt="Double-click to Open file"></p>
+<h2 id="Software"><a href="#Software" class="headerlink" title="Software"></a>Software</h2><p>好了,重中之重,软件的配置肯定是必不可少的了.</p>
+<p>下面会介绍在生产方面以及其他方面高效的工具了</p>
+<h3 id="Vim"><a href="#Vim" class="headerlink" title="Vim"></a>Vim</h3><p>不多说了,”编辑器之神”不是盖得,很好用.</p>
+<p>这里推荐一个Vim配置,超厉害,还集成了YouCompleteMe的配置,爽到.</p>
+<p>其中目前尚未补完README,估计是个大坑,地址在此: <a href="https://github.com/Evil-crow/Crow-Vim" target="_blank" rel="noopener">Crow-Vim &gt;&gt;</a></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/Vim.png" alt="Vim"></p>
+<h3 id="gcc套件"><a href="#gcc套件" class="headerlink" title="gcc套件"></a>gcc套件</h3><p>虽然Linux平台上,默认使用GNU C Compiler套件包括(gcc, g++, gdb等),试试clang也是不错的</p>
+<p>尤其是clang-format,超好用,另外推荐一个二进制包集合<a href="http://www.gnu.org/software/binutils/" target="_blank" rel="noopener">Binutils &gt;&gt;</a></p>
+<h3 id="Google-chrome"><a href="#Google-chrome" class="headerlink" title="Google-chrome"></a>Google-chrome</h3><p>新时代的超强浏览器,超爽,主要和VPN契合度也比较高.好用,而且Google 的Cloud Service特别厉害</p>
+<h3 id="Visual-Studio-Code"><a href="#Visual-Studio-Code" class="headerlink" title="Visual Studio Code"></a>Visual Studio Code</h3><p>虽然宇宙第一IDE–Visual Studio已经改名上了Mac OS X.不过最近还没有登录Linux平台的想法</p>
+<p>让小弟VSC来试试水,超好用,推荐插件:</p>
+<ul>
+<li>C++ Intellisense (补全神器)</li>
+<li>C/C++ (提供语言支持,可以进行静态语法分析)</li>
+<li>One Monokai (变体Monokai,超好看)</li>
+<li>VSCode Great Icons (好看的Icons图标)</li>
+<li>Ruby Solargraph (提供Ruby补全,等着吧,Ruby劳资会回来的,不过可能上RM)</li>
+</ul>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/vscode.png" alt="VS Code"></p>
+<h3 id="Atom"><a href="#Atom" class="headerlink" title="Atom"></a>Atom</h3><p>说是Github出的新一代编辑器,不过目前貌似也就只是写前端舒服一点(Ruby会捡回来,前端,口可口可)</p>
+<p>(说不定就用WebStorm去了)</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/atom.png" alt="Atom"></p>
+<h3 id="Sublime-Text"><a href="#Sublime-Text" class="headerlink" title="Sublime Text"></a>Sublime Text</h3><p>使用时间很短,因为维护不积极,心累.已弃之.</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/st.png" alt="Sublime Text"></p>
+<h3 id="Qt-Creator"><a href="#Qt-Creator" class="headerlink" title="Qt Creator"></a>Qt Creator</h3><p>没什么多说的,C++ Qt GUI的IDE, 写C++鸡肋一点,但是写Qt很强,图形界面做的也比较好看</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/Qt.png" alt="Qt Cteator"></p>
+<h3 id="CLion"><a href="#CLion" class="headerlink" title="CLion"></a>CLion</h3><p>除VS以外的王牌C++IDE,个人审美倾向于CLion. 不过前面提到过KDE字体有问题</p>
+<p><strong>曲线救国: 从Win,或者其他地方export正常的setting.jar,在这里import进行</strong></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/CLion.png" alt="CLion"></p>
+<h3 id="Haroopad"><a href="#Haroopad" class="headerlink" title="Haroopad"></a>Haroopad</h3><p>我见过的有史以来的最好的MarkDown编辑器,支持:</p>
+<ul>
+<li>html/css嵌套</li>
+<li>mathjax的支持</li>
+<li>多种theme</li>
+<li>语法高亮</li>
+</ul>
+<p>简单地说,解释能力强,Markdown标记支持完善,同时颜值高 <a href="http://pad.haroopress.com/user.html" target="_blank" rel="noopener">Haroopad &gt;&gt;</a></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/Haroopad.png" alt="Haroopad"></p>
+<h3 id="netease-cloud-music"><a href="#netease-cloud-music" class="headerlink" title="netease-cloud-music"></a>netease-cloud-music</h3><p>超好用的网易云音乐,Fedora27目前不支持,但是github上有deb封包转化的rpm包</p>
+<p><em>有点小问题,不过无伤大雅</em></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/netease-cloud.png" alt="netease-cloud-music"></p>
+<h3 id="Shadowsocks-qt5"><a href="#Shadowsocks-qt5" class="headerlink" title="Shadowsocks-qt5"></a>Shadowsocks-qt5</h3><p>shadowsocks的话题不多说,仅仅介绍这个好看的客户端,C++Qt编写.</p>
+<p>好看,快捷,其中存在一个问题: 当libbortan库指定版本不存在时, </p>
+<p><strong>一般是库版本更新太快,重新做一个软链接,程序正常启动,否则会找不到链接库而启动失败</strong></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/ss-qt5.png" alt="Shdowsocks-qt5"></p>
+<h3 id="fcitx小企鹅输入法"><a href="#fcitx小企鹅输入法" class="headerlink" title="fcitx小企鹅输入法"></a>fcitx小企鹅输入法</h3><p>fcitx只是一个框架引擎, 它可以搭载任何输入法, 我们要推荐的就是<strong>Rime,中州韵</strong></p>
+<p>具体的可以访问官网,基本是这样子. <a href="https://www.baidu.com/link?url=-G25PobK8KLfBGkeuSSuWSpQmjzNqFTVj20t02l6Anu&amp;wd=&amp;eqid=99014f4700010abf000000035b6017de" target="_blank" rel="noopener">Rime &gt;&gt;</a></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/fcitx.png" alt="Fcitx-rime"></p>
+<h3 id="文字编辑"><a href="#文字编辑" class="headerlink" title="文字编辑"></a>文字编辑</h3><p>大家可以使用Linux版的WPS,<em>我一般就切系统了…</em></p>
+<h3 id="valgrind"><a href="#valgrind" class="headerlink" title="valgrind"></a>valgrind</h3><p>要想写C/C++事半功倍,必须了解（终端使用的工具）</p>
+<h3 id="IntelliJ-IDEA／RubyMime等"><a href="#IntelliJ-IDEA／RubyMime等" class="headerlink" title="IntelliJ IDEA／RubyMime等"></a>IntelliJ IDEA／RubyMime等</h3><p>同CLion,主攻语言不同罢了,所以功能有差异,风格近似</p>
+<h3 id="Latte-Dock"><a href="#Latte-Dock" class="headerlink" title="Latte Dock"></a>Latte Dock</h3><p>KDE专属Dock,甩什么<code>dash-to-dock</code>, <code>cairo-dock</code>十八条街.</p>
+<p>原生支持wayland,Fedora适性也是没问题的,超级好看兼好用</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/latte.png" alt="latte"></p>
+<hr>
+<p><em>差不多所了,这一次的介绍就到此,我们有机会下次再补充</em></p>
+<p><em>估计差不多了</em></p>
+<p><em>有钱了,上Mac OS X. 当然KDE仍然是个好桌面,继续用下去</em></p>
+<p>update: July 31, 2018 4:13 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://yoursite.com/2018/07/31/Evilcrow/linux_setting/" data-id="cjk9fzmgi000kfynri95vn3g2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACLklEQVR42u3awY6DMAxFUf7/pxlptgzhPqetpvZlhUpLfLqwEtvHga/z97rer79/va5P7351vOOSIUPG1zLO5UVCX4e4vr/D8NhkyJAxh1ELjiyw/hX5fB2bDBkyZNx9h3yy3r+RpzJkyJCxk3DJ8nxTSO5lyJAhgxfIeIifeZsMGTImMHYaA+++/1B/Q4YMGf+YcYZX7Q286FaMSoYMGa0ZaeGstiQfsEgPwyg4GTJkNGKsF9jZj6WNTB6bDBkypjHS8S8eEG8wpMdpGTJkzGHU2pBpHSwdNav90TJkyJjAqKW8tFTHm5oxSYYMGU0ZPMmmx1o+ZFZL9DJkyJjDSEtsNUDaEiB/gQwZMuYweBrljU+y7ePhoqhkyJDRlMHHLGoJNx0sq60oQ4aM3oxaKPsNSP6edAREhgwZ/Ri14F6VImubxT+eypAhYwyDl7fS7igfb60Ns8qQIWMCA81i8PSHN5p8UOOBJEOGjNaMtMTPUyov3nFkkHZlyJDRiMHTYi2NBtW+jdapDBkyJjDIgZMUyMiwRW0rKUOGjMkMsoHjKTjdDqat0Ie1ZMiQ0ZRxhle6ySMpuJbWHw6xMmTIaMRIk106vJUm6x28DBkyejN4kiUh8tSZbh8f3iBDhowBDLKxS4+y6TBHmvTRWVyGDBnDGDtlOJ6sa4NiMmTIkLGzPP8OL9vdHmJlyJDRmpE2A2olew5IGwYyZMjozUgPkLURrtr9ixuZMmTI+D7GD4m+YL4i9svJAAAAAElFTkSuQmCC">分享</a><div class="tags"></div><div class="post-nav"><a class="next" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/编程语言/">编程语言</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/C-C/">C/C++</a></li></ul></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C3P_VI/">VI Function</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/25/SQL/MySQL_start/">MySQL入门</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/20/C++/C_C++_expr/">C/C++坑点总结</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/10/C++/pointer_and_reference/">指针与引用</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/07/TLPI/syscall/">Linux x86_64系统调用的实现过程</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/06/04/C/Expert_C_Programming/error_jmp/">聊一聊C中的异常处理</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
