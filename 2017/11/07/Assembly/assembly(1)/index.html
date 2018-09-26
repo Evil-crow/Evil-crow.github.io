@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>汇编语言(一)_基础知识 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">汇编语言(一)_基础知识</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">汇编语言(一)_基础知识</h1><div class="post-meta">Nov 7, 2017<span> | </span><span class="category"><a href="/categories/编程语言/">编程语言</a></span></div><div class="post-content"><p><em>汇编语言,没想到有一天我也要将重心放在汇编上进行学习.以前,都是进行调侃,说用汇编写”Hello World”</em></p>
+<p><em>不过,作为一门语言来讲,汇编还是很有意思的,在这里可以清楚的明白pointer到底为何物 ? </em></p>
+<p><em>先从基础知识开始积累</em></p>
+<h2 id="1-1-机器语言"><a href="#1-1-机器语言" class="headerlink" title="1.1 机器语言"></a>1.1 机器语言</h2><p>计算机的发展仅仅只有不到一百年的历史,发展十分迅速.但是,在最初的阶段,计算机的发展也是步履维艰的</p>
+<p><strong>计算机是电子设备,所以其中进行信息的表示都是使用高低电平的.</strong></p>
+<p><strong>那么表示高低电平这两种状态最简单的就是使用0,1两种状态.</strong></p>
+<p><strong>常用的机器指令,就是一列二进制数,而计算机就将这一列二进制数转换成为高低电平来表示指令</strong></p>
+<blockquote>
+<p>Tips: 计算机与PC机</p>
+</blockquote>
+<blockquote>
+<p>来区分一个容易混淆的概念,计算机与PC机.从广义的角度上来讲,这两者是一致的.</p>
+</blockquote>
+<blockquote>
+<p>但是,实际上计算机指的是可以执行机器指令,进行运算的机器,这是早期的计算机的概念</p>
+</blockquote>
+<blockquote>
+<p>而PC机则是现代意义上的计算机,有一个芯片就可以完成上面所有的任务,即CPU</p>
+</blockquote>
+<blockquote>
+<p>那么,PC机是什么?,CPU与其他直接或者间接受CPU控制的芯片,器件,设备组成的计算机系统,即是PC机</p>
+</blockquote>
+<p>而每一种微处理器,由于硬件设计,内部结构的不同.造成其需要不同的电平脉冲进行指令操作</p>
+<p><strong>每一种微处理器都有其自身的机器指令集,即机器语言,这也是造成汇编语言基本没有可移植性的原因</strong></p>
+<p>早期的程序员,真的是十分辛苦的,因为机器语言的缘故,使得要使用纸带以及卡片机进行编程</p>
+<p>这样有两个致命缺点:</p>
+<p><strong>1.编程时难度大,极易出错</strong></p>
+<p><strong>2.后期的维护很不方便,出错后,进行Debug也是十分的麻烦</strong></p>
+<p>所以,才有了汇编语言的诞生,以至于之后还衍生出了许多更高级的语言</p>
+<h2 id="1-2-汇编语言"><a href="#1-2-汇编语言" class="headerlink" title="1.2 汇编语言"></a>1.2 汇编语言</h2><p>由以上可知,<strong>机器语言,晦涩,难懂,不便于维护</strong>,所以就出现了汇编语言</p>
+<p>什么是汇编语言呢?</p>
+<p><strong>汇编语言,主体是汇编指令,汇编指令就是机器语言(机器指令)的助记符,实质是相同的</strong></p>
+<p><strong>汇编指令仅仅只是机器指令便于记忆的格式</strong></p>
+<p>来举个例子:</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">操作:寄存器<span class="built_in">BX</span>的内容送到<span class="built_in">AX</span>中</span><br><span class="line"></span><br><span class="line">机器指令:<span class="number">1000100111011000</span></span><br><span class="line"></span><br><span class="line">汇编指令:<span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="built_in">bx</span></span><br></pre></td></tr></table></figure>
+<p>由上面的这个例子,可以很清楚的看出汇编指令的作用了吧,</p>
+<p><strong>对,没错,使用汇编指令可以大幅提高程序开发的效率和后期维护的方便</strong></p>
+<p>所以,程序员的开发模式由:</p>
+<p>程序员 -&gt; 机器语言 -&gt; 计算机</p>
+<p>程序员 -&gt; 汇编语言 -&gt; 编译器 -&gt;机器语言 -&gt; 计算机</p>
+<p>大大得体高了程序设计的效率</p>
+<blockquote>
+<p>Tips: 汇编代码大小写的问题</p>
+</blockquote>
+<blockquote>
+<p>汇编代码的大小写并无差异，对于汇编指令而言</p>
+</blockquote>
+<blockquote>
+<p>但是，对于程序员所定义的变量之类而言，是要严格区分大小写的</p>
+</blockquote>
+<blockquote>
+<p>即{MOV,PUSH,ADD,LOOP…} == {mov,push,add,loop}</p>
+</blockquote>
+<h2 id="1-3-汇编语言的组成"><a href="#1-3-汇编语言的组成" class="headerlink" title="1.3 汇编语言的组成"></a>1.3 汇编语言的组成</h2><p>汇编语言主要由三种内容组成:</p>
+<table>
+<thead>
+<tr>
+<th>序号</th>
+<th>指令</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>汇编指令</td>
+<td>机器码的助记符,有对应的机器码</td>
+</tr>
+<tr>
+<td>2</td>
+<td>伪指令</td>
+<td>由编译器执行,计算机不执行,没有机器码</td>
+</tr>
+<tr>
+<td>3</td>
+<td>其他符号</td>
+<td>如+,-,/,*等,由编译器识别,没有对应的机器码</td>
+</tr>
+</tbody>
+</table>
+<h2 id="1-4-存储器"><a href="#1-4-存储器" class="headerlink" title="1.4 存储器"></a>1.4 存储器</h2><p>存储器是在计算机科学中常提到的一个词,实际上,就是我们平时所说到的内存</p>
+<p>内存有什么用呢?</p>
+<p><strong>内存可以暂时存储CPU需要进行处理的数据,需要操作的指令</strong></p>
+<p><strong>所以说,性能再强的CPU脱离了内存也是无法工作的</strong></p>
+<p><strong>内存不同于硬盘,硬盘的数据需要读入内存中才能被CPU使用</strong></p>
+<p>我们想要学好汇编语言,就必须对计算机的内从优一定程度上的了解与熟悉</p>
+<h2 id="1-5-指令和数据"><a href="#1-5-指令和数据" class="headerlink" title="1.5 指令和数据"></a>1.5 指令和数据</h2><p>在计算机中,对于指令和数据是不加区分的(在内存中)</p>
+<p><strong>在内存中,指令和数据都是以二进制的形式存储的,系统不会区分是指令还是数据</strong></p>
+<p>如:</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1000100111011000</span> -&gt; <span class="number">89D8H</span> (数据)</span><br><span class="line"><span class="number">1000100111011000</span> -&gt; <span class="keyword">mov</span> <span class="built_in">ax</span>,<span class="built_in">bx</span> (指令)</span><br></pre></td></tr></table></figure>
+<p>同样的二进制数字,可以是数据,也可以是指令,具体作为指令还是数据处理,在从内存中取出时进行区分</p>
+<h2 id="1-6-存储单元"><a href="#1-6-存储单元" class="headerlink" title="1.6 存储单元"></a>1.6 存储单元</h2><p>前面说了很多,汇编语言是直接操控硬件,主要的是进行计算机内存的处理.</p>
+<p>那么,关于存储单元的知识就需要好好理解了</p>
+<p>之前提到过,存储器指的是内存,我们使用内存总不可能一次直接将它都使用了,对吧</p>
+<p>所以,为了更好地利用内存,才会有存储单元的概念.</p>
+<p><strong>所谓,存储单元,指的是将存储器进行划分，一个存储单元所能存储的信息为1byte</strong></p>
+<p>所以如果一个存储器有128个存储单元，那么他所能存储的信息就有128byte</p>
+<p>对于微机存储器来讲，我们可以说他的容量就是128字节</p>
+<blockquote>
+<p>Tips: 关于存储单位</p>
+</blockquote>
+<blockquote>
+<p>字：word＝２Byte＝16Bit</p>
+</blockquote>
+<blockquote>
+<p>字节：1 Byte= 8 Bit</p>
+</blockquote>
+<blockquote>
+<p>位：计算机中最小的存储单位</p>
+</blockquote>
+<blockquote>
+<p>B=Byte=byte</p>
+</blockquote>
+<blockquote>
+<p>b=bit=Bit</p>
+</blockquote>
+<h2 id="1-7-CPU对于存储器的读写"><a href="#1-7-CPU对于存储器的读写" class="headerlink" title="1.7 CPU对于存储器的读写"></a>1.7 CPU对于存储器的读写</h2><p>存储器在计算机中被分成了多个存储单元,那么计算机(PC机中的CPU)如何对其进行访问,操作呢?</p>
+<p>CPU(计算机)对存储器的读写是依靠总线的,</p>
+<blockquote>
+<p>Tips: 总线</p>
+</blockquote>
+<blockquote>
+<p>由导线组成的传输线束,是计算机的内部结构.</p>
+</blockquote>
+<blockquote>
+<p>CPU,内存,输入/出设备的公用通道,主机部件由总线连接</p>
+</blockquote>
+<blockquote>
+<p>外部设备通过相应的接口电路与总线连接</p>
+</blockquote>
+<blockquote>
+<p>系统总线,包括,数据总线,地址总线,控制总线,这三种即为通常意义上的总线</p>
+</blockquote>
+<blockquote>
+<p>另外还有,扩展总线,局部总线.注意在某些硬件上,Data,Address总线是可以进行复用的</p>
+</blockquote>
+<p>CPU要对存储器进行操作,分析可得,它需要三种总线:</p>
+<p>1.地址总线:用来对存储单元进行寻址,要知道操作的存储单元的地址</p>
+<p>2.控制总线:对存储单元那个进行操作,进行何种操作,即对存储单元的控制</p>
+<p>3.数据总线:获取到地址以及操作后,就需要数据总线来进行数据的传输</p>
+<p>CPU对存储器进行操作,总共有一下的三种信息交互:</p>
+<ul>
+<li><p>存储单元的地址(地址信息)</p>
+</li>
+<li><p>器件的选择,读或写命令(控制信息)</p>
+</li>
+<li><p>读或写的数据(数据信息)</p>
+</li>
+</ul>
+<p>下面来看一张图,明白CPU如何进行操作</p>
+<p><img src="http://oz3e8fi42.bkt.clouddn.com/1.png" alt=""></p>
+<p>上图中的过程是这样的:</p>
+<p>1.CPU通过地址线将寻址信息发出</p>
+<p>2.CPU通过控制总线发出内存读命令,选中存储器芯片,并且通知它,将要从中读取数据</p>
+<p>3.使用数据总线,将数据8送入CPU</p>
+<h3 id="地址总线"><a href="#地址总线" class="headerlink" title="地址总线"></a>地址总线</h3><p><strong>地址总线决定了CPU的寻址能力</strong></p>
+<p>地址总线是用来寻址的,那么地址的寻址范围有多少呢?</p>
+<p>每一根导线上由高低电平之分,即一根导线可以表示两种状态,我们来抽象一下</p>
+<p>一根导线可以表示,0,1两种信息,设地址总线共有N根导线组成,</p>
+<p><strong>地址总线的寻址单元有, 2 ^ N ,范围为 0 ~ 2^N - 1 </strong></p>
+<h3 id="数据总线"><a href="#数据总线" class="headerlink" title="数据总线"></a>数据总线</h3><p>CPU与内存或者其他器件之间的数据传送是通过数据总线来进行的.</p>
+<p><strong>数据总线的宽度决定了CPU和外界数据的传送速度</strong></p>
+<p>8根数据总线一次可以传送一个字节的数据,16根总线一次可以传送两个字节的数据</p>
+<p>8086CPU以及8088CPU的数据总线宽度分别为16和8</p>
+<p>所以对于两个字节的数据,8086CPU一次即可传输完毕,而8088CPU需要两次才能将数据输送完毕</p>
+<h3 id="控制总线"><a href="#控制总线" class="headerlink" title="控制总线"></a>控制总线</h3><p><strong>控制总线决定了CPU对系统中其他器件的控制能力</strong></p>
+<p>控制总线,并不是一条总线,实际上是很多控制线的集合.比如上面进行从内存中进行数据读写的操作</p>
+<p>既有”读输出信号”的控制总线,用来从CPU中输出信号</p>
+<p>又有”写输出信号”的控制总线,负责传送写信号</p>
+<blockquote>
+<p>Tips:关于总线能力的描述</p>
+</blockquote>
+<blockquote>
+<p>地址总线: 依靠所能访问到的存储单元总量来描述,比如,有13根地址总线的CPU,</p>
+</blockquote>
+<blockquote>
+<p>它的寻址能力就是2^13 = 8KB,即我们用该CPU的寻址能力是8KB来描述它</p>
+</blockquote>
+<blockquote>
+<p>数据总线: 便可以通数据总线的宽度来描述,总线越宽,一次能传输的数据越多</p>
+</blockquote>
+<blockquote>
+<p>控制总线: 所集成的控制总线越多,所能控制的CPU器件就越多,控制能就越强</p>
+</blockquote>
+<h2 id="1-8-内存地址空间"><a href="#1-8-内存地址空间" class="headerlink" title="1.8 内存地址空间"></a>1.8 内存地址空间</h2><p>我们使用汇编语言,而汇编语言更多的操作基本上是集中在内存,寄存器这些存储空间中的.</p>
+<p>所以认识内存地址空间是很有必要的</p>
+<p>首先来看两个概念:<strong>主板</strong>与<strong>接口卡</strong></p>
+<h4 id="主板"><a href="#主板" class="headerlink" title="主板"></a>主板</h4><p>每一台PC机上面都是存在主板的,随着计算机的发展,计算机已经不仅仅是计算机(指CPU)</p>
+<p>主板上有着各种各样的器件,这些器件通过总线相连</p>
+<p>举一个例子,如果说计算机是一座城市,那么主板便是城市中川流不息的汽车</p>
+<p><strong>CPU,存储器,外围芯片组,扩展插槽等,扩展插槽上一般插有RAM内存条,以及各种各样的接口卡</strong></p>
+<h4 id="接口卡"><a href="#接口卡" class="headerlink" title="接口卡"></a>接口卡</h4><p>为什么会有接口卡?</p>
+<p>CPU对于计算机所有的部件都要有绝对的控制,但是对于一些外部设备</p>
+<p>比如,鼠标,键盘,音响设备这些,都不能进行直接的控制,这些设备是平时接在接口卡上的</p>
+<p>接口之后再通过总线CPU相连,即CPU通过直接控制接口卡,实现间接控制外部设备</p>
+<h4 id="各类存储器芯片"><a href="#各类存储器芯片" class="headerlink" title="各类存储器芯片"></a>各类存储器芯片</h4><p>PC机中有许多的存储器芯片,根据读写属性来分,为RAM(随机存储器)与ROM(只读存储器)</p>
+<p>RAM,随机存储器:</p>
+<p>此类存储器,可读可写,但是必须带电存储,没电的时候,一切GG</p>
+<p>ROM,只读存储器:</p>
+<p>此类存储器,可读不可写,及时断电之后也可以保存数据</p>
+<p>从连接与功能上来分:</p>
+<ul>
+<li>随机存储器</li>
+</ul>
+<p>用于存放供CPU上绝大部分的程序和数据,主随机存储器一般由两个位置上的RAM组成</p>
+<p><strong>装在主板上的RAM以及插在扩展插槽上的RAM</strong></p>
+<ul>
+<li>装有BIOS的ROM</li>
+</ul>
+<p>BIOS,即为(Basic Input/Output System),BIOS不单指在主板上的BIOS,其实BIOS指的是主板</p>
+<p>以及各类接口卡厂商提供的软件系统,可以通过这样使硬件进行基本的输入输出</p>
+<p><strong>在主板即各类接口卡上插有存储BIOS的ROM</strong></p>
+<blockquote>
+<p>TIps: 联系日常</p>
+</blockquote>
+<blockquote>
+<p>通常,我们说的BIOS指的是主板BIOS,即系统BIOS</p>
+</blockquote>
+<blockquote>
+<p>而且,RAM,ROM并不是单指其中一个存储器,它指的是一类存储器,在PC机的各个位置都会有其存在</p>
+</blockquote>
+<blockquote>
+<p>另外有关RAM,ROM的概念,详情参考&lt;计算机科学导论&gt;</p>
+</blockquote>
+<ul>
+<li>接口卡上的RAM</li>
+</ul>
+<p>对于接口卡,在处理大批量数据时,也是需要进行暂时存储的,就需要用到RAM</p>
+<p>典型的是,插在显卡上的RAM,俗称显存,我们只要将想要显示的内容写在显存中,屏幕上就会出现内容</p>
+<p><img src="http://oz3e8fi42.bkt.clouddn.com/Screenshot_20171108_164917.png" alt=""></p>
+<h4 id="内存地址空间"><a href="#内存地址空间" class="headerlink" title="内存地址空间"></a>内存地址空间</h4><p>现在有了知识积累后,在来看看内存地址空间的内容</p>
+<p>CPU在进行计算机控制时,将上面这么多的存储器都作为内存对待,不仔细的进行区分.</p>
+<p><strong>把它们看成总的一个由多个存储单元组成的逻辑存储器,而这个逻辑存储器就是我们说的内存地址空间</strong></p>
+<p><strong>在汇编中,我们操控的便是内存地址空间</strong></p>
+<p><img src="http://oz3e8fi42.bkt.clouddn.com/Screenshot_20171108_164933.png" alt=""></p>
+<p>上面的逻辑存储器占有一个地址段,这个地址段即为CPU的地址总线所能访问到的所有存储单元</p>
+<p><strong>内存地址空间的大小受CPU总线宽度的限制</strong></p>
+<p>我们在基于计算机硬件进行编程的时候必须知道其第一个单元的地址和最后一个单元的地址</p>
+<p><strong>即我们必须知道内存得分配情况</strong></p>
+<p><strong>至于为什么要了解内存地址空间,因为我们汇编程序的代码最后都是由CPU执行</strong></p>
+<p><strong>所以我们就要从CPU的角度考虑问题,对CPU来讲所有存储器单元都是处于一个统一的逻辑存储器中</strong></p>
+<p><strong>他的容量受到CPU地址总线(寻址能力)的限制</strong></p>
+<blockquote>
+<p>Tips: 内存地址空间相关</p>
+</blockquote>
+<blockquote>
+<p>首先,来谈一些总线的事,</p>
+</blockquote>
+<blockquote>
+<p>1.地址总线,数据总线之间并无必然的相等关系,可以不相等</p>
+</blockquote>
+<blockquote>
+<p>2.常常谈到的CPU位数指的是数据通路的位数,即数据总线的宽度</p>
+</blockquote>
+<blockquote>
+<p>3.而操作系统的位数指的便是操作系统寻址能力,所以才有XP支持到4G的说法</p>
+</blockquote>
+<blockquote>
+<p>而上面说到的,也只是以前的理论知识,到了现在,随着计算机的发展,已经大变样了</p>
+</blockquote>
+<blockquote>
+<p>XP只支持到4G,也不是绝对的,还可以使用虚拟内存,扩展的…之类的</p>
+</blockquote>
+<blockquote>
+<p>另外有一点,便是理论值也并不是实际的情况,因为实际上就没有那么大的需求</p>
+</blockquote>
+<blockquote>
+<p>理论上操作系统的支持内存XXXXXGB,实际上目前支持到约192GB(Win10)</p>
+</blockquote>
+<blockquote>
+<p>64位处理器的总线基本上也就在39左右浮动,比如我的机子</p>
+</blockquote>
+<blockquote>
+<p>39物理总线,48虚拟总线</p>
+</blockquote>
+<blockquote>
+<p><img src="http://oz3e8fi42.bkt.clouddn.com/Screenshot_20171108_173040.png" alt=""></p>
+</blockquote>
+<p>最后,说一点学习的感受吧:</p>
+<p>学习汇编,感觉一般都是学习硬件知识,与之前的高级语言学习完全不一样</p>
+<p>知识在不断更新,而且网上鱼龙混杂,很麻烦</p>
+<p>好累,果然学习内核方向需要耐得住寂寞…</p>
+<p>November 8, 2017 5:32 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/11/07/Assembly/assembly(1)/" data-id="cjmj9ui8h0006oonracenizd8" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACM0lEQVR42u3ayw7CMAxEUf7/p8sWqTTMjFuk2DerqqI0h4XxI6+XvI6P9Xnn/Jnz58/Prr/hfP+2BQMGjG0Zx3Ip21rfVzbqvvcLFQYMGAMYVxFMCa/6prPAvd4bDBgwYCjXSsDVMTBgwIDxNEN6ZaFUhgEDxmSGGzorSy99H6nFYcCAsSFDD4X/v35kvgEDBoytGFmgzMrXbJAp7QoGDBitGXqAc8tL/ShGFnBhwIAxjaEPJpVwqR/w0gecYbIIAwaMFgz9AT3gZo28SssPBgwYExh3lbJucesG38tICwMGjPEMtzWm5GzuEY0fzTsYMGC0Zuj1YOXYhBus9Z/JLmthwICxISNLxfRtZWE0TA1hwIDRlFE/DHHXeFIfEvyYxMKAAWMAw824su0qowU7TYQBA0ZrhjJ0dFNDO7Ezj4BID8CAAaMRo1LKukfH9OswNYQBA0ZThj4GcIcBeiDWS+jwHwMGDBjbMupN/KzUrCSOl0EWBgwYTRmVejArdLMGnJu8woABox8ja+LrLf7K4NN4LwwYMAYw3KaYO0jIxpPh2BIGDBitGXpTXi909Xae2xaEAQPGBMZhLrdVV0kZjUEpDBgwWjPqA05l03oxXAnoMGDA6M1wU0O3ce/+ZtkeYMCAMYGRBcrs+Fcl1XtkvgEDBox2DP14hJsU6injDQEXBgwYYxhZ4rhOKN3gDgMGjDkMt6Gm9O30Fn+WVsKAAWMOIysds6FjdsBCL61hwIDRjvEGisIZBpKTVV8AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Assembly/">Assembly</a></div><div class="post-nav"><a class="pre" href="/2017/11/20/Other/CodeStyle/">编码风格</a><a class="next" href="/2017/10/24/VimScript/VimScript(V)/">VimScript的学习(五)</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

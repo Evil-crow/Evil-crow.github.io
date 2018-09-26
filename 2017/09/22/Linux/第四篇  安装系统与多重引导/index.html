@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第四篇 安装系统与多重引导 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第四篇 安装系统与多重引导</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第四篇 安装系统与多重引导</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Unix-Linux/">Unix/Linux</a></span></div><div class="post-content"><p><em>本章内容区别与之前的装机，之前的一篇之我自己没有任何学习经验的情况下，</em></p>
+<p><em>误打误撞进行装机的经验，此篇是比较系统正式的学习了之后的知识总结。</em></p>
+<ul>
+<li><p>第一步：由BIOS调整开机选项</p>
+<p>  通过上一章的学习，认识到BIOS在开机时的重要性，即对电脑开机时的一些配置选项</p>
+<p>  那么我们调整开机选项就与BIOS密切相关了。</p>
+<p>  通过网上查询，找到自己型号电脑开机时进入BIOS的快捷键</p>
+<p>  开机时，迅速进入BIOS设置界面，</p>
+<p>  之后，做到以下几点</p>
+<p>  1.关闭快速启动 Source Boot</p>
+<p>  2.改为Legacy only</p>
+<p>  重新开机，使用光盘，或可启动U盘进入安装。</p>
+</li>
+<li><p>第二步： 在安装时选择合适的选项</p>
+<p>  <strong>安装时的选项，语系，时区，Root账户，用户账户</strong></p>
+<p>  切记：<strong>以上内容需进行谨慎设置</strong></p>
+</li>
+<li><p>第三步：进行磁盘分区</p>
+<p>  如何进行分区，已经在上一章详述。</p>
+<p>  接下来介绍几种常用的文件系统类型：</p>
+<p>  在Win中基本都是FAT32，NTFS跑不掉</p>
+<p>  在Linux中则是ext2/ext3/ext4 日志文件系统</p>
+<p>  swap 内存交换空间，<strong>swap空间并不会使用到目录的挂载</strong></p>
+<p>  biosbrug 针对BIOS的挂载</p>
+<p>  vfat 兼容的文件系统</p>
+<p>  LVM 弹性调整文件系统的机制，</p>
+<p>  以上内容，我目前能懂得也不多，只能算是了解而已。</p>
+<blockquote>
+<p>针对swap分区：</p>
+</blockquote>
+<blockquote>
+<p>swap分区是用来存储物理内存中不常访问的数据的，可以理解为扩展内存</p>
+</blockquote>
+<blockquote>
+<p>Linux说明中，有建议swap是物理内存的1-1.5倍</p>
+</blockquote>
+<blockquote>
+<p>但是，这也只能算是以前的标准了，按现在来讲，其实都用不了，只要4G以上内存</p>
+</blockquote>
+</li>
+</ul>
+<p>最后的一些建议：</p>
+<p>强烈建议设置两个用户，普通用户作平时用，Root用户权限过大，可能会出错的。</p>
+<p>如果小白的水平不够，不建议自行进行grub2引导程序的安装，我当时就是这样把舍友电脑玩坏的，捂脸</p>
+<p>安装顺序：Win-&gt;Linux</p>
+<p>如果安装顺序反了不行吗？也可以使用grub2引导程序进行修正。</p>
+<p>还有具体的安装问题可以继续戳我。</p>
+<p>June 3, 2017 4:03 AM</p>
+<p><strong>———————————————–</strong></p>
+<p>Update: November 30, 2017 10:48 PM</p>
+<h3 id="系统启动流程"><a href="#系统启动流程" class="headerlink" title="系统启动流程"></a>系统启动流程</h3><h5 id="系统引导概述"><a href="#系统引导概述" class="headerlink" title="系统引导概述"></a>系统引导概述</h5><ol>
+<li><p>计算机加载BIOS,最接近硬件的软件,同时对计算机进行自检,”加电自检” (Power On Self Test)</p>
+</li>
+<li><p>BIOS读取MBR的内容,或者GPT中的内容进行系统启动引导,一段引导程序及分区信息,对于Grub,详述</p>
+</li>
+<li><p>运行Grub,同时开始计算机的第一个进程 /sbin/init 进行初始化</p>
+</li>
+<li><p>系统根据/etc/inittab中的设置,进行初始化配置,</p>
+<p>进行一系列的设置,比如系统变量,网络配置,并启动swap,设置/proc,加载用户自定义模块,加载内核设置</p>
+</li>
+<li><p>根据/etc/inittab中的runlevel启动对应的服务,运行指定rc?.d/下的脚本来启动服务</p>
+</li>
+<li><p>运行,/etc/rc.local</p>
+</li>
+<li><p>生成终端以及X Window来等待用户登录</p>
+</li>
+</ol>
+<h5 id="Grub-Runlevel-比较容易理解-在此不详述了"><a href="#Grub-Runlevel-比较容易理解-在此不详述了" class="headerlink" title="Grub,Runlevel 比较容易理解,在此不详述了"></a>Grub,Runlevel 比较容易理解,在此不详述了</h5></div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/09/22/Linux/第四篇  安装系统与多重引导/" data-id="cjmj9ui99001noonrxh1l5vdz" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACsElEQVR42u3awVIjMQwE0Pz/T7NVewWSbskOObw5UYFh/OZgOS09HvH19f/6/kl+/XbX98+fP+Vx48LDw8MbLT1Z1m/g5w9+zkvw+f/5YSV4eHh413jJspKC0W7rm9cUrQcPDw/vT3nPN+vZIpKDclKo8PDw8D6T18LapecvCw8PD+8TeHlMUMcB5d/P4uADWQseHh5e9/SiAfYJP1/s7+Hh4eEtuuqbUYA88M0P4vUK8fDw8C7w2uAgDyPaWDYZLGgjXTw8PLwbvP0BNy8V+XKTshHdhYeHh3eB17ajkgKwD4XfVAPx8PDwDvH2BaAdPsip+drw8PDwbvNm2/QGnwDyv3lxNMfDw8O7xpu1mvKD7HPqbBIg+i0eHh7eUd4pQN7ybw/xq7gEDw8P7wKv/eY+O/i2QfC9e/Hw8PD2955d9Cw5zscLksbYr0dqPDw8vEO8fBxqFli0/y0/ghevFQ8PD+8oL3/k7EoKzywyjtaMh4eHd5l3qgGWv6Z9eXgRN+Ph4eFd4LUDTPlm3bavZi9o+I0BDw8Pb8GbMfJFtG3+w0EGHh4e3gVefsDdDzydjXrbthweHh7eDd6eUbTz21mweLAADw8P7z28fMtONuVZtJF8nh+jX3T58PDw8Na8ZLlJY6yltiUkYURhBB4eHt5RXvuA/N5TgWx+QMfDw8O7x2vb/O2mvw9822P0D98Y8PDw8C7w8m06J+WFJAoUZhceHh7eUd5XeeUNsNkYQV4MooADDw8P7wKv3WNnEUYeE7dH6gMZDB4eHt6h3tBsi89HDdpRgNVQFx4eHt41Xr6V7xtpbUnYlC48PDy8T+DtRwf2xaZ4BXh4eHh/ytuEuftINx9ZwMPDw3sPLwkj2tBhNibVNrSOZS14eHh4h1pf+5i1PRC3pAOjWnh4eHgp7x8X3wMnSlxqdAAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/vbird/">vbird</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/Linux_C/第七章 进程操作(一)/">第七篇 进程控制(一)</a><a class="next" href="/2017/09/22/Linux/第十篇 文件系统与磁盘管理/">第十篇 磁盘与文件系统管理</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

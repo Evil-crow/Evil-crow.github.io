@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第五篇 在线求助与基本操作 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第五篇 在线求助与基本操作</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第五篇 在线求助与基本操作</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Unix-Linux/">Unix/Linux</a></span></div><div class="post-content"><p><em>本章是入门与安装的最后一章节，也可以是开启Linux系统学习的开始，会逐步接触Linux深处的东西</em></p>
+<p>首先，明确一个概念，我安装Linux作为练习机，非学习服务器的内容，</p>
+<p>则一些关于服务器的内容现在并不会深入。</p>
+<hr>
+<p>##命令行 与 图形界面</p>
+<p>Linux操作系统与Win一个很重要的区别就是：用户</p>
+<p>Linux属于多用户多任务类型的操作系统</p>
+<p>Win属于单用户多任务的操作系统</p>
+<p>所以，Linux的系统进行开关机就尤为重要，因为进行关机操作时其他的用户任务不一定完成。</p>
+<p>所以，了解对桌面环境的登陆与注销是十分有必要的，而这就牵扯到了命令行界面。</p>
+<p><strong>Linux系统本身是没有桌面环境的，即注销退出桌面环境后，还是Linux。桌面环境只是一个程序。</strong></p>
+<p><strong>对于Win而言，现在图形界面已经在内核(Kernel)中实现，若没有桌面环境，就不是Win了。</strong></p>
+<p><strong>注意:图形界面与命令行模式的切换</strong></p>
+<blockquote>
+<p>Linux会默认提供6各种终端供用户操作，为[ctrl]+[alt]+F1-F6 文字登陆界面的切换</p>
+</blockquote>
+<blockquote>
+<p>若要切换回图形界面桌面：[ctrl]+[alt]+F7即可</p>
+</blockquote>
+<p>如果图形界面没有启动，如何启动呢？</p>
+<p>有这样的代码<code>[Evilcrow@Evilcrow ~] $ startx</code>，即可启动图形界面。</p>
+<p>既然已经学习了如何在命令行模式与图形界面间的切换，那么开始终端操作吧！</p>
+<hr>
+<p>##在命令行模式下进行操作</p>
+<p>众所周知，只有在终端下操作Linux系统才是最有意思的，终端中进行操作都是使用命令行模式。</p>
+<p>那么，如何开始上手命令行模式呢？</p>
+<p>命令行，命令行，如字面意思而言，使用多行命令进行操作的模式。</p>
+<p>1.使用命令行模式登陆用户，</p>
+<p>在命令行模式下，输入密码即可登陆，注意：<strong>此时输入密码是不回显的，并非键盘失灵！</strong></p>
+<p>2.使用命令行模式退出/注销主机</p>
+<p>使用命令<code>[Evilcrow@Evilcrow ~ ] $ exit</code>即可注销主机，<strong>切记：注销并非关机</strong></p>
+<blockquote>
+<p>分析<code>[Evilcrow@Evilvrow] $/#</code></p>
+</blockquote>
+<blockquote>
+<p>Evilcrow 既为普通用户用户名，也为用户全名</p>
+</blockquote>
+<blockquote>
+<p>其中 $表示普通用户权限下操作</p>
+</blockquote>
+<blockquote>
+<p>而 #表示Root权限下操作。</p>
+</blockquote>
+<blockquote>
+<p>强烈建议，设置系统用户时，一个普通用户，和一个管理员用户。</p>
+</blockquote>
+<blockquote>
+<p>Why? 因为Root账户权力太大了！</p>
+</blockquote>
+<hr>
+<p>##开始在命令行中执行命令</p>
+<ul>
+<li>执行命令：</li>
+</ul>
+<p><code>[Evilcrow@Evilcrow] $ command [-options] parameter1 parameter2</code></p>
+<p>即为，执行命令时的标准格式</p>
+<p>则有以下要点要注意：</p>
+<blockquote>
+<p>1.执行命令时的格式：命令/可执行文件名 + 选项 + 参数</p>
+</blockquote>
+<blockquote>
+<p>2.command 为命令名称或者文件名称 cd ls ./a.out</p>
+</blockquote>
+<blockquote>
+<p>3.模板中[]仅仅起到区分的作用，实际操作时，并非输入选项</p>
+</blockquote>
+<blockquote>
+<p>4.选项一般用 -l -a之类按需秋，但是，在某些选项时需要完整选项名  –help，详情查看说明文件</p>
+</blockquote>
+<blockquote>
+<p>5.在命令中，命令，选项，参数，用空格来分开，无论空几个空格，shell(即bash)均视为一格</p>
+</blockquote>
+<blockquote>
+<p>6.[Enter]键按下表示命令的执行，<strong>在命令中，是区分大小写的，cd：变换路径  CD：未知</strong></p>
+</blockquote>
+<p>举个例子：</p>
+<p>将当前目录下所有的文件都显示出来</p>
+<p>ls -al ~</p>
+<p>ls -a   -l  ~</p>
+<p>效果同理，选项可以合并写，也可以分开写，不影响实际操作结果。</p>
+<ul>
+<li>语言的选择：</li>
+</ul>
+<p>尽管我也很不情愿，但是我还是要说一句，<strong>在shell中，大家能使用英语还是使用英语！</strong></p>
+<p>首先是，使用中文可能会乱码，毕竟许多文件都是外国友人写的，一些文件也没有针对性的汉化</p>
+<p>贸然在shell中完全使用zh_CN.UTF-8可能会发生一些难处理的错误！</p>
+<p>建议：<strong>在使用shell时，使用英语语系</strong></p>
+<p>1.检查当前语系</p>
+<p><code>[Evilcrow@Evilcrow] $ echo $LANG</code></p>
+<p>即可查看当前语系，美式英语为en_US</p>
+<p>2.修改语系</p>
+<p><code>[Evilcrow@Evilcrow] $ LANG=en_US</code></p>
+<p>即可修改语系，<strong>注意LANG后“=”没有空格</strong></p>
+<p>修改为英语语系后，就可以在shell中畅游了，遇到英语不要怕，即使拿着字典查。</p>
+<p>###几个基础的简单命令</p>
+<ul>
+<li><p>日期与时间：date(<strong>注意：此命令一定为小写！</strong>)</p>
+<p><code>[Evilcrow@Evilcrow] $ date +%Y/%m/%d</code></p>
+</li>
+</ul>
+<p>即可，按照xxxx/xx/xx格式输出日期，其中+%Y/%y/%d都是参数，进行合理使用即可</p>
+<p><strong>命令行之后的参数不一定都是“-”，也存在“+”的情况</strong></p>
+<ul>
+<li>日历：cal(<strong>注意：此命令依然为小写！</strong>)</li>
+</ul>
+<p>直接使用<code>[Evilcrow@Evilcrow] $ cal</code>即可得本月(同计算机时间)日历</p>
+<p>cal的语法为：<code>cal[month][year]</code></p>
+<p>month的参数必须为1-12之间的数！</p>
+<p><strong>某些参数有特殊的取值范围，我们可以通过错误信息来了解他</strong></p>
+<ul>
+<li>简单的计算器：bc</li>
+</ul>
+<p><code>[Evilcrow@Evilcrow] $ bc</code> 即可打开计算器</p>
+<p>此计算器，在第一行输入算式，第二行即可得到结果</p>
+<p><strong>注意：bc计算器，实际上默认的数据都为整型，所以输出1/10的结果为0</strong></p>
+<p><strong>解决办法：<code>scale = number</code>，其中number为需要保留的小数位数</strong></p>
+<p>最后，退出计算器，quit进行退出即可。</p>
+<p>以上内容的总结：</p>
+<p>1.在命令行模式中执行命令，有两种情况：</p>
+<p>  命令直接显示结果并回到命令行模式界面</p>
+<p>  或者 进入该命令环境中，直到结束命令才能回到命令行模式界面</p>
+<p>判断：每次只要是<code>[Evilcrow@Evilcrow] $</code>光标等待击键，即为命令提示符界面，等待命令输入</p>
+<p>2.一直在说shell，shell到底是什么？shell(壳)区别于kernel(核)，</p>
+<p>即指人与机器互的程序，例如在Linux下的bash，Win下的cmd都是shell</p>
+<p>##几个重要的热键</p>
+<ul>
+<li>Tab补全</li>
+</ul>
+<p>大家是不是经常也会出现命令记不全的时候，对吗？</p>
+<p>那该怎么办，难道去背吗？</p>
+<p>Linux中提供了一个很方便的热键 Tab</p>
+<p>Tab键可以进行命令/文件补全功能</p>
+<blockquote>
+<p>用法：</p>
+</blockquote>
+<blockquote>
+<p>在command的位置，输入相关部分的命令，在敲击两次[Tab]即可显示出之后所有可能的命令</p>
+</blockquote>
+<blockquote>
+<p>而选项，参数，这些并不会补全，这些需要你自行查阅说明解决</p>
+</blockquote>
+<blockquote>
+<p>在命令确定后，即可进行文件名的补全，同理敲击两次[Tab]即可，显示出所有可操作文件名</p>
+</blockquote>
+<p>Tab作为一个很重要的补全功能热键，希望大家能合理使用！</p>
+<ul>
+<li>[Ctrl]-c  进程终止热键</li>
+</ul>
+<p>有时候避免不了的，会进行了错误的进程，那么怎么办？</p>
+<p>热键[Ctrl]-c解决了这个而问题，会强制终止进程！</p>
+<p>虽然好用，但是有的时候，也需要谨慎使用，不能肆意使用，否则会引起重大错误的出现</p>
+<ul>
+<li>[Ctrl]-d  结束输入热键</li>
+</ul>
+<p>使用[Ctrl]-d可迅速结束从键盘的输入，相当于输入exit（ ）一样</p>
+<p><strong>注意：请刻关注错误消息，可以从错误报告中进行挖掘</strong></p>
+<h2 id="man-page-与-info-page"><a href="#man-page-与-info-page" class="headerlink" title="man page 与 info page"></a>man page 与 info page</h2><p>在上面的小节中，介绍了几个简单的命令</p>
+<p>ls，cal，date，bc，</p>
+<p>但是，你能完全掌握它的功能吗？</p>
+<p>你了解它的每一个选项，没一个参数吗？</p>
+<p>这个时候就需要用到强大的在在线求助 <strong>man page</strong></p>
+<p>man 也是命令 为manual(操作说明）</p>
+<p><code>man command</code>即可显示此命令的操作说明！</p>
+<p>举个例子：</p>
+<p>man ls     即可显示关于 ls 命令的所有内容，包括其用法，等级，相关环境参数等一系列信息</p>
+<p>而使用 man命令时会进入一个界面，此即所谓的 man page，在其中也可以使用许多快捷键进行操作</p>
+<p>可以说，过man命令即可了解到所有的命令相关的操作说明。</p>
+<p>即，虽然Linux中有许多许多的命令，你背不完所有的命令，你也不需要背过所有的命令</p>
+<p><strong>记住平时常用的命令，然后灵活使用man 与 Tab补全即可完成许多复杂操作</strong></p>
+<p>info page的用法与 man page基本类似，</p>
+<p>但是，在info中将文件数据折叠成一个个段落，更方便使用者的查询与查看。</p>
+<p>##nano轻量级编辑器</p>
+<p>虽然在Linux下，提及编译器莫不是</p>
+<p><strong>“编辑器之神”Vim 和“神之编辑器”Emacs</strong></p>
+<p>但是，一些轻量级，精简的编辑器也是十分的好用，比如nano</p>
+<p>nano中同样使用了大量的快捷键，根据他的快捷键，也可以了解到许多有趣的操作。</p>
+<p>最后，回到最开始的问题上：正确的关机方法</p>
+<p>由于涉及此部分不多，所以简要说明</p>
+<p>要对Linux进行关机，首先进行资源的查看，确保不会中断其他用户的关键操作</p>
+<p>然后关机时给个用户发消息，预留备份数据的时间</p>
+<p>最后按需求关机</p>
+<p>June 3, 2017 12:32 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/09/22/Linux/第五篇  在线求助与基本操作/" data-id="cjmj9ui92001aoonrcztuomi9" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACrklEQVR42u3awW7kIBAE0Pn/n5697iqxU9WAMys9n6LIMTwONCn69Yqf91/P19+/Rs/Xb74vnvWx8PDw8Pby3rdPPnC+BFeTvnozn883S4CHh4d3jHe1oyYDX70fDb881g8WPDw8vA/g3U+0Peu2B248PDy8/503KwZtOcHDw8P7TN7Kp/ND8EocfDxrwcPDw+vSgFf76d/9+cj9Hh4eHt7yrfrsMiw58ubNAXkx+OabeHh4eAd47XG23aZnS9O++UNzGB4eHt5WXtsgtetqajbdpFD9MxYeHh7eAV5UN0YhbN6SVdexsgUBDw8P7xleciCelYEVUhte4OHh4T3DW2Gf2/QP3uzh4eHhLQOSibbhbNuA1ZalurMMDw8Pb4E3u5rKi8EstriPhouf8fDw8A7wkmPr7AC9ArsvHkmBwcPDw/td3mxDbwtMuxxFmIuHh4d3jLcrVlhPR2YlBA8PD+8ZXvuhlSPySjHIl3LzFPHw8PAC3uyCKokMcnDeKFBUPDw8PLxNvF1bf94WUPQylHOrm7Tw8PDwRrw2Skg233YJ8nfqyzA8PDy8w7wWMGsRaFsQ2lIR3ezh4eHhLfDaqPT+c20kkYwVxbV4eHh4D/JWtuPZtIrrq/iYfrnEeHh4eAd47T/5LTj523zc4dEcDw8P7xhvb0lYaU3YHC7j4eHhPcKbNVTdY3YFwfUX8PDw8B7h5Q1P7fbdxriziGRD3cPDw8O73TPzp73Wyrf+ZFHqgAMPDw/vAO90ANE2IrQh72vXg4eHh1fyVorBShPArMAMY1w8PDy8A7yVTXmlALSlYkf8goeHh/c0L9n0ZwvUxsRRZIyHh4f3Yby9BSBnFEd5PDw8vGO8vEm0HSa/1rp/Py9OeHh4eKd57X/0ecFIgte2PetIbIGHh4eX8v4AOV7Y7iXSkWQAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/vbird/">vbird</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/Linux/第八篇  Linux文件与目录管理(上)/">第八篇 Linux文件与目录管理(上)</a><a class="next" href="/2017/09/22/Linux/第二篇  Linux基础知识/">第二篇 Linux基础知识</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

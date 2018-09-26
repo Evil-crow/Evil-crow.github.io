@@ -1,0 +1,194 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Ruby学习笔记(一) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Ruby学习笔记(一)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Ruby学习笔记(一)</h1><div class="post-meta">Feb 1, 2018<span> | </span><span class="category"><a href="/categories/编程语言/">编程语言</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一-杂项"><span class="toc-number">1.</span> <span class="toc-text">一. 杂项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#二-对象-变量-常量"><span class="toc-number">2.</span> <span class="toc-text">二, 对象,变量,常量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-变量的类型"><span class="toc-number">2.1.</span> <span class="toc-text">1. 变量的类型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-常量"><span class="toc-number">2.2.</span> <span class="toc-text">2. 常量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-灵活的使用多重赋值"><span class="toc-number">2.3.</span> <span class="toc-text">3. 灵活的使用多重赋值</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-变量的命名方法"><span class="toc-number">2.4.</span> <span class="toc-text">4. 变量的命名方法</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#三-条件判断"><span class="toc-number">3.</span> <span class="toc-text">三, 条件判断</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-聊聊对象的同一性"><span class="toc-number">3.1.</span> <span class="toc-text">2. 聊聊对象的同一性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-nil是什么"><span class="toc-number">3.2.</span> <span class="toc-text">3, nil是什么</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#四-循环控制"><span class="toc-number">4.</span> <span class="toc-text">四, 循环控制</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#五-do-end-与"><span class="toc-number">5.</span> <span class="toc-text">五, do ~ end 与{ ~ }</span></a></li></ol></div></div><div class="post-content"><p>[TOC]<br><em>之前写博客太作逼了,说到底,博客还是给自己看的,所以,以后的博客可能不是那么的说人话</em></p>
+<h2 id="一-杂项"><a href="#一-杂项" class="headerlink" title="一. 杂项"></a>一. 杂项</h2><ol>
+<li><p>Ruby中可以子符串中获取到变量的值,不同于C中的”%”控制符,也不同于VimScript中的${}</p>
+<p> <strong>Ruby中使用的是#{var},在子符串中获取到变量的值</strong></p>
+</li>
+<li><p>调用类时,需要写类名,当然也可以 </p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span> Math</span><br></pre></td></tr></table></figure>
+<p>之后就可以随便使用Math中的方法</p>
+</li>
+<li><p>“string”,会进行转义, ‘string’不会进行转义</p>
+</li>
+<li><p>Ruby中的数组是动态数组,会自动根据需求调整数组大小,所以要写具有Ruby风格的数组操作代码</p>
+<p> 比如</p>
+ <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">array = []</span><br><span class="line">array[<span class="number">2</span>] = <span class="number">3</span></span><br><span class="line">p array <span class="comment">#=&gt; [nil, nil, 3]</span></span><br><span class="line">   p array.szie <span class="comment">#=&gt; 3</span></span><br></pre></td></tr></table></figure>
+<p> 总之,在符合标准的条件下,自由进行代码组织,Ruby是非常灵活的,给”人”写的语言</p>
+</li>
+<li><p>散列的两种组织方法</p>
+<p> 由于散利的键一般是符号/字符串,我们倾向于使用符号,<strong>因为只是判断相等与否,符号的开销小</strong></p>
+<p> 那么,就有两种散利的创建方法,一种是转换为符号(符号化),一种是直接操作符号</p>
+ <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hash = &#123;<span class="symbol">:foo</span> =&gt; <span class="string">"1"</span>, <span class="symbol">:soo</span> =&gt; <span class="string">"2"</span>&#125;</span><br><span class="line">hash_test = &#123;<span class="symbol">foo:</span> <span class="string">"1"</span>, <span class="symbol">soo:</span> <span class="string">"2"</span>&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>正则表达式的用法</p>
+<p> 既然是脚本语言,那么正则的使用是必不可少的,Ruby使用正则时是这样的</p>
+ <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/pattern/ =~ string</span><br></pre></td></tr></table></figure>
+<p> 就是这样进行匹配的,其中的pattern为模式串,即常写的正则表达式</p>
+</li>
+<li><p>从命令行获取输入使用的是预定义数组(伪变量),切记,<strong>ARGV[x]中取出的是字符串,需要to_?方法</strong></p>
+</li>
+<li><p>区分<strong>类</strong>与<strong>库</strong>,刚接触,还混淆过,require用来引用库,就像include之于C一般</p>
+</li>
+</ol>
+<h2 id="二-对象-变量-常量"><a href="#二-对象-变量-常量" class="headerlink" title="二, 对象,变量,常量"></a>二, 对象,变量,常量</h2><p>来捋一捋概念:</p>
+<p><strong>Ruby中数据的基本单位是对象,对象有很多种</strong></p>
+<p><strong>对象的特征,可以进行的操作,全部由类进行封装,</strong></p>
+<p><strong>实例就是对象,实例的说法是对类而言的,类就像是一类东西,实例就是其中一个具象的表达,即为对象</strong></p>
+<p><strong>所以,在Ruby中,实例即为对象</strong></p>
+<p><strong>另外,还有容器这个名词,那么,什么是容器,array,hash就是容器,因为他们是存放对象的对象</strong></p>
+<h3 id="1-变量的类型"><a href="#1-变量的类型" class="headerlink" title="1. 变量的类型"></a>1. 变量的类型</h3><p>Ruby也不复杂,变量类型就四种:</p>
+<p><strong>局部变量(英语字母或_开头),全局变量($),实例变量(@),类变量(@@)</strong></p>
+<p>另外,注意伪变量,<strong>false, true, ARGV, nil</strong>,这些即使赋值了,值也不会改变的</p>
+<p><strong>同其他编程语言(C),变量未经初始化,不能进行使用,会抛出异常</strong></p>
+<h3 id="2-常量"><a href="#2-常量" class="headerlink" title="2. 常量"></a>2. 常量</h3><p>常量要注意两点:</p>
+<p><strong><1>.常量不能重复赋值,会抛异常</1></strong></p>
+<p><strong><2>.Ruby中的常量都是大写字母</2></strong></p>
+<h3 id="3-灵活的使用多重赋值"><a href="#3-灵活的使用多重赋值" class="headerlink" title="3. 灵活的使用多重赋值"></a>3. 灵活的使用多重赋值</h3><h3 id="4-变量的命名方法"><a href="#4-变量的命名方法" class="headerlink" title="4. 变量的命名方法"></a>4. 变量的命名方法</h3><p>简单地来说,就三点:</p>
+<p><strong><1>.使用含义清晰,不冗杂的命名</1></strong></p>
+<p><strong><2>.变量和方法使用下划线命名法</2></strong></p>
+<p><strong><3>.类名和模块名使用驼峰命名法</3></strong></p>
+<h2 id="三-条件判断"><a href="#三-条件判断" class="headerlink" title="三, 条件判断"></a>三, 条件判断</h2><p>条件判断,其中重要的是:<strong>Ruby中何为真假值</strong></p>
+<table>
+<thead>
+<tr>
+<th>真假</th>
+<th>类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>真</td>
+<td>false/nil以外所有值</td>
+</tr>
+<tr>
+<td>假</td>
+<td>fasle, nil</td>
+</tr>
+</tbody>
+</table>
+<p><strong>从C转过来的,要十分注意这里</strong></p>
+<p>语句,看一下下面的例子就懂了</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> condition <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">elsif</span> condtion <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unless</span> condtion <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> object <span class="keyword">then</span></span><br><span class="line"><span class="keyword">when</span> value1 <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">when</span> value2 <span class="keyword">then</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="keyword">do</span> something</span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+<p>ruby的条件判断就上面三种语句,</p>
+<p><strong>从静态语言到脚本语言,是有点不适应,语法太过于灵活自由</strong></p>
+<p><strong>方法调用,可以不给参数加括号,</strong></p>
+<p><strong>上面三种于语句的条件(condtion)都不需要括号,同时then也都也可以省略</strong></p>
+<p><strong>但是,虽然语法自由,要写出自己的风格</strong></p>
+<p>既然语法自由,所以,可以将if/unless作为修饰符</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">puts <span class="string">"a &gt; b"</span> <span class="keyword">if</span> a &gt; b</span><br><span class="line">puts <span class="string">"a &gt; b"</span> <span class="keyword">unless</span> a &lt;= b</span><br></pre></td></tr></table></figure>
+<p>语句处理比较简单地时候,可以这样写,写得更加优雅,而不是在if ~ then ~ end 块中就只有一条语句</p>
+<h3 id="2-聊聊对象的同一性"><a href="#2-聊聊对象的同一性" class="headerlink" title="2. 聊聊对象的同一性"></a>2. 聊聊对象的同一性</h3><p>既然Ruby中数据的基本单位是对象,那么,如何区分看上去相同的对象呢?</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">str1 = <span class="string">"hello"</span></span><br><span class="line">str2 = <span class="string">"hello"</span></span><br><span class="line"></span><br><span class="line">str1 == str2 ? ? ?</span><br></pre></td></tr></table></figure>
+<p>上面使用”==”不太恰当,是为了说是否相等</p>
+<p>答案是:<strong>值相等,但并非是同一对象</strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">p str1.object_id <span class="comment">#=&gt; 10476400</span></span><br><span class="line">p str2.object_id <span class="comment">#=&gt; 10437580</span></span><br></pre></td></tr></table></figure>
+<p>很显然,并不相同</p>
+<p>所以我们,可以使用方法来进行判断,下面提到两个极易混淆的方法</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str1.equal?(str2) <span class="comment">#=&gt; false    检查是否为同一对象</span></span><br><span class="line">str1.eql?(str2) <span class="comment">#=&gt; true       检查是否相等</span></span><br></pre></td></tr></table></figure>
+<p>但是,eql?方法,进行检查是否相等时,内部实现,相对于 == 更为严谨</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>.eql?(<span class="number">1.0</span>) <span class="comment">#=&gt; false</span></span><br><span class="line">p <span class="number">1</span> == <span class="number">1.0</span> <span class="comment">#=&gt; true</span></span><br></pre></td></tr></table></figure>
+<p>尤其是在散列值得获取时,要十分注意,散列的内部实现是eql?方法</p>
+<p><strong>同时,我们自己在构建方法,是,也要遵守返回值为真假时,以?结尾的方法名</strong></p>
+<h3 id="3-nil是什么"><a href="#3-nil是什么" class="headerlink" title="3, nil是什么"></a>3, nil是什么</h3><p>之前说过,Ruby中真假值的判断与C有所不同,C中,NULL是什么?</p>
+<p><strong>NULL指空指针,实际上是啥?</strong></p>
+<p><strong>就是这个,(void *)0</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NULL (void *)0</span></span><br></pre></td></tr></table></figure>
+<p>所以,NULL可以所谓假的判断条件,</p>
+<p><strong>而nil指的是对象不存在,这样一想,所以nil也可以作为假的判断条件</strong></p>
+<h2 id="四-循环控制"><a href="#四-循环控制" class="headerlink" title="四, 循环控制"></a>四, 循环控制</h2><p><strong>循环的部分,有着这些注意的</strong></p>
+<p>for语句的用法</p>
+<p>与C中稍有不同</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> var <span class="keyword">in</span> object <span class="keyword">do</span></span><br><span class="line">  loop something</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line">这个对象还可以是,动态生成的(x..y)</span><br></pre></td></tr></table></figure>
+<p>来看看Ruby中循环控制符</p>
+<table>
+<thead>
+<tr>
+<th>控制符</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>break</td>
+<td>跳出循环</td>
+</tr>
+<tr>
+<td>next</td>
+<td>结束此次循环,进入下次,类似于continue</td>
+</tr>
+<tr>
+<td>redo</td>
+<td>重复上一次的行为</td>
+</tr>
+</tbody>
+</table>
+<p>关于redo:</p>
+<p><strong>这是一个比较神油的关键字,看下面这个例子</strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">name = [<span class="string">"Ruby"</span>, <span class="string">"Python"</span>, <span class="string">"C++"</span>, <span class="string">"Java"</span>]</span><br><span class="line">i = <span class="number">0</span></span><br><span class="line">name.each <span class="keyword">do</span> <span class="params">|lang|</span></span><br><span class="line">  i += <span class="number">1</span></span><br><span class="line">  <span class="keyword">redo</span> <span class="keyword">if</span> i == <span class="number">2</span></span><br><span class="line">  print [i,lang],<span class="string">"\n"</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#=&gt; </span></span><br><span class="line">[<span class="number">1</span>, <span class="string">"Ruby"</span>]</span><br><span class="line">[<span class="number">3</span>, <span class="string">"Python"</span>]</span><br><span class="line">[<span class="number">4</span>, <span class="string">"C++"</span>]</span><br><span class="line">[<span class="number">5</span>, <span class="string">"Java"</span>]</span><br></pre></td></tr></table></figure>
+<p><strong>当 i == 2 时,执行redo</strong></p>
+<p>程序回到这个块首,重新执行<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">i += <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>因此,才能跳出循环,否则会变成死循环</p>
+<p><strong>一般情况下,ruby仅提供此关键词,即使是Ruby类库中,一般也不会用到此关键字</strong></p>
+<p><strong>一般,break, next便可以处理大部分情况,即使要用redo,也要十分谨慎</strong></p>
+<p>来看看循环语句的区分,毕竟ruby<strong>提供了6方式来进行循环</strong></p>
+<table>
+<thead>
+<tr>
+<th>不同方式</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>times 方法</td>
+<td>确定循环次数时使用</td>
+</tr>
+<tr>
+<td>for 语句</td>
+<td>从对象中取出元素时使用(each的语法糖)</td>
+</tr>
+<tr>
+<td>while 语句</td>
+<td>自由制定循环条件时</td>
+</tr>
+<tr>
+<td>until 语句</td>
+<td>while比较难懂时,反其道行之</td>
+</tr>
+<tr>
+<td>each 方法</td>
+<td>从对象中取出元素时使用</td>
+</tr>
+<tr>
+<td>loop 方法</td>
+<td>不限制循环次数时使用</td>
+</tr>
+</tbody>
+</table>
+<p><strong>到这里,糖多的语言,写的是真的舒服</strong></p>
+<p><strong>for的内部实现,就是使用each方法</strong></p>
+<h2 id="五-do-end-与"><a href="#五-do-end-与" class="headerlink" title="五, do ~ end 与{ ~ }"></a>五, do ~ end 与{ ~ }</h2><p>这是两种块的写法,</p>
+<p>我们通常有以下的约定:</p>
+<p><strong><1>. 程序跨行时,使用do ~ end的写法</1></strong></p>
+<p><strong><2>. 程序在一行时,使用{ ~ }的写法</2></strong></p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10</span>.times <span class="keyword">do</span> <span class="params">|i|</span></span><br><span class="line">  puts i</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#=&gt; 10.times &#123;|i| puts i&#125;</span></span><br></pre></td></tr></table></figure>
+<p>这些都是些基础内容,下一次就是些OOP的知识了</p>
+<p>让我吹一句,<strong>人中之龙天下第一 (滑稽)</strong></p>
+<p>February 1, 2018 9:41 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2018/02/01/Ruby/Ruby1/" data-id="cjmj9ui9g0024oonr6cv0k6mf" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMYAAADGCAAAAACs8KCBAAACMUlEQVR42u3aS27DMAxF0ex/0w7QUSe27yOVIKauRkFiyDodsOLn9cLr+Fv/P5+t62fIW8iTxSVDhozHMvixzl7W+ab/J5MhQ8Y+jHS76x2uj0vCND+bDBkyZJCj8G/IkzJkyJDxuYBLUtbaNVSGDBkyauUzUpgjCTC/LC7LxWXIkPFARq0x8J3PH+9vyJAh4+cZR7jIdS1tVfaXDBkyZjPIZY5c+zg4Hcvgf0QZMmRMZZBxCp6CdoJv2lqQIUPGboy0QE/KbWkIJuH+FCZDhozRDPIQ/0yal3yYIy32yZAhYyojyHTDMS/enkzHO26qhjJkyBjHSANcOrYVp6ONpqkMGTJmM9IiGgmOncZn7RsZMmTMZvTbjWkDkiS6JJ2WIUPGDoz+azrhmKfHN2FahgwZGzA6IY+UwMivfAjs9G4rQ4aMoYx+sONpanqs+IYrQ4aM0Yw0le2U/oPuRDgIIkOGjKmMVUksD6npWAb6ZyBDhozRDB7g+pvyYYs00ZUhQ8ZsBgmCnWPVdo73kSFDxgYMHmrTclu6Dw+1Ny1MGTJkDGKQq1itesfL+p1AL0OGjB0YR7hqpTcesou/ypAhYzQjDXP8upa2M9N31ZqgMmTIeC6DHIKku6tKbOQMqD0gQ4aMcQwS+MjWnfZkGvRlyJAhgxTU0gJcreeILp0yZMiQgQPl2sJccAGVIUPGBozagAXfIR3C4M1RGTJk7MBIE8j0KOkQBjn0ghamDBkynsF4A8YhGQY6QsVfAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/Ruby/">Ruby</a></div><div class="post-nav"><a class="pre" href="/2018/02/06/Ruby/Ruby2/">Ruby学习笔记(二)</a><a class="next" href="/2018/01/21/C/C_Traps_Pitfalls/trap1/">语法陷阱与词法陷阱</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

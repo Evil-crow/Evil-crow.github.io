@@ -1,0 +1,208 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>第八章 线程控制(一) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">第八章 线程控制(一)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">第八章 线程控制(一)</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Unix-Linux/">Unix/Linux</a></span></div><div class="post-content"><p><em>上一次的内容是进程控制,到了这一章则是比进程用处更广泛的线程了</em></p>
+<p><em>学好线程,可是有很大的作用呢!</em></p>
+<p>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\</p>
+<p><strong>一,线程的概念</strong></p>
+<p>在进行线程的学习时,首先来了解一下概念:</p>
+<p><strong>线程是进程中的一个实体,自己不拥有资源,(除了运行中的必不可少的资源,如堆栈段,寄存器)</strong><br><strong>一个线程可以创建/撤销其他的线程,同一个进程中的多个线程可以并发执行</strong>,由于线程之间的相互制约<br>有间断性{就绪,阻塞,运行}<br><strong>每一个进程至少存在一个线程,如果只有一个线程,那么这个线程 = 进程 = 程序自身</strong></p>
+<p>再用用户看来,多个线程同时进行,实质上线程还也是类似于进程一样在进行调度运行,叫做<strong>并发</strong></p>
+<p>但是,要注意的一点是:<strong>在多核CPU的现世代,多个线程可以在不同的CPU上工作,即真正意义上的并行</strong></p>
+<hr>
+<p>为什么要有多线程,因为它比多进程有这些优点:</p>
+<ol>
+<li><p>多进程是独立的地址空间(vfork除外)</p>
+<p>反观多线程是独立的地址空间,<strong>同一进程内的线程,共享此进程的内存空间</strong></p>
+<p><strong>所以,多线程更具有时间优势</strong></p>
+</li>
+<li><p>系统调度方面</p>
+<p>在系统调度方面,<strong>因为线程共享内存空间,所以在线程调度切换上更具有优势,内部直接进行通信</strong></p>
+<p>而进程之间的系统调度,<strong>则需要信号机制调度,必经过操作系统,时间上更麻烦</strong></p>
+</li>
+<li><p>另外的一些优势</p>
+<p>使用线程,可以提高响应速度,可以提高多处理器效率,改善程序结构</p>
+</li>
+</ol>
+<p>在我自己的理解看来,</p>
+<p><strong>线程也没有多神秘,其实就是在进程中继续划分的更小的计算机工作单位,可以更好地提高效率,节省时间</strong></p>
+<p>上面提到了,同一进程内的线程线程共享进程的地址空间,但是,线程也有其私有数据(区别于之后的<strong>“私有数据”</strong>)</p>
+<blockquote>
+<p>线程号,ThreadID</p>
+</blockquote>
+<blockquote>
+<p>寄存器 [程序计数器,堆栈指针]</p>
+</blockquote>
+<blockquote>
+<p>堆栈</p>
+</blockquote>
+<blockquote>
+<p>信号掩码</p>
+</blockquote>
+<blockquote>
+<p>优先级</p>
+</blockquote>
+<blockquote>
+<p>线程的私有存储空间</p>
+</blockquote>
+<p>Linux系统下,不同于进程,线程的实现方式基于POSIX多线程标准</p>
+<p>所有线程的操作,都是基于POSIX基准的接口函数</p>
+<p>所以,<strong>在进行编译时,要链接动态库 -lpthread</strong></p>
+<p>下面说一些线程其他事情吧:</p>
+<hr>
+<ol>
+<li><p>为什么会有线程出现?</p>
+<p>上世纪60年代,出现了进程的概念,方便工程师进行程序的设计,</p>
+<p>但是,随着科学日益进步,工程量的增加,进程已经明显不能满足需求了</p>
+<p>主要问题体现在两点上:</p>
+<ul>
+<li><p>进程较大的时 + 空开销(时间,空间的开销都大)</p>
+</li>
+<li><p>SMP,对称多处理机的出现,是同时运行几个程序成为了可能,但是使用进程的开销会很大</p>
+</li>
+</ul>
+<p>就这样,在需求不段增长的时候,80年代,线程就出生了.</p>
+</li>
+<li><p>线程有几种调度方式?</p>
+<p>线程进行调度分为三种:</p>
+<p><strong><1>. 操作系统内核线程 e.g.Win32线程</1></strong></p>
+<p><strong><2>. 用户线程 e.g.POSIX Thread</2></strong></p>
+<p><strong><3>. 内核与用户线程混合调度 e.g.Win7 线程</3></strong></p>
+</li>
+<li><p>线程的属性</p>
+<p>最早在Linux环境下,并没有真正的实现线程,所使用的名为”轻量进程”,实则用进程来实现线程功能</p>
+<p>直至后来,才再真正意义上实现了线程</p>
+<p><strong>线程 = 程序(代码) + 数据 +　TCB(类似于PCB)</strong></p>
+<p>而其动态特性,则由TCB进行描述:</p>
+<p><strong>线程状态 + 线程不运行时资源问题 + 执行堆栈 + 线程局部变量主存区 + 访问同一进程主存与其他资源</strong></p>
+<p><strong>最后,用一句话来描述线程与进程的关系 : 进程是线程的容器,线程是进程执行程序真正实体</strong></p>
+</li>
+</ol>
+<p>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\</p>
+<p><strong>二,线程操作</strong></p>
+<p><strong>1.创建线程</strong></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#incldue<span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_creat</span><span class="params">(<span class="keyword">pthred_t</span> *thread,<span class="keyword">pthread_attr_t</span> *attr,</span></span></span><br><span class="line">                  void *(*start_routine)(void *), void arg)</span><br></pre></td></tr></table></figure>
+<p>pthread_creat,线程创建函数</p>
+<p>其作用是:<strong>创建线程号为thread,线程属性为attr,执行参数为arg的start_routine函数的线程</strong></p>
+<p><strong>创建一个新的线程后,线程也去执行新的程序,类似于进程的exec系函数,但是在内存空间上分配有不同之处</strong></p>
+<p><strong>新创建的线程去运行指针指向的函数,而原线程继续执行接下来的操作</strong></p>
+<p>再来看几个函数:</p>
+<table>
+<thead>
+<tr>
+<th>函数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pthread_t pthread_self(void)</td>
+<td>类似于getpid(),获取线程自身线程ID</td>
+</tr>
+<tr>
+<td>int pthread_equal(pthread_t thread1,pthread_t thread2)</td>
+<td>判断两个进程是否为同一进程</td>
+</tr>
+<tr>
+<td>int pthread_once(pthread_once_t <em>once_control,void(</em>int_routine)(void))</td>
+<td>保证该函数仅执行一次</td>
+</tr>
+</tbody>
+</table>
+<p>下面来看看如何创建进程:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> *<span class="title">get_thid</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> thid;                     <span class="comment">//声明进程ID变量</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"parent pthread is me,my thid is %lu\n"</span>,pthread_self( ));</span><br><span class="line">    <span class="keyword">if</span>(pthread_create(&amp;thid,<span class="literal">NULL</span>,(<span class="keyword">void</span> *)get_thid,<span class="literal">NULL</span>) != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Error!\n"</span>);                 <span class="comment">//调用函数进行进程的创建</span></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    sleep(<span class="number">1</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> *<span class="title">get_thid</span><span class="params">(<span class="keyword">void</span>)</span>                      <span class="comment">//创建进程时,被调用的函数</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> thid;</span><br><span class="line"></span><br><span class="line">    thid = pthread_self( );</span><br><span class="line">    <span class="keyword">if</span>(thid &lt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"Error!\n"</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"I'm child pthread,my thid is %lu\n"</span>,thid);</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如图所示,即为结果<br><img src="http://img.blog.csdn.net/20170807192925226?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<hr>
+<p><strong>2.线程属性</strong></p>
+<p>在线程的创建函数中一个参数是attr,其类型为pthread_attr_t,此结构体定义如下:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    <span class="keyword">int</span>                      detachstate;</span><br><span class="line">	<span class="keyword">int</span>                      schedpolicy;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">sched_param</span>       <span class="title">schedparam</span>;</span></span><br><span class="line">	<span class="keyword">int</span>                      inheritsched;</span><br><span class="line">	<span class="keyword">int</span>                      scope;</span><br><span class="line">	<span class="keyword">size_t</span>                   guardsize;</span><br><span class="line">	<span class="keyword">int</span>                      stackaddr_set;</span><br><span class="line">	<span class="keyword">void</span> *                   stackattr;</span><br><span class="line">	<span class="keyword">size_t</span>                   stacksize;</span><br><span class="line">&#125; <span class="keyword">pthread_attr_t</span>;</span><br></pre></td></tr></table></figure>
+<p>以上即为attr,线程属性的定义,类似于文件描述符FILE的定义,</p>
+<p>线程的属性设置又有重要的作用,因为此处目前没有太多作用,不予深究,有兴趣的可自行查阅man手册</p>
+<hr>
+<p><strong>3.线程的终止</strong></p>
+<p>在Linux环境下,有两种方式实现线程的终止</p>
+<ul>
+<li><p>调用return函数,实现线程终止</p>
+</li>
+<li><p>使用POSIX标准的接口API,pthread_exit函数</p>
+</li>
+</ul>
+<p><strong>这两个函数主要的区别之处在于在主线程中调用的区别:</strong></p>
+<p><strong>在主线程中调用return/exit,会使主线程结束,进而整个线程结束,全部线程消亡</strong></p>
+<p><strong>如果是调用pthread_exit( )函数,则主线程消亡后,其他线程并不会受到影响,知道所有线程结束,进程才会结束</strong></p>
+<hr>
+<p>在线程的终止时,另外一个重要的问题就是关于资源的释放问题:</p>
+<p><strong>特别是一些临界资源,临界资源在同一时间只能被其中一个线程所使用,如若被多个线程使用,则会导致资源混乱</strong></p>
+<p>而如果,临界资源给一个线程所使用,的那是线程退出时没有释放临界资源,</p>
+<p><strong>则其他线程会一直认为该临界资源还在被其他线程所占用,就会导致死锁问题的出现</strong></p>
+<p><strong>死锁问题的出现,在程序设计的过程中,往往是灾难性的</strong></p>
+<p>所以为了妥善处理线程结束时,临界资源的释放问题,Linux系统提供了一对函数:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> pthread_cleanup_push(routine ,arg) \</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> _<span class="title">pthread_cleanup_buffer</span> <span class="title">buffer</span>;</span> \</span><br><span class="line">	      _pthread_cleanup_push(&amp;buffer,(routine),(arg));</span><br><span class="line"><span class="meta">#dedine pthread_cleanup_pop  \</span></span><br><span class="line">         _pthread_clean_pop(&amp;buffer,(exeute));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的两个函数,pthread_cleanup_pop( )与pthread_cleanup_push( )是要配合起来使用的</p>
+<p>*cleanup_push( )用来在线程提前结束时清理函数,</p>
+<p>而,*cleanup_pop( )则是在线程正常结束时,用来清理*cleanup_push( )函数的</p>
+<hr>
+<p>在释放资源以外,另一个需要谨慎处理的就是资源的同步问题了,</p>
+<p>一般情况下,进程中各个线程的运行是相互独立的,线程的终止并不会相互通知,终止的线程资源仍归线程独有</p>
+<p><strong>所以资源的同步十分重要,同进程中的wait函数,在线程中所使用的是pthread_join( )函数</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthred.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">phread_exit</span><span class="params">(<span class="keyword">void</span> *retval)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_join</span><span class="params">(<span class="keyword">pthread_t</span> thid,<span class="keyword">void</span> *thread_return)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_detach</span><span class="params">(<span class="keyword">pthread_t</span> thid)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>函数pthread_join用来使调用者挂起等待thid线程的结束</p>
+<p>要注意的点有:</p>
+<p><strong>1.一个线程只能被另一个线程所等待,并且被等待的线程必须处于可join的状态,即它不能被设定为DETACHED</strong></p>
+<p><strong> 处于DETACHED状态的线程是指内核不关心线程返回值,线程结束后,内核自动回收的分离模式</strong></p>
+<p><strong> 所以,为了防止内存泄漏,并且完成线程同步,所有的线程结束时,都要设定为DETACHED或者被join( )等待</strong></p>
+<p><strong>2.一个线程只能被一个线程等待,若被多个线程等待,其中一个线程恢复恢复就绪状态后,其他线程便进入了死锁</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc,<span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> thid;</span><br><span class="line">    <span class="keyword">int</span> status;</span><br><span class="line"></span><br><span class="line">    pthread_create(&amp;thid,<span class="literal">NULL</span>,(<span class="keyword">void</span> *)test,<span class="literal">NULL</span>);</span><br><span class="line">    pthread_join(thid,(<span class="keyword">void</span> *)&amp;status);                                     <span class="comment">//使主线程进行阻塞,等待子线程结束</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"I  (%lu)  have waited for a long time  %d"</span>,pthread_self( ) ,status);        </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"I am for test !\n"</span>);</span><br><span class="line">    sleep(<span class="number">20</span>);                                                  <span class="comment">//用sleep来延时函数</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"I have achieved!\n"</span>);</span><br><span class="line"></span><br><span class="line">    pthread_exit(<span class="number">0</span>) ;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上结果即可看出,调用函数对目标函数完成了挂起等待.<br><img src="http://img.blog.csdn.net/20170807192942808?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<hr>
+<p><strong>4.私有数据</strong></p>
+<p><strong>区别于之前提到的私有数据,此处私有数据指的是多个线程中操作不同的数据,并非是..</strong></p>
+<p><strong>在这里举一个特殊的的例子:errno全局变量</strong></p>
+<p><strong>理论上errno应该是任何线程都够访问的全局变量.但是如若errno中保存的值还没有被使用</strong></p>
+<p><strong>便被其他线程更改了其中的值,同样也会影响使用</strong></p>
+<p><strong>像这种全局变量,即是我们此处要讨论的私有数据,即都能访问的全局变量,但是在各个线程中又是不一样的值</strong></p>
+<p>私有数据的实现方式借用了:<strong>一键多值</strong></p>
+<p>此处对这个键可以理解为:<strong>一个数据管理器,在各个线程中,调用时,键会告诉在此线程中应该使用什么值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">int pthread_key_creat (pthread_key_t *key,void (*destr funcation) (void *));</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_setspecific</span> <span class="params">(<span class="keyword">pthred_key_t</span> *key,<span class="keyword">const</span> <span class="keyword">void</span> *pointer)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">pthread_getspecific</span> <span class="params">(<span class="keyword">pthread_key_t</span> key)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">pthread_key_delete</span> <span class="params">(<span class="keyword">pthread_key_t</span> key)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>上面的函数,</p>
+<p><strong>Creat函数是用来创建键的,</strong></p>
+<p><strong>setspecific函数用来将线程的私有数据与键绑定,在线程自身中调用</strong></p>
+<p><strong>getspecific函数用来获取键值中绑定的私有数据</strong></p>
+<p><strong>delete函数用来销毁键</strong></p>
+<p>有以下要注意的点:</p>
+<p>1.在使用pthread_key_creat函数时,</p>
+<p>切记只能初始化一次如果一个键值被创建了两次,会覆盖</p>
+<p>建议:<strong>在创建键时,可以在main函数中创建一次,或者使用prhread_once函数只进行一次创建</strong></p>
+<p>创建新键时,每个私有数据的地址为NULL.</p>
+<p>2.在pthread_key_creat函数中,</p>
+<p>使用了析构函数.所谓析构函数指的是用来在键值使用完成之后</p>
+<p>清除并释放与键值绑定的私有数据所占的内存空间,</p>
+<p><strong>键值对与私有数据所占用的并不是相同的数据空间,所以要分开进行释放</strong></p>
+<p><strong>一旦在键值对释放时,未释放私有数据所占据的空间,则会导致内存泄漏,灾难性的后果</strong></p>
+<p><strong>所以调用析构函数有其一定的必要性,当为NULL,会调用内核自身的清理函数</strong></p>
+<p>一般情况下,<strong>线程调用malloc为私有数据分配内存空间</strong></p>
+<p>3.在pthread_delete函数中</p>
+<p><strong>pthread_delete函数是用来取消键与私有数据间关联的函数</strong></p>
+<p>调用pthread_delete函数并不会影响正在使用的私有数据与键值,但是容易造成内存泄漏</p>
+<p><strong>最后总结,不同的线程对私有数据的访问对彼此之间是不可见的,操作互不影响,</strong></p>
+<p><strong>即键同名且全局但访问内存空间不同</strong></p>
+<p><strong>可以将key理解为一个数据管理员</strong></p>
+<p>来看一个示例</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;unistd.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">pthread_key_t</span> key;                <span class="comment">//定义全局变量库--键</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread1</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>;          <span class="comment">//线程1</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread2</span><span class="params">(<span class="keyword">void</span> *arg)</span></span>;          <span class="comment">//线程2</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">pthread_t</span> tid;                 <span class="comment">//线程ID</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"main thread begins running!\n"</span>);</span><br><span class="line">    pthread_key_create(&amp;key,<span class="literal">NULL</span>);                        <span class="comment">//参数为,键地址,以及析构函数(用于私有数据的内存清理),如果为NULL,则调用系统的清理函数</span></span><br><span class="line">    pthread_create(&amp;tid,<span class="literal">NULL</span>,thread1,<span class="literal">NULL</span>);               <span class="comment">//四个参数依次是线程ID,线程属性,调用函数,函数参数</span></span><br><span class="line">    sleep(<span class="number">10</span>);                                            <span class="comment">//睡眠以使主线程等待</span></span><br><span class="line">    pthread_key_delete(key);                              <span class="comment">//销毁键,私有数据的销毁必须在其之前,不然会内存泄漏</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"mian pthread ends \n"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread1</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> tsd = <span class="number">5</span>;                                          <span class="comment">//pthread中的私有数据</span></span><br><span class="line">    <span class="keyword">pthread_t</span> thid_1;                                     <span class="comment">//分配新的线程号</span></span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"pthread 11  %lu is running!\n"</span>,pthread_self(  ));</span><br><span class="line">    pthread_setspecific(key,(<span class="keyword">void</span> *)tsd);                        <span class="comment">//使键与私有数据绑定</span></span><br><span class="line">    pthread_create(&amp;thid_1,<span class="literal">NULL</span>,thread2,<span class="literal">NULL</span>);            <span class="comment">//创建新线程</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"thread1 %lu ends,pthread's tsd is %d\n"</span>,pthread_self(  ),pthread_getspecific(key));</span><br><span class="line">    sleep(<span class="number">5</span>);                                            <span class="comment">//睡眠以等待新线程结束</span></span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> *<span class="title">thread2</span><span class="params">(<span class="keyword">void</span> *arg)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> tsd = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"pthread 22 %u is running\n"</span>,pthread_self(  ));</span><br><span class="line">    pthread_setspecific(key,(<span class="keyword">void</span> *)tsd);                       <span class="comment">//绑定键值与私有数据</span></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Thread %lu ends,thread's tsd is %d\n"</span>,pthread_self(  ),pthread_getspecific(key));</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 对此段代码,其中需要注意的地方是,</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 一,关于Thid的问题,使用%d,整型根本保存不下线程ID,必须使用%u,不然会出现溢出</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 二,即是任意类型指针的问题,(void *)可以指向任何类型的数据,但是会出现警告</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 而在网路上的解法都是直接进行取地址去获取地址,并传参</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * 至于细节,还需要再琢磨</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> */</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://img.blog.csdn.net/20170807192959580?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""><br>\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\</p>
+<p>本次线程控制总结至此,下次将会是线程同步的内容,十分重要!!!</p>
+<p>另外还有小实验的总结,十分有用!</p>
+<p>August 7, 2017 7:24 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/09/22/Linux_C/第八章 线程总结(一)/" data-id="cjmj9ui9d001xoonrqil7qf4s" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACr0lEQVR42u3a0U7DMAwF0P3/T8MraHS910mmIZ0+VdCmOUGKjZ3HI76+Xl4/n2lHeH73+f75+c0XHh4e3rGpv/5M8vzzu8lvk/lczg0PDw/vGC+ZbjuhJCTsWqbLn+Ph4eF9AK/d1tsxXy8THh4e3n/kJWnurpCDh4eH98m8WYm2LTQURYQy1d5Qa8HDw8Obj/NY2crfc3+kv4eHh4e33FWfBYm2yNsWL4rZ4uHh4R3g5Rtu29aaJdMrZd/L5cPDw8PbystbUG1zq93oZ/nwzULg4eHhHeC1qfCu1tTKkuUJOh4eHt453izxTQoNsxbX7GjCzVfw8PDwDvBmRdUZo33rSGcPDw8Pb5k3K9QmyDZgrIwTxT08PDy8BV47dH4Ya9dhgnxWf4yAh4eHd5iXb9MtI3+rLTHfsPHw8PDezmvvdy1HW/i4fBcPDw/vLbxZ0jwLLSvlj2hWeHh4eAd4bQOsDQb5dj8LM/VxATw8PLxl3qwQkPTTkpAzO7JQpOZ4eHh4x3izkuusdLtySKsG4+Hh4R3gtQXcNl9tQ0V+xKoIP3h4eHhbeW1ba3058lCxnojj4eHhneC1SXPbyM+LHSvtrqKki4eHh7eJt96+mh0I2HukICpG4OHh4W3itRvxbFpF+jta9Jt0HA8PD28rr53EMGePN/F864/KFnh4eHiHecm2m7f/8yZWHorycIKHh4d3mpc3/tePCOxqeuHh4eG9n7erqJqkzitJfP7dX+Pg4eHhHeDNNtxZ2j2jvi5JPHZdeHh4eCUvDwZ1tl4eHcjLvkVQwcPDwzvGm6XF+fGCPFRsvvDw8PA+htdONzkKMAtUN1/Hw8PD+wBeXkhNEuI85AyTfjw8PLxjvLbp1ZZf8y0+Hzn6U+Hh4eEd4M3+o/9auNqjABsAeHh4eHt437hhc6gCYadVAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/LinuxC/">LinuxC</a></div><div class="post-nav"><a class="pre" href="/2017/09/22/documents/2016暑期总结_陈森/">暑期生活总结</a><a class="next" href="/2017/09/22/Linux_C/第七章 进程控制及其操作(二)/">第七章 进程控制(二)</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

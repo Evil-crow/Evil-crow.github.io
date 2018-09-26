@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>Linux系统装机 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Linux系统装机</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Linux系统装机</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Unix-Linux/">Unix/Linux</a></span></div><div class="post-content"><p><strong>写在前面</strong></p>
+<p>我想向大家来分享一下我在安装Linux系统是的一下经验</p>
+<p>首先，我注明，我所安装过的是<strong>Ubuntu 16.04</strong>与<strong>Fedora 25</strong></p>
+<ul>
+<li>对于安装前的一些基础知识的准备</li>
+</ul>
+<p>BIOS + MBR 以及 UEFI+GPT</p>
+<p>这两个东西怎么怎么的，理论知识我也没有搞清楚，具体也讲不清。</p>
+<p>但是就是因为这东西，<strong>使得在2010年之后的本子上装Linux的系统成为了一个大问题</strong></p>
+<p>接下来我来说一下如何进行Linux系统的安装:</p>
+<hr>
+<h4 id="一-，前期的准备工作"><a href="#一-，前期的准备工作" class="headerlink" title="一 ，前期的准备工作"></a>一 ，前期的准备工作</h4><ol>
+<li><p>一块至少8G的U盘，理论上4G也是可以用的，但是建议至少8G</p>
+</li>
+<li><p>从fedora官网或者Ubuntu官网下载的iso镜像文件</p>
+<p> fedora（<a href="http://https://getfedora.org/" target="_blank" rel="noopener">http://https://getfedora.org/</a>）</p>
+<p> Ubuntu（<a href="http://www.ubuntu.org.cn" target="_blank" rel="noopener">http://www.ubuntu.org.cn</a>）</p>
+</li>
+<li><p>合理的可启动U盘制作工具（手动滑稽）</p>
+<p> 强烈推荐<strong>rufus</strong>！</p>
+</li>
+<li><p>具有一定的动手能力</p>
+</li>
+</ol>
+<hr>
+<h4 id="二，实际安装的过程"><a href="#二，实际安装的过程" class="headerlink" title="二，实际安装的过程"></a>二，实际安装的过程</h4><hr>
+<p>以下分为两个版本，分别对应早期的本子无UEFI版，和现在的UEFI启动版</p>
+<p><strong>无UEFI启动版</strong></p>
+<ol>
+<li><p>先去戳度娘，查询自己的本子，BIOS的进入快捷键，一般也就是F2，F8，Esc，Enter之类的</p>
+<p> 然后，右击”计算机“，点击”管理“，</p>
+<p> 在”磁盘管理“中，”压缩卷“分出一定的空间来进行系统安装，一般建议60G左右即可</p>
+<p> <strong>注意，只需要”压缩卷“，不需要”新建卷“，系统安装时需要的是未分配的空间。</strong></p>
+</li>
+<li><p>使用上面推荐的rufus U盘制作工具进行Linux系统可启动U盘的制作</p>
+<p> <strong>详细步骤，戳度娘，此处不赘述如何进行可启动U盘的制作</strong></p>
+</li>
+<li><p>顺利进入BIOS设置，（在某些BIOS固件版本中，可以设置中文）</p>
+<p> 然后首先将secure boot 改为<strong>disabled</strong></p>
+<p> 之后更改启动引导选项为<strong>legacy only</strong></p>
+<p> 按F10 保存并退出</p>
+<p> 然后插上你的U盘，并重启，按下F12，进入启动选项</p>
+<p> 选择自己的U盘作为启动选项，<strong>可以通过名字找到自己的U盘</strong></p>
+</li>
+<li><p>此时，你应该已经进入可移动U盘中的内容了吧，</p>
+<p> 别得意，下来的设置也是需要仔细处理的</p>
+<p> 有两个选项，<strong>try Ubuntu /try Fedora</strong></p>
+<p> 和<strong>install Ubuntu/Fedora to hard drive</strong></p>
+<p> 可以先进行系统的体验再进行安装，也可以直接进行安装到硬盘的操作</p>
+</li>
+<li><p>选择之后，进入了语言，键盘，地区时间，主机名的设定，这些大家自己一一设置即可了</p>
+<p> 最关键的地方来了  <strong>分区选择</strong></p>
+<p> 讲道理，如果是小白，建议选择<strong>自动分区</strong></p>
+<p> 否则，有你好受的</p>
+<p> 如果是老油条了，其实可以进行进行分区自己的调整，</p>
+<p> 比如<strong>/boot  /bios burg  /home  swap  /</strong>等分区可以进行自己的计划和调整</p>
+<p> 关键的是，<strong>启动引导器的安装位置</strong>需要进行十分小心的甄选，</p>
+<p> 不然系统安装完成后，要不然Windows无法启动，要不然没有linux系统的启动引导选项</p>
+<p> 我知道来看这篇文章的都是想装双系统的同学-&gt; &lt;-（手动滑稽）</p>
+<p> 此处注意：<strong>选择启动器的安装位置时，建议挂载到/boot或者windows的/efi目录下</strong></p>
+<p> <strong>如果这样继续提醒grub2引导无法安装，要不然重装选择自动分区，否则可以在windows目录下</strong></p>
+<p><strong>使用EasyUEFI 或者EasyBCD两个工具进行启动项的修复，</strong></p>
+<p><strong>可以进行正常的引导因为刚接触Linux操作系统所以不是很清楚如何在Linux中使用终端进行启动项修复，请见谅</strong></p>
+</li>
+<li><p>在分区进行了合理的划分之后，就可以进行安装了呦！ <strong>~o~</strong></p>
+<p> 另外，再注意的一点是，对于 Root密码与用户密码的设置需要谨慎处理</p>
+</li>
+<li><p>最后，在系统安装完成后进行重启就可以使用系统了呦</p>
+</li>
+</ol>
+<p><strong>UEFI启动版</strong></p>
+<p>如果是支持UEFI启动版的，直接按F12，进行启动项的选择即可</p>
+<p>其余步骤同理</p>
+<p>比如，fedora 25的安装</p>
+<p><strong>我自己偏好使用Fedora，滑稽  -&gt; &lt;-</strong></p>
+<hr>
+<h4 id="三，我自己安装过程中所遇到的问题"><a href="#三，我自己安装过程中所遇到的问题" class="headerlink" title="三，我自己安装过程中所遇到的问题"></a>三，我自己安装过程中所遇到的问题</h4><hr>
+<ol>
+<li><p><strong>合理的可启动U盘制作工具</strong></p>
+<p> 我安装的经历是，自己安装个了两次Fedora，帮舍友安装了Ubuntu（很不幸，舍友的电脑是先被我搞崩，才装好的）</p>
+<p> 然后我第一次安装时，运气好装好了，但因为镜像有点下问题准备重装，然后就拉闸了，无法安装</p>
+<p> 就差没把度娘戳死了，也没找到有效的解决办法。</p>
+<p> 所以，<strong>Ultraiso 基本不要尝试，坑了不少新人</strong>，（并非抹黑此软件，</p>
+<p> 只是在Linux系统安装时不方便，对于Windows系统的镜像安装还是很不错的</p>
+<p> 然后，<strong>poweriso，还可以，但也只是对于Ubuntu支持比较好</strong>，如果要装Fedora，还是算了，看运气</p>
+<p> Fedora，在网上给出的方法已经是让，先装Ubuntu，再使用dd命令，在Linux环境下制作Fedora的启动盘</p>
+<p> 然后，雪上加霜的是，Fedora社区官方给出的可启动U盘制作工具，<strong>在win10下就是个笑话</strong>，</p>
+<p> 有的人支持，有的人不支持，就像我。</p>
+<p> 而之后重装时所遇到的问题更是让我这种刚开始的小白无言以对，</p>
+<p> <img src="http://i.imgur.com/oIs8s4b.jpg" alt="错误"></p>
+<p> 很久以前的方法，也能解决问题，但是我觉得不是很轻松，直到发现了<strong>rufus</strong></p>
+<p> 那么如果想要进行Fedora在Win平台下的启动盘制作就没有办法了吗？？？</p>
+<p> <strong>方法还是有的：rufus 真的是神器！</strong></p>
+<p> 让我安利一口，700k大小，支持各种格式的启动盘制作，而且是开源软件，因为下载源是国外，所以速度较慢，需要耐心等待</p>
+</li>
+<li><p><strong>对于小白，我真的很建议采用自动分区，毕竟玩的没意思了，以后还可以换其他的使用，</strong></p>
+<p>  <strong>Linux不装个10次，不能说自己装过机</strong></p>
+</li>
+<li><p><strong>卸载问题</strong></p>
+<p> 我在上面说，我卸载过，那么怎么才能卸载的干干净净呢？</p>
+<p> 方法还是有的，对于用来装Linux的盘，直接删除卷即可，不需要多操作，</p>
+<p> <strong>问题就在于，如何处理无效的启动引导项，每次开机看见无用的引导项，很不爽的QAQ</strong></p>
+<p> 那么，就再让我安利一个软件，<strong>easyUEFI</strong>，类似与easyBCD,但是我觉得要比easyBCD更好用</p>
+<p> 对无效的开机启动引导项的删除即可</p>
+</li>
+</ol>
+<hr>
+<h3 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h3><hr>
+<p>首先很抱歉，本教程，没有多少的截图</p>
+<p>本篇安装Linux系统的经验分享到这里就结束了，我自己也了解的不是很多，如果有错也希望大家能过来指正</p>
+<p>另外，本篇的经验，基本上只适用于Ubuntu 与Fedora，其他的Linux发行版我还没有尝试过</p>
+<p>诸如：<strong>deepin  debian  arch  redhat  Linuxmint</strong></p>
+<p>最近在进行Linux系统初装后的配置，大家也可以来一起交流</p>
+<p>我也只是刚开始接触Linux，也希望大家多来和我交流</p>
+<p>编辑时间： 2017/5/19 2:54:35<br>发表时间： 2017/5/22 2:05:23</p>
+<hr>
+<p><strong>更新:</strong></p>
+<p>今天帮二蛋学姐的同学装机,才彻底使我真真切切的理解了装机时的设定</p>
+<p>之前其实也只是听说了,Bios,UEFI,MBR,GPT这些东西.</p>
+<p>但是,在装了这一台机子后,我是真的快被搞死了,这机子TM的,真的是在搞我</p>
+<p>几年前的Bios,MBR分区,</p>
+<p>首先教给大家鉴别MBR分区,GPT分区</p>
+<p><img src="http://oww4cv296.bkt.clouddn.com/2.jpg" alt=""></p>
+<p><strong>如果现在显示的是”转换为MBR分区”,那么现在就一定是GPT分区喽</strong></p>
+<p>第二,教给大家鉴别UEFI启动和传统的Bios</p>
+<p><img src="http://oww4cv296.bkt.clouddn.com/%E6%8D%95%E8%8E%B7.JPG" alt=""></p>
+<p><img src="http://oww4cv296.bkt.clouddn.com/1.JPG" alt=""></p>
+<p>首先通过以上两步,便可以确定到,一会使用Rufus进行写盘的方式了!</p>
+<p>这里,安装系统,我是份推荐使用写盘工具—rufus,十分方便又好用</p>
+<p>之后,按照rufus操作便可以正式进行写盘了,</p>
+<p><strong>使用合理的写盘方式进行写盘,是成功安装系统的关键之一</strong></p>
+<hr>
+<p>在安装系统时,可能最常见的一个问题就是,<strong>启动项消失,丢失的情况</strong></p>
+<p>在这里,我先谈谈我的经历吧!</p>
+<p>在装完系统后,我打开机子,结果只有CentOS的启动项,咦? !</p>
+<p>之后,我便使用<strong>bootice</strong>将启动项改回Win的传统启动,而不使用grub2进行引导</p>
+<p>这TM才开始坑了……</p>
+<p>使用bootice修改后,可以使用EasyBCD,或者EasyUEFI进行启动项修改</p>
+<p><strong>但是,太年轻了,Easy*系列进行启动项的修改后,基本用不了,,,</strong></p>
+<p>这时,还得使用grub2进行修改</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grub2-mkconfig -o /boot/grub2/grub.cfg</span><br></pre></td></tr></table></figure>
+<p>你会发现结果启动项<strong>并没有什么改变</strong>,</p>
+<p>2333333333!</p>
+<p><strong>因为Linux不支持NTFS文件系统,而Win是基于NTFS的,所以上面的命令</strong></p>
+<p><strong>基本上没有什么卵用,那么,没有办法了吗?</strong></p>
+<p><strong>办法还是有的,毕竟前人已经为我们造好了轮子</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install netf-3g</span><br></pre></td></tr></table></figure>
+<p>安装这个包后,再使用grub2的命令,就会有奇迹发生!</p>
+<p>(<strong>注:以上方法对CentOS Linux7适用,已测试,其他发行版,差别不大</strong>)</p>
+<p>September 26, 2017 10:49 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/09/22/Linux/Linux系统的安装问题 (针对Fedora与Ubuntu）/" data-id="cjmj9ui8p000ioonrdrdtepvt" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADK0lEQVR42u3aS46cQBAFwLn/pduSV7Zs0HuZbWuoDlYjoKGiWOTk5+srPl4/j/urv97z599/3nP1hKvfXq3nfm2rAxsbG/sh7NftkT86Wdz9W5JNvGfnb8HGxsY+j33PmL3mfrn74Jd/HmxsbGzsJJHYJxhtUoSNjY2NPQtgsyQkB8xCIDY2NjZ2UlTKyz1tib+t3v/XWho2Njb2t2fPEoDv+fc/7G9jY2Njf0v2a3S0yUkeCO/DYduWuFw/NjY29kHsWbE+T1ryElLbANg0fbGxsbHPY+cjNbOQMwt1yYeZhTdsbGzsk9ib9mrbHmjbtG0ILAIhNjY29nHsNqgkqULe+p21ZtvN+ks5CRsbG/sIdsJoAZv0Zj/iU6RD2NjY2Eew39Xc3Scz+RNmb/ntKjY2NvZB7He1b9sANmsnz8ZDsbGxsc9mtwWgWfO1LeK/q3d9eQYbGxv7OHYehPKl5OWqthkwGy2qMydsbGzsh7DznxXhoRz0mZWH2o0rvjw2Njb2cexNC3ZW4n9vKjIMYNjY2NgPZG9GamaDPsnVTdKCjY2N/TnsFpacz1OU/YhP27TAxsbGPpW9OfIWwiYEzkZ2LrcJGxsb+yD2vmyUl4o2S5+9FxsbG/sT2LMgNGsDz4Z+6oCUBD9sbGzsI9g5eJMwbKg5uFgtNjY29kHsvCm7aQC0Td+2qZCfx8bGxj6b3SYAyRYk4zXtIE77tGJwBxsbG/uB7ATWNgw2GzdbQ/FtsbGxsY9jz5q1eSLRDvHkSUv7q8swho2NjX0oO08Y2qpVEmzaM7MCFjY2NvZJ7PeW9dtSftuabT9MPbWEjY2N/Vj2vnU6K/rkV2eDO3VpCRsbG/vh7La4nwehPMzk5arZE7CxsbFPYr/KY1bWTxKb9p6oAXD1NGxsbOyD2LP/2GcF+gTQNo9n5S1sbGzs89ht0GqLQUlKM9vQVdkLGxsb+zj2rKzzrqLSbMs2lX9sbGzsT2bnreKk0btPgWZNaGxsbOzPZM/GHGf3JxuaD+tgY2NjfwJ7Fnjy823zePb2vAmBjY2NfRK7TQk24zJ58jBLNjZBFxsbG/uB7B8owkUoGiePkgAAAABJRU5ErkJggg==">分享</a><div class="tags"></div><div class="post-nav"><a class="pre" href="/2017/09/22/Linux/第一篇  计算机概论/">第一篇 计算机概论</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Coding/">Coding</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/">Tools</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Tools/Vim/">Vim</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/EvilCrow/">EvilCrow</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/力量的源泉/">力量的源泉</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/编程语言/">编程语言</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/hole/" style="font-size: 15px;">hole</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/standard/" style="font-size: 15px;">standard</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/experience/" style="font-size: 15px;">experience</a> <a href="/tags/Shellscript/" style="font-size: 15px;">Shellscript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/git/" style="font-size: 15px;">git</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/C-Primer/" style="font-size: 15px;">C++Primer</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/C++/EffC++/effective4/"><星月夜>_Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/C++/EffC++/effective3/"><星月夜>_Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C/Expert_C_Programming/data_mem/"><咸鱼书>_运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/C++/EffC++/effective2/"><星月夜>_Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/C++/EffC++/effective1/"><星月夜>_Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Evilcrow/linux_setting/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/tools/git_tool/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/C/two_level_array/">一个C语言指针的问题让我翻车</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/14/C++/C++Primer/C3P_VI/">VI Function</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
