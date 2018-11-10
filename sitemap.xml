@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://evil-crow.github.io/2018/11/08/C++/EffSTL/stl1/</loc>
+    
+    <lastmod>2018-11-10T09:38:42.121Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://evil-crow.github.io/2018/10/09/C++/EffC++/effective5/</loc>
     
     <lastmod>2018-10-18T03:36:24.376Z</lastmod>
