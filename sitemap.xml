@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://evil-crow.github.io/about/index.html</loc>
+    
+    <lastmod>2018-11-13T10:27:56.848Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://evil-crow.github.io/2018/05/14/Question_Answer/github_green_point/</loc>
     
     <lastmod>2018-11-13T10:09:07.154Z</lastmod>
@@ -446,13 +453,6 @@
     <loc>http://evil-crow.github.io/2017/09/22/Guide/Linux/how_to_install_linux/</loc>
     
     <lastmod>2017-09-26T13:50:00.000Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>http://evil-crow.github.io/about/index.html</loc>
-    
-    <lastmod>2017-09-20T15:31:42.000Z</lastmod>
     
   </url>
   
