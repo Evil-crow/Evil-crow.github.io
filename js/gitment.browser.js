@@ -3415,8 +3415,8 @@ var Gitment = function () {
       }, options);
 
       this.state.user.isLoggingIn = true;
-      // _utils.http.post('https://auth.baixiaotu.cc', {
-      _utils.http.post('https://www.evilcrow.site', {
+      _utils.http.post('https://auth.baixiaotu.cc', {
+      // _utils.http.post('https://www.evilcrow.site', {
         code: code,
         client_id: client_id,
         client_secret: client_secret

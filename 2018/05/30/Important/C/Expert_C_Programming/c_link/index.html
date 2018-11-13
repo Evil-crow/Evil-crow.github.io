@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>&lt;咸鱼书&gt; 链接那点事 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">&lt;咸鱼书&gt; 链接那点事</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">&lt;咸鱼书&gt; 链接那点事</h1><div class="post-meta">May 30, 2018<span> | </span><span class="category"><a href="/categories/C-C/">C/C++</a></span></div><div class="post-content"><p><em>编译系统很早就接触了,但是编译系统中到底干了什么?</em></p>
+<p><em>我们今天来着重看一看链接的那点事</em></p>
+<h2 id="1-编译系统"><a href="#1-编译系统" class="headerlink" title="1. 编译系统"></a>1. 编译系统</h2><p>首先,来看那一看编译系统都干了什么:</p>
+<p><img src="http://oz3e8fi42.bkt.clouddn.com/complier_system.png" alt="编译系统"></p>
+<p>而我们今天着重来说的就是: <strong>链接</strong>的过程</p>
+<h2 id="2-链接"><a href="#2-链接" class="headerlink" title="2. 链接"></a>2. 链接</h2><p>链接到底发生了什么?</p>
+<p>我们都知道,在汇编器作用完成后, 汇编文件.s被转化成为目标文件(可重定位的目标文件).o</p>
+<p>.o文件是已经编译,优化二进制文件,只要成功进行装配就可以了.</p>
+<p>软件开发的工程浩大,如果所有的内容都是自己从头开始编写,势必力不从心,难以维系</p>
+<p>所以,我们倡导多使用库,对于一些基础内容,已经编译好的库,我们直接去链接即可.</p>
+<p>这也就是,我们今天来讨论链接内容的原因.</p>
+<p>首先,我们要明确一个概念: <strong>所谓链接,其中重要的有两点: 1.链接方式, 2. 链接时机</strong></p>
+<p>这两点就是链接中最核心的内容.</p>
+<p>我们先来从链接方式说起.</p>
+<h2 id="3-静态链接"><a href="#3-静态链接" class="headerlink" title="3. 静态链接"></a>3. 静态链接</h2><p>C从很早就支持分离式编译,这个特性在C++中也支持,即是说,对于一个大型软件</p>
+<p><strong>只要分块得当,大家完全可以分离式开发,最后进行模块的装配即可</strong></p>
+<p>链接也是这样一个道理, 但是,链接去装拼的是函数库.</p>
+<p>比如我们整天使用的C库,很多C库会默认链接 libc.so -&gt; libc.so.6</p>
+<p><strong>因为是最基础的库,自动链接,而是我们平时不注意这些链接细节</strong></p>
+<p>静态链接: </p>
+<blockquote>
+<p><strong>实际上说的就是, 链接库, 链接时,直接将需要的库一次性装入可执行文件</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>这样装配成功的可执行文件中包含了所需要库中函数实现的所有内容</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>比如说, 我调用printf, 静态链接了C库, 于是我的a.out中便包含了printf实现的所有目标文件</strong></p>
+</blockquote>
+<p> 那么,来分析一下静态链接的优缺点:</p>
+<p> 优点: </p>
+<ol>
+<li><p>静态链接将库中所需要的内容直接装入可执行文件,使得可执行文件脱离静态库,即无需依赖库</p>
+</li>
+<li><p>因为装配的内容全部发生在链接时,所以运行时程序速度快,1% ~ 5% (相比于动态链接链接)</p>
+</li>
+</ol>
+<p>缺点: 尽管静态链接有优秀的地方,但它的缺点也比较严重</p>
+<ol>
+<li><p>静态链接因为直接将每一个.o所需要的库文件装入, 他们相互之间不可见,于是相同的模块</p>
+<p>甚至会悲壮在进入内存多次, 严重消耗了内存空间,举个简单的例子: printf若占0.2K, 一个大型程序</p>
+<p>如果调用printf 2k次, 那么此可执行程序中,printf的内容就占了200KB的内容, 严重浪费内存</p>
+<p>而且,这样的浪费情况,在早期的计算机系统中,甚至是致命的.</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/static_link.png" alt="静态链接"></p>
+<p>当然我们在分析后,发现了静态链接可能会造成在可执行文件中出现多份拷贝的问题,</p>
+<p>早期的计算机如何如何处理呢? 是这样干的:</p>
+<p><strong>他们将程序对于函数库的依赖实现在内核中,woc!, 这是个很严重的问题</strong></p>
+<p><strong>会造成可怕的”内核膨胀”,后果不堪设想</strong></p>
+<p>基于上面的问题,静态链接在特殊的历史时期还是比较有用的,但是现在,毫无疑问的过时了</p>
+<p>所以,我们来介绍动态链接</p>
+</li>
+</ol>
+<h2 id="4-动态链接"><a href="#4-动态链接" class="headerlink" title="4. 动态链接"></a>4. 动态链接</h2><p>首先,我们来说说为什么要有动态链接:</p>
+<p><strong>1. 为了解决内存中重复库代码的问题,内核膨胀实际上是很危险的做法</strong></p>
+<p><strong>2. 还是为了实现软件库更新迭代的便捷性</strong></p>
+<p>我们先来说说动态链接,然后具体进行分析,并说说它如何解决上面其中的问题</p>
+<p>动态链接:</p>
+<blockquote>
+<p><strong>首先,要明确的是, 动态链接是为了改进静态链接的.</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>我们首要解决的问题,便是多份库实现的拷贝问题,解法就是,维持一份拷贝</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>只要装入后在内存中维持一份库文件的拷贝,效率要好很多(隐含:链接后,a.out仅仅保留文件名)</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>(库文件的位置,符号表等内容,并未进行装入,推迟到运行时真正链接)</strong></p>
+</blockquote>
+<blockquote>
+<p><strong>即是说,只要是在内存中维系了一份库文件拷贝的链接方式,便是动态链接</strong></p>
+</blockquote>
+<p>其实,我这里的说法和&lt; C专家编程 &gt; (“咸鱼书”) 还是不一样的.</p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/dynamic_pi.png" alt="动态链接"></p>
+<p>因为下面我们就要说说链接的第二点了: 2. 装入时机</p>
+<p>因为静态库已经过时(这说法也不全面)的问题,我们主要讨论动态链接</p>
+<ol>
+<li><p>装入时动态链接</p>
+<p>如上所说,两种装入时机,第一种便是传统的装入时(Link期间)进行动态链接,</p>
+<p>这个时候,链接器会进行查找,他会将目标文件中的所需要的库文件装入内存</p>
+<p><strong>这就有一个问题了,有些模块的使用程度并不高: 尤其是错误处理模块</strong></p>
+<p>动态链接的方式,可以有效的减少内存压力,但是利用率还是没有明显提升</p>
+<p>错误模块仍然被装入,会导致,多个错误模块的装入但未使用的情况.</p>
+<p><strong>而现在,十分流行的便是运行时动态链接(JIT Just-In-Time)的模式</strong></p>
+</li>
+<li><p>运行时动态链接</p>
+<p>上面说到过,装入时动态链接,它的位置是可变的,可以是内存中任意位置.但是,结构是静态的</p>
+<p><strong>即是说,装入多少模块,模块之间的顺序都是固定的.有的模块如果没有使用还是会浪费</strong></p>
+<p>因此引入了运行时动态链接的方式: 装入时,不进行链接.一直将模块的链接推迟到运行时进行</p>
+<p>(PS: 是不是有一种静态语言和动态语言的感觉,编译时/运行时确定类型,滑稽)</p>
+<p>这样,如果需要错误处理模块,便由OS去寻找模块并装入,可以大大提高效率</p>
+</li>
+</ol>
+<p>好了,常见的链接方式介绍完毕,我们再来比较一下这几种方式:</p>
+<p>静态链接: </p>
+<ul>
+<li>在我们需要摆脱库依赖,而且程序对此库依赖程度小时使用,也就不会造成太多内存拷贝.</li>
+</ul>
+<p>动态链接: </p>
+<ul>
+<li><p>如果我们要经常调用某个库,我们便使用动态链接的形式,虽然说动态链接的运行都会变慢,</p>
+<p>尤其是运行时动态链接,将链接时机推迟,但是另一方面会提高效率,(比其他两种更快的装入速度)</p>
+<p><strong>可以说装入时动态链接基本上已经使用的很少了</strong></p>
+</li>
+</ul>
+<p>上面是综合来讲,其实将链接方式和链接时机分开来说,也不过是这样:</p>
+<ol>
+<li><p>静态链接: 可以摆脱库依赖,重复拷贝多</p>
+</li>
+<li><p>动态链接: 仅维护一份共享拷贝,无法摆脱库依赖</p>
+</li>
+<li><p>静态装入: 位置是静态的,同时会将不一定运行的模块进行装入</p>
+</li>
+<li><p>动态装入: 绝不会装入任何一个不使用的模块,不过运行速度降低(在当今的机器配置下,都不是问题)</p>
+</li>
+</ol>
+<h2 id="5-动态链接的优点"><a href="#5-动态链接的优点" class="headerlink" title="5. 动态链接的优点"></a>5. 动态链接的优点</h2><p>既然动态链接是目前的主流,我们就来看看动态链接的优点:</p>
+<ol>
+<li><p>生成的可执行文件小得多,因为具体模块的实现,并没有装入可执行文件中,是推迟到running是链接</p>
+</li>
+<li><p>因为进行推迟,所以装入速度很快,比起它链接方式都要快,的那是缺点就是理论上运行速度慢</p>
+<p> 不过,这都不是事,在当下的计算机硬件水平下,堆配置就可以了(我游民老哥标配四路泰坦(ಡωಡ))</p>
+</li>
+</ol>
+<blockquote>
+<p>　动态链接重要的目的之一便是：　ABI(Application Binary Interface)应用程序二进制接口<br>　<br>　历史的经验表明: 软件版本的更新迭代,往往会出现严重的问题, 不兼容,各种各样的问题<br>　<br>　而且,每次进行新的库迭代,都要进行重新编译,(对于静态链接)<br>　<br>　这显然是他妈的操蛋,所以动态链接出现了,它要求操作系统提供一套二进制接口<br>　<br>　应用程序进行链接时,不去考虑器具体实现,只使用接口.<br>　<br>　是不是进行库版本的迭代,一下简单多了,我们甚至可以同时维护多个版本的库进行选择<br>　<br>　(PS: 是不是由了一点面向对象的感觉,ABI正是一种中间件,自然的处理了程序与库之间的关系)</p>
+</blockquote>
+<p>一般我们约定,库文件放在指定的位置,编译系统按照默认的规定去进行编译链接.但是,</p>
+<p>我们还可以给编译器传参,(ಡωಡ) -I,-L,-l这些可不能白瞎了,还可以-Wl,-rpath=XXX 给链接器传参</p>
+<p><em>此处,我们建议尽量只使用动态链接,因为这样,我们的版本更新十分方便,并且容错率高</em></p>
+<p>说了这么多,静态链接库,动态链接库实体是什么样的呢?</p>
+<p>静态链接库成为archive,使用ar生成 “XXX.a”</p>
+<p>动态链接库,使用gcc或者ld生成(怀疑?),”libXXX.so.x.y.z”</p>
+<h2 id="6-如何生成链接库"><a href="#6-如何生成链接库" class="headerlink" title="6. 如何生成链接库"></a>6. 如何生成链接库</h2><p><strong>首先,我们要严正声明,咸鱼书中的是基于SPARC上面的cc编译器</strong></p>
+<p><strong>与我们日常在x86_64机器上使用的gcc/clang/msvc有很大不同,命令也是</strong></p>
+<p><strong>我下面的操作是基于gcc x86_64机器进行的操作</strong></p>
+<p>上面我们说过静态链接库,使用ar生成,喜爱面试我们的步骤:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">file: hello.c</span><br><span class="line">---</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"hello.h"</span></span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Hello. I'm a static link test\n"</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">file: hello.h</span><br><span class="line">---</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _HELLO_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _HELLO_H</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">hello</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="meta">#<span class="meta-keyword">endif</span></span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line">file: main.c</span><br><span class="line">---</span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    hello();</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面是我们的测试文件,下面是具体的步骤:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gcc -c hello.c</span><br><span class="line"></span><br><span class="line">ar -rcv -o libhello.a hello.o</span><br><span class="line"></span><br><span class="line">gcc main.c -L . -lhello</span><br><span class="line"></span><br><span class="line"><span class="comment">#=&gt; </span></span><br><span class="line">[Crow@EvilCrow ~]$ ./a.out </span><br><span class="line">Hello. I<span class="string">'m a static link test</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/static_link_ter.png" alt="静态链接"></p>
+<p>其中需要注意的是:</p>
+<ul>
+<li><p>ar中的选项,-rcv ,显示,更新,创建新的archive,即是说,对于一个archive,我们可以进行包的增删改</p>
+</li>
+<li><p>gcc中 -L 指的是链接目录,对于静态,动态都适用</p>
+</li>
+<li><p>-l说明要链接的库名, 一般都是libXXX.so XXX就是要进行链接的名字</p>
+</li>
+</ul>
+<p>下面是,动态链接库的创建,可以使用链接器ld,我们此处使用简单地gcc:</p>
+<p>文件一致.</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">gcc -fPIC -c hello.c</span><br><span class="line"></span><br><span class="line">gcc -shared -fPIC -o libhello.so hello.o</span><br><span class="line"></span><br><span class="line">gcc main.c -L . -Wl,-rpath=. -lhello</span><br><span class="line"></span><br><span class="line"><span class="comment">#=&gt;</span></span><br><span class="line">[Crow@EvilCrow ~]$ ./a.out </span><br><span class="line">Hello. I<span class="string">'m a dynamic link test</span></span><br></pre></td></tr></table></figure>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/dynamic_link.png" alt="动态链接"></p>
+<p>其中需要注意的是:</p>
+<ul>
+<li><p>外面说的共享库和动态库是一个东西Win下DLL(Dynamic Loading Libary)</p>
+<p>Linux下 .so(Shared Object)</p>
+</li>
+<li><p>-fPIC(- file Position Independent Code) 表示与位置无关,很容易对数据进行重定位</p>
+<p>我们的建议是: <strong>函数库应始终使用与位置无关的代码,共享库建议使用PIC</strong></p>
+<p>为什么,因为共享库维护同一份拷贝,我们使用PIC,可以有效的减少换页.可以按需求任意位置装入</p>
+<p>否则就成了静态共享库了(SVR3上一个奇葩玩意,不提)</p>
+</li>
+<li><p>-shared 这个选项一定要有啊,否则,是不能生成共享库的(动态库)</p>
+</li>
+<li><p>-L. 之后,,为什么还要有 -Wl,-rpath=. 动态库因为可以通过同时维护多个,而且运行时必须存在</p>
+<p>所以,我们即需要指定链接目录,也需要运行目录,一般,/usr/lib64下,都是链接指向-&gt;</p>
+<p>-Wl,rpath=XX, 纯属是gcc的命令问题,cc,只即使用-R(running dir),-Wl,…表示向链接器传参</p>
+<p>如果我们不使用这个选项,也是可以的.将我们的共享库放在/usr/lib64, 或者/usr/local/lib64下</p>
+<p>/usr /usr/local区别不用我说了, </p>
+<p>另一种方法在ld.so.conf中添加我们共享库所在目录,然后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ldconfig 即可(需要sudo)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p> 之后,动态链接,就不需要指定目录了,静态链接同理</p>
+<p>我们下面列出一些常用库,及其链接方式</p>
+<table>
+<thead>
+<tr>
+<th>#include文件</th>
+<th>库路径名</th>
+<th>选项</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; math.h &gt;</td>
+<td>/usr/lib64/libm.so</td>
+<td>-lm</td>
+</tr>
+<tr>
+<td>&lt; math.h &gt;</td>
+<td>/usr/lib64/libm.a</td>
+<td>-lm</td>
+</tr>
+<tr>
+<td>&lt; stdio.h &gt;</td>
+<td>/usr/lib6/libc.so</td>
+<td>自动链接</td>
+</tr>
+<tr>
+<td>……</td>
+<td>……</td>
+<td>…..</td>
+</tr>
+</tbody>
+</table>
+<p>提取库中的符号: nm命令(我使用的不太多,大家可以去man一下)</p>
+<h2 id="7-使用静态库提取符号更严格"><a href="#7-使用静态库提取符号更严格" class="headerlink" title="7. 使用静态库提取符号更严格"></a>7. 使用静态库提取符号更严格</h2><p>因为共享库,推迟到运行时链接(我们现在就不考虑装入时链接了)</p>
+<p>所以,链接命令顺序无所谓,运行时统一去链接</p>
+<p>但是,静态库就必须在直接完成链接,所以,一旦有符号为装入,GG</p>
+<p>而且,静态库,<strong>链接时,不是将其装入,而是装入undeference symbol</strong></p>
+<p><strong>也就是说,gcc -lhello main.c -L. ,会提示找不到hello</strong></p>
+<p>因为先链接库, 而库中hello是已经定义了的符号,</p>
+<p><strong>因此,我们强烈建议,-l选项放在最后,虽然这有违, UNIX命令使用顺序,选项放在最后</strong></p>
+<p><strong>不过为了程序顺利运行,这都不是事</strong></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/static_error.png" alt="静态链接顺序"></p>
+<h2 id="8-Interpositioning"><a href="#8-Interpositioning" class="headerlink" title="8. Interpositioning"></a>8. Interpositioning</h2><p>曾经,由很多人都干过,定义与C保留字名相同的函数</p>
+<p>不过C标准是支持这样的行为的,与OOP中对于类成员函数的重写类似</p>
+<p>但是,在C中,如果你重写了某一个函数</p>
+<p><strong>注意,注意,所有使用该保留字函数,都会被你写的函数进行替换,很严重的问题! ! !</strong></p>
+<p><strong>有解吗? 有, 使用static关键字,限制命名空间, 其实OOP也就是限制了命名空间</strong></p>
+<h2 id="9-建议"><a href="#9-建议" class="headerlink" title="9. 建议"></a>9. 建议</h2><p>说了这么多,其实也不是说静态链接就一无是处</p>
+<p>事实上,它没有湮灭在历史长河中,就说明了它的存在性</p>
+<p><strong>比如说,需要给没有函数库的机器上执行,那不得需要静态编译来脱离函数库依赖么,</strong></p>
+<p><strong>而且,以目前的计算机硬件水平,基本可以忽略内存多余拷贝</strong></p>
+<p><strong>多说一句: 一般默认选择动态链接,找不到libXXX.so时去找libXXX.a</strong></p>
+<p>最后,有一个疑问: 现如今,使用的到底是装入时动态链接, 还是运行时动态链接? 可以交流一下呗,</p>
+<p>而且这两种模式,是否可以手动指定?</p>
+<p>最后,此次的链接知识开个小头,等CSAPP中的精华内容吧,甚至C可以直接在程序设计层面调用共享库</p>
+<p>May 25, 2018 2:18 PM</p>
+<hr>
+<p>Update: May 25, 2018 2:18 PM</p>
+<p>更新, 今天在问了老王之后,得到两个概念:</p>
+<ol>
+<li><p>gcc也只是一个driver, 其内部自行调用ccl,cpp,as,ld之类的组件 即Binuntils</p>
+</li>
+<li><p><strong>可以确定的是链接是在运行时进行的,ld-linux-x86_64.so.2实际上可以单独运行</strong></p>
+</li>
+</ol>
+<p><strong>也就是说,在链接完成后,可执行文件中填入了链接器,证明是运行时完成动态链接</strong></p>
+<p><img src="http://p8pmsq2a4.bkt.clouddn.com/runtime_dynamic_link.png" alt="strings a.out | grep ld"></p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2018/05/30/Important/C/Expert_C_Programming/c_link/" data-id="cjofk6in500698vnrdo4zc1zp" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACpUlEQVR42u3awXLqQAwEQP7/p3nXpPIwGmllOLRPKUKWbafKK0Z6PMrX88f185Xr3/59vbLm9fsfGxceHh7eYOuvtvXqg+uvVFa+Blz/1csV8PDw8NZ4leXqR0Vv63V8cHjg4eHhfQ1vUhzX10z3g4eHh/fNvGfh6h0D9fgDDw8P77O8SmSQxqn1Qryy5nrWgoeHh9d5YgdLf/bnlf4eHh4e3rirXm//V8rcyTBBc7d4eHh4C7z6A/dUqd27ZWnZjYeHh7fN6wUHe22zs8U9Hh4e3jYvHRhN2fV2Vy9tyE8MPDw8vA5vPlDViw96TbjK+nh4eHh7vPqmJ7Hs/Cg6NhCAh4eHd5TXq8TrhXX6zsnB8Ku/h4eHh3eUl4YCkxi3V4gfaL/h4eHhHeWlD9/eYEFads8jDDw8PLw7edcfOYkt5kMDzdYXHh4e3o283uO4crPmh1Dp34OHh4e3wKsHrGk8MY9om7NjvaQZDw8Pr8XrAdISPA1/D5TXeHh4eEd5aVMqnWuqb6hHelNk4+Hh4S3w0j/uhbzpzUqHruKjBQ8PD2/AuykOGG+9ftjEiS8eHh7eAm/S0Jp089Oy+z/vxMPDw7uRl4a26UDAdhhRypLx8PDwWrzrR39lWylsEsg+wwsPDw/vTl7whT9shtUHvE614vDw8PC2efUHce+oqGxrcgveHAx4eHh4a7xeFDuJLSattTe3DA8PD+8or/f1vrKhyhBAbzggOGzw8PDwFnjpozbdUL1Z1QsyHqcuPDw8vJBXPwzmAUHlNqWfW5qPwMPDw1vgTR7K6fBBfZ3DWQseHh7e1/Dq8W7a7kpvU2lcFQ8PD++jvF55XW+D9Qp0PDw8vHt4adNrAksBaU6Lh4eHt82Lv96XN31qBCFts+Hh4eGt8f4BOfimSzxYxp0AAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Expert-C-Programming/">Expert_C_Programming</a></div><div class="post-nav"><a class="pre" href="/2018/06/04/Important/C/Expert_C_Programming/error_jmp/">聊一聊C中的异常处理</a><a class="next" href="/2018/05/29/Important/C/Expert_C_Programming/array_pointer/">&lt;咸鱼书&gt; 数组与指针</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/13/Question_Answer/github_green_point/">关于github绿点的常见问题--邮箱</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Important/EffSTL/stl1/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Important/EffC++/effective5/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Important/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Important/EffC++/effective4/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Important/EffC++/effective3/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/Important/EffC++/effective2/"><星月夜> Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/Important/EffC++/effective1/"><星月夜> Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/Guide/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Guide/Fedora_KDE/">Linux的常用配置</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
