@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>VimScript的学习(五) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">VimScript的学习(五)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">VimScript的学习(五)</h1><div class="post-meta">Oct 24, 2017<span> | </span><span class="category"><a href="/categories/Vim/">Vim</a></span></div><div class="post-content"><p><em>程序是用来操控数据的</em></p>
+<p><em>现在开始,我们来介绍VimScript中进行操作的6种变量类型</em></p>
+<p><em>数字,浮点型,字符串,列表,字典,函数引用(不做讨论)</em></p>
+<h2 id="数值"><a href="#数值" class="headerlink" title="数值"></a>数值</h2><p>在程序中操纵数据是再平常不过的事情了</p>
+<p>而数值类型则是一种很常见的变量类型,VimScript中有两种数值类型:数字与浮点型</p>
+<h3 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo 100</span><br><span class="line">echo 0xff</span><br><span class="line">echo 017</span><br><span class="line">echo 019</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_number.png" alt=""><br>VimScript中支持使用八进制,十六进制进行数字的设定</p>
+<p>上面的示例中,显示了</p>
+<p>为什么最后一个是19</p>
+<p><strong>因为八进制没有9,按10进制处理,Vim会自动处理掉这个错误,所以建议一般写十进制为好</strong></p>
+<h3 id="浮点型"><a href="#浮点型" class="headerlink" title="浮点型"></a>浮点型</h3><p>浮点型,可以使用多种形式进行表示</p>
+<p>但是,<strong>不能使用echom,echom不接受浮点型</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo 100.1    #=&gt; 100.1</span><br><span class="line">echo 5.45e+3  #=&gt; 5450.0</span><br><span class="line">echo 5e10     #=&gt; Error!   并非是浮点型</span><br></pre></td></tr></table></figure>
+<p><strong>当使用数值与浮点型混用时,Vim会强制转换类型,将所有的数值转换为浮点型</strong></p>
+<p><strong>以Float形式作为结果</strong></p>
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><p>字符串,是一个很大的类型,为什么这么说呢?</p>
+<p><strong>因为VimScript就是用来处理文本的,所以字符串是一个很大的类型,Ruby,Perl也是如此</strong></p>
+<h3 id="字符串的连接"><a href="#字符串的连接" class="headerlink" title="字符串的连接"></a>字符串的连接</h3><p><code>echo &quot;Hello,&quot; + &quot;World&quot;</code></p>
+<p>是不会生效的,因为”+”运算符只适用与数值类型与列表类型,对于字符串是不适用的</p>
+<p><strong>强行使用,会将字符串强转为数值类型,(转换规则之前已经提到过了)</strong></p>
+<p>对于字符串,使用<strong>连接运算符</strong>进行字符串的的连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;Hello ,&quot; . &quot;World&quot;    #=&gt; &quot;Hello,World&quot;</span><br><span class="line">echo 10 . &quot;abc&quot;             #=&gt; &quot;10abc&quot;</span><br><span class="line">echo 10.1 . &quot;foo&quot;           #=&gt; Error!   Float不能转换为字符串</span><br></pre></td></tr></table></figure>
+<p><strong>这就是VimScript不善解人意的地方 : </strong></p>
+<p><strong>可以在进行 “ + “ 运算时,将String转为数值</strong></p>
+<p><strong>但是, “ . “ 运算时不能将Float转换为String</strong></p>
+<p><strong>所以,建议在VimScript书写时,如果需要即进行变量类型的转换时,请显式的进行类型准换</strong></p>
+<p><strong>不要依赖于Vim自身的类型转换,不靠谱,出来混迟早是要还的</strong></p>
+<h3 id="转义字符"><a href="#转义字符" class="headerlink" title="转义字符"></a>转义字符</h3><p>同其他的编程语言一样,对于不能进行输入的字符,可以使用转义字符来进行处理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;foo\&quot;bar\&quot;&quot;   #=&gt; foo&quot;bar&quot;</span><br><span class="line">echo &quot;foo\nbar&quot;     #=&gt; foo&lt;换行&gt;bar</span><br><span class="line">echom &quot;foo\nbar&quot;    #=&gt; foo^@bar   echom 会将一些特殊字符进行输出,而不是进行功能性输出</span><br></pre></td></tr></table></figure>
+<p>对于这种echom诡异的情况,就要使用字符串字面量,来进行处理</p>
+<h3 id="字符串字面量"><a href="#字符串字面量" class="headerlink" title="字符串字面量"></a>字符串字面量</h3><p>为了上面的转义字符滥用的情况,所以我们使用字符串字面量来进行处理</p>
+<p><strong>字符串字面量:所见即所得,几乎没有转义的情况</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echom &apos;foo\nbar&apos;  #=&gt; &quot;foo\nbar&quot;</span><br><span class="line">echo &apos;that&apos;&apos;s&apos;   #=&gt; &quot;that&apos;s&quot;</span><br></pre></td></tr></table></figure>
+<p><strong> ‘ ‘ 即是唯一的例外,进行转义,其余所有的字符串都是不会进行转义的</strong></p>
+<h2 id="字符串函数"><a href="#字符串函数" class="headerlink" title="字符串函数"></a>字符串函数</h2><p>前面提到了这么多的字符串,那么其进行处理的字符串函数也是有很多的</p>
+<ul>
+<li>长度</li>
+</ul>
+<p>类似于C语言,使用strlen(string-length)来进行字符串长度的求解</p>
+<p>len函数也是可以使用的,但是len函数也用在列表求解时使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo strlrn(&quot;foo&quot;)</span><br><span class="line">echo len(&quot;foo&quot;)</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_strlen.png" alt=""></p>
+<ul>
+<li>切割</li>
+</ul>
+<p>可以按照指定的字符将字符串切割成列表</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo split(&quot;abc&quot;)</span><br><span class="line">echo split(&quot;a,b,c&quot;,&quot;,&quot;)</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_split.png" alt=""><br><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_split,,,.png" alt=""></p>
+<ul>
+<li>连接</li>
+</ul>
+<p>对于字符串的连接处理,是类似于列表的,好吧,其实就是列表</p>
+<p>使用join函数,将字符串使用指定的连接符进行连接</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo join([&quot;abc&quot;,&quot;def&quot;],&quot;--&quot;)</span><br><span class="line">echo join([&quot;abc,&quot;def&quot;])</span><br></pre></td></tr></table></figure>
+<p><strong>第三个参数缺省的情况下,使用空格进行字符串符的连接</strong></p>
+<p><strong>split函数与join函数合作十分密切</strong></p>
+<ul>
+<li>大小写的转换</li>
+</ul>
+<p>这个可就真的是类似于C了</p>
+<p>使用tolower( )以及toupper( )函数进行大小写转换</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo tolower(&quot;Foo&quot;)</span><br><span class="line">echo toupper(&quot;Foo&quot;)</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_lower.png" alt=""><br><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_upper.png" alt=""></p>
+<h2 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h2><p>列表,也可以叫做有序链表.</p>
+<p>对Python,我基本没学过,从Ruby的角度来讲,基本同Array</p>
+<p>(不多说了,毕竟什么语言就是什么语言,不能整天在类比)</p>
+<p><strong>VimScript的列表是有序的,异质的元素集合</strong></p>
+<p><strong>列表中可以嵌套列表</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo [1,2,3]  #=&gt; [1,2,3]</span><br><span class="line">echo [[1,2],3] #=&gt; [[1,2],3]</span><br></pre></td></tr></table></figure>
+<h3 id="索引-index"><a href="#索引-index" class="headerlink" title="索引(index)"></a>索引(index)</h3><p>列表,是有序的集合,所以输出列表需要依靠索引</p>
+<p>索引,简单地来讲,就是下标</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo [1,2,3][0] #=&gt; 1</span><br><span class="line">echo [1,[2,3]][1] #=&gt; [2,3]</span><br></pre></td></tr></table></figure>
+<p>同时,VimScript还可以进行反向索引,反向索引的时候,</p>
+<p><strong>-1为最后一个元素,-2为倒数第二个元素,以此类推</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo [1,2,3][-1]  #=&gt; 3</span><br><span class="line">echo [[1,2],3][-2]  #=&gt; [1,2]</span><br></pre></td></tr></table></figure>
+<h3 id="切割"><a href="#切割" class="headerlink" title="切割"></a>切割</h3><p>切割即将列表中的元素按照需要的顺序进行切割并显示</p>
+<p>举个例子:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">echo [1,2,3,4][1:2]   #=&gt; [2,3]</span><br><span class="line">echo [1,2,3,4][-2:-1] #=&gt; [3,4]</span><br><span class="line">echo [1,2,3,4][:2]    #=&gt; [1,2,3]</span><br><span class="line">echo [1,2,3,4][3:]    #=&gt; [4]</span><br></pre></td></tr></table></figure>
+<p>有上面的例子可以看出,切割需要注意的点有:</p>
+<ul>
+<li><p>切割时的索引也是从0开始</p>
+</li>
+<li><p>切割必须遵守列表顺序,否则为空</p>
+</li>
+<li><p>切割可以反向索引,但是必须遵守第二条</p>
+</li>
+<li><p>切割时,左缺省置为0,右缺省值为最大值</p>
+</li>
+</ul>
+<p><strong>可以使用负数索引列表,但是不能使用负数索引字符串!</strong></p>
+<p>这个例子,直观又贴切</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;abcd&quot;[-1] . &quot;abcd&quot;[-2:-1]</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%28V%29_cd.png" alt=""></p>
+<p><strong>第一个字符串索引值为空,得到一个空的字符串.</strong></p>
+<p><strong>第二个字符串进行切割,获得的结果cd, “ . “ 连接运算符的结果是”cd”</strong></p>
+<h3 id="连接"><a href="#连接" class="headerlink" title="连接"></a>连接</h3><p>想要连接Vim中的列表,直接 “+”就可以了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo [&apos;a&apos;,&apos;b&apos;] + [&apos;c&apos;]   #=&gt; [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]</span><br></pre></td></tr></table></figure>
+<h3 id="列表函数"><a href="#列表函数" class="headerlink" title="列表函数"></a>列表函数</h3><p>上面这些都是些正常的列表操作,当然列表也是有很多的函数的</p>
+<ul>
+<li>add( )函数</li>
+</ul>
+<p><strong>用于进行列表的扩展使用,即给列表后添加内容</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let foo = [&apos;a&apos;]</span><br><span class="line">call add(foo,&apos;b&apos;)</span><br><span class="line">echo foo            #=&gt; [&apos;a&apos;,&apos;b&apos;]</span><br></pre></td></tr></table></figure>
+<ul>
+<li>get( )函数</li>
+</ul>
+<p>用于进行列表值的获取,基本用法</p>
+<p><code>get(List,index,&#39;default&#39;)</code></p>
+<p><strong>获取List列表中,索引为index的元素,若元素不存在,则将’default’作为结果,default缺省值为0</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">foo = [&apos;a&apos;,&apos;b&apos;]</span><br><span class="line">let a = get(foo,1,&apos;default&apos;)</span><br><span class="line">let b = get9foo,2,&apos;default&apos;)</span><br><span class="line">echo a         #=&gt; &apos;b&apos;</span><br><span class="line">echo b         #=&gt; &apos;default&apos;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>index( )函数</li>
+</ul>
+<p><strong>用于返回List中元素的索引,若元素不存在,则返回-1</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo index([1,2,3],1)       #=&gt; 0</span><br><span class="line">echo index([1,2,3],&quot;1&quot;)     #=&gt; -1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>join( )函数</li>
+</ul>
+<p>其实这个函数,之前在字符串的部分已经见过了.</p>
+<p>但是,当时只是为了进行字符串的连接使用</p>
+<p>实际上,join( )函数,是进行列表元素的连接使用</p>
+<p><strong>将列表元素按照给定的连接字符进行连接成为字符串,若非字符串的项,强转为字符串</strong></p>
+<p><strong>连接符的缺省值为空格</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let foo = [1,2,3]</span><br><span class="line">echo join(foo,&quot;,&quot;)    #=&gt; 1,2,3</span><br><span class="line">echo join(foo)        #=&gt; 1 2 3</span><br><span class="line">echo join(foo,&quot;&quot;)     #=&gt; 123</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>reverse( )函数</li>
+</ul>
+<p><strong>不需要多说,很简单的就地转置函数,将列表进行转置</strong></p>
+<h2 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h2><p>最后的一种数据类型了,字典这种数据类型在很多语言中都是存在的</p>
+<p><strong>Python中的dict,Ruby中的hash,JavaScript中的Object,都是类似的key-value键值对</strong></p>
+<p>字典用花括号创建,值是异质的,但是会被强转为字符串</p>
+<p><strong>因为value只能是字符串啊 ! </strong></p>
+<p>Vim将value强转为字符串,但是保持值不变</p>
+<p><strong>同时,VimScript改进了JavaScript中的蠢笨之处,字典末尾是可以保留逗号的</strong></p>
+<p><strong>建议在字典末尾保留 , (逗号),便于字典元素换行时,可以保证不会出现添加元素缺少逗号的问题</strong></p>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>既然数据类型相似,那么语言之间进行字典的索引基本都是相同的,对没错,使用键进行访问即可</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">foo = &#123;&apos;a&apos;:&quot;1&quot;,&apos;b&apos;:&quot;2&quot;&#125;</span><br><span class="line">echo foo[&apos;a&apos;]          #=&gt; 1</span><br><span class="line">echo foo[b]            #=&gt; 2</span><br></pre></td></tr></table></figure>
+<p>同时,<strong>如果,键key仅由字母/下划线组成时,VimScript也支持JavaScript风格的 ‘ . ‘查找</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo foo.a    #=&gt; 1</span><br><span class="line">echo foo.b    #=&gt; 2</span><br></pre></td></tr></table></figure>
+<h3 id="赋值与添加"><a href="#赋值与添加" class="headerlink" title="赋值与添加"></a>赋值与添加</h3><p>赋值与添加新项的操作是一样的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let foo = &#123;1:&quot;a&quot;,2:&quot;b&quot;,&#125;</span><br><span class="line">let foo.1 = &quot;c&quot;</span><br><span class="line">let foo.3 = &quot;d&quot;</span><br><span class="line">echo foo          #=&gt; &#123;&apos;1&apos;:&apos;c&apos;,&apos;2&apos;:&apos;b&apos;,&apos;3&apos;:&apos;d&apos;&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="移除项"><a href="#移除项" class="headerlink" title="移除项"></a>移除项</h3><p>进行字典项的移除时,有两种方法</p>
+<ol>
+<li><p>使用remove函数</p>
+</li>
+<li><p>使用unlet命令</p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">unlet foo.3</span><br><span class="line">echo foo           #=&gt; &#123;&apos;1&apos;:&apos;c&apos;,&apos;2&apos;:&apos;b&apos;,&#125;</span><br><span class="line">let test = remove(foo,2)</span><br><span class="line">echo foo           #=&gt; &#123;&apos;1&apos;:&apos;c&apos;&#125;</span><br><span class="line">echo test          #=&gt; b</span><br></pre></td></tr></table></figure>
+<p><strong>remove函数可以移除项,并且返回被移除的项值,unlet函数能做的,remove都可以</strong></p>
+<p><strong>所以,建议使用remove函数,同时,你不能移除不存在的项,会抛出异常</strong></p>
+<h3 id="字典函数"><a href="#字典函数" class="headerlink" title="字典函数"></a>字典函数</h3><p>同理于列表,字典也是存在许多的字典函数的</p>
+<p>存在着类似的get( )函数</p>
+<ul>
+<li>get( )函数</li>
+</ul>
+<p><code>get(Dict,index(key),default)</code>类似于List的get函数</p>
+<ul>
+<li>has_key( )函数</li>
+</ul>
+<p><strong>用于判断Dict是否存在改建值对,返回1/0</strong></p>
+<p><strong>可以用此来判断真假</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo has_key(&#123;&apos;a&apos;:100&#125;,&apos;a&apos;)  #=&gt; 1</span><br><span class="line">echo has_key(&#123;&apos;a&apos;:100&#125;,&apos;a&apos;)  #=&gt; 0</span><br></pre></td></tr></table></figure>
+<ul>
+<li>items( )函数</li>
+</ul>
+<p>可以使用items( )函数查看该Dict中所有的键值对,<strong>获取结果为嵌套列表</strong></p>
+<p><strong>但是,切记items( )中的键值对是无序的</strong></p>
+<p><strong>同时,使用keys,values可以获得,键,值的所有值</strong></p>
+<p>至此,所有的VimScript的数据类型已经介绍完毕了</p>
+<p>在理接的过程中,我也是觉得,使用help命令十分的重要,可以帮助你学习很多注意不到地方</p>
+<p>同时,也请注意进行规范的操作,</p>
+<p><strong>Vim会自动的将一些错误进行抹除,严重的影响程序设计</strong></p>
+<p>目前关于VimScript的学习暂时到此,下面我会进行一段时间插件开发的学习,之后再进行总结</p>
+<p>October 25, 2017 9:41 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/10/24/Coding/VimScript/VimScript_V/" data-id="cjofkwne4002gybnrnly2k0ri" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtUlEQVR42u3cQZJiIRAEUO9/6ZkDOGpmQXU7Ec+VocjnsQA6i+jHI379CV7P7ZP3zz089/b+8wsvPDw8vKtDf27TDjrBv2qZ/+plD3h4eHhrvKS795PyfhDtGt6O5+XneHh4eF/Dy5fvpGVCxcPDw/t/ee0mMWuPh4eH9/28WddJYNH2k3yykrXg4eHhxbyTg/JvvV+p7+Hh4eFduhBwcjmgvXaQh8JRn3h4eHgLvHzBnQ0rv1CVP7cuoeHh4eFd5Z1EAO3lgDY+aCfxH2PGw8PDW+DN/uDfjnTvXlDAw8PD2+Alf/bn0UDb8uRKQVEAw8PDw7vEyxfuvE1+2J0drIs2eHh4eGu8pNB1wjgvmOVhcVTfw8PDwzvg5UvtbGnOI9fZFjILlPHw8PBu8WZL/0kU2yaubXiBh4eHt81rD77JY/LSV8JIpmNYN8PDw8OLv83DiPpUXl4XyJf44ld4eHh4y7yTA/Ts2tb50flx6zF4eHh4B5lAe9UpX+7PN5LktByVvvDw8PAOeLMH54PeW+ij0BkPDw9vjXeyGbQt84N73s/LKcPDw8Nb4906CufBa/LE9/1EWwUeHh7eAm8WoSaDONkGZjnKh0gCDw8P7xKvjRVOYtYiRLi1FeHh4eFtnXKLf+HUhgVtxJBPRL4t4eHh4e3xbkWxsz7bnotNBQ8PD2+N10arybcnG0/ez4dNBQ8PD+9HeLcOx0kxLG8/vIyFh4eHd5V3Xnxqo4Q8aJhdcn1ZAMPDw8O7xGsX3Nmg85A3n7IagIeHh3eVl0eubUiRR66zACKaXDw8PLw1Xls5yreNWVB7bQPDw8PD+xrebLjtsXtWGLuwMeDh4eH9CC+/LHVyBaF9Lh4eHt4eL78W0Bb+25JVW8T68BQ8PDy8BV7eRT4dbaQ7K54dXRfAw8PDm/D+Au6UkpfwdXDsAAAAAElFTkSuQmCC">分享</a><div class="tags"><a href="/tags/VimScript/">VimScript</a></div><div class="post-nav"><a class="pre" href="/2017/11/07/Coding/Assembly/assembly_I/">汇编语言(一)_基础知识</a><a class="next" href="/2017/10/19/Coding/VimScript/VimScript_IV/">VimScript的学习(四)</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/stl1/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/effective5/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/effective4/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/effective3/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/Coding/EffC++/effective2/"><星月夜> Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/Coding/EffC++/effective1/"><星月夜> Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/Guide/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Guide/Fedora_KDE/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/Question_Answer/C/two_level_array/">一个C语言指针的问题让我翻车</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

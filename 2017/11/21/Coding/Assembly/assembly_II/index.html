@@ -1,0 +1,281 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>汇编语言(二)_寄存器 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">汇编语言(二)_寄存器</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">汇编语言(二)_寄存器</h1><div class="post-meta">Nov 21, 2017<span> | </span><span class="category"><a href="/categories/Assembly/">Assembly</a></span></div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-寄存器"><span class="toc-number">1.</span> <span class="toc-text">1. 寄存器</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-1-通用寄存器"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 通用寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-2-寄存器中存储的数据"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 寄存器中存储的数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-3-汇编指令"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 汇编指令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-物理地址"><span class="toc-number">2.</span> <span class="toc-text">2. 物理地址</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#2-1-“段地址-x-16-偏移地址-物理地址”-的本质含义"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 “段地址 x 16 + 偏移地址 = 物理地址” 的本质含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-2-段的含义"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 段的含义</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-3-段寄存器"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 段寄存器</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-4-修改CS-IP的指令"><span class="toc-number">2.4.</span> <span class="toc-text">2.4 修改CS,IP的指令</span></a></li></ol></li></ol></div></div><div class="post-content"><p><em>上一章介绍了汇编语言的基本知识，这一章开始我们深入的理解汇编语言最常操作的寄存器</em></p>
+<h2 id="1-寄存器"><a href="#1-寄存器" class="headerlink" title="1. 寄存器"></a>1. 寄存器</h2><p>接着上一章的内容,我们现在来剖析一下CPU中所包含的内容:</p>
+<ul>
+<li><p>运算器: 进行信息处理</p>
+</li>
+<li><p>寄存器: 进行信息的存储</p>
+</li>
+<li><p>控制器: 控制这个各个器件进行工作</p>
+</li>
+<li><p>内部总线,连接内部的部件.外部总线,连接CPU与主板上的其他部件,并且进行数据之间的传送</p>
+</li>
+</ul>
+<p>而对于汇编语言来讲,我们最常操作的就是寄存器(Register)了</p>
+<p><strong>8086CPU总共有14个寄存器,AX,BX,CX,DX,CS,DS,SS,ES,IP,SP,BP,SI,DI,PSW</strong></p>
+<h3 id="1-1-通用寄存器"><a href="#1-1-通用寄存器" class="headerlink" title="1.1 通用寄存器"></a>1.1 通用寄存器</h3><p><strong>8086CPU中所有的寄存器都是16位的,AX,BX,CX,DX为通用寄存器</strong></p>
+<p><strong>同时,为了处理兼容的问题,8086CPU的所有寄存器都可以拆成2个8位寄存器来进行使用</strong></p>
+<blockquote>
+<p>Tips: 8086CPU的寄存器可以拆成两个8位寄存器使用</p>
+</blockquote>
+<blockquote>
+<p>因为8086CPU的上一代产品(具体叫什么忘了)的原因,8086相对于上一代产品,仅仅做了</p>
+</blockquote>
+<blockquote>
+<p>寄存器位数上的升级,指令基本没有变化.</p>
+</blockquote>
+<blockquote>
+<p>所以为了兼容的问题,8086每个寄存器可以拆成两个8位使用</p>
+</blockquote>
+<p>即:</p>
+<ul>
+<li><p>AX = AH + AL</p>
+</li>
+<li><p>BX = BH + Bl</p>
+</li>
+<li><p>CX = CH + CL</p>
+</li>
+<li><p>DX = DH + DL</p>
+</li>
+</ul>
+<p><em>CPU名称的记法,可以根据位的高低,AH(High),高8位.AL(low),低8位</em></p>
+<blockquote>
+<p>Tips:在汇编语言中的进制</p>
+</blockquote>
+<blockquote>
+<p>汇编中,我们经常要操作的是寄存器,而寄存器基本都是8位和16位.</p>
+</blockquote>
+<blockquote>
+<p>所以,我们常用的进制是二进制和十六进制,B表示二进制,H表示十六进制,例: 1001B,02E3H</p>
+</blockquote>
+<h3 id="1-2-寄存器中存储的数据"><a href="#1-2-寄存器中存储的数据" class="headerlink" title="1.2 寄存器中存储的数据"></a>1.2 寄存器中存储的数据</h3><p>在计算机的进制单位中,经常操作的是字节与字,之前也进行过相关进制的描述</p>
+<p>字节:1 Byte,一次可以由一个8位寄存器进行控制</p>
+<p>字: word,为两个字节,每次可以由1个16位寄存器进行控制</p>
+<p>那么,问题来了,对于一个字,在16位仅存其中是如何存储的?</p>
+<p><em>在计算机的发展史上,关于数据如何在元件中存储也是一个经典问题</em></p>
+<p><em>随着,存储器的规模越来越大,这成为了一个不得不考虑的问题</em></p>
+<p><em>对于少字节的数据,如何在计算机中存储</em></p>
+<p><strong>大端,小端</strong>两种模式应运而生</p>
+<p><strong>大端模式，是指数据的高字节保存在内存的低地址中，而数据的低字节保存在内存的高地址中 </strong></p>
+<p><strong>大端模式和我们的阅读习惯一致。</strong></p>
+<p><strong>小端模式，是指数据的高字节保存在内存的高地址中，而数据的低字节保存在内存的低地址中 </strong></p>
+<p><strong>这种存储模式将地址的高低和数据位权有效地结合起来，高地址部分权值高，低地址部分权值低。</strong></p>
+<p>很显然的,8086CPU属于<strong> 小端模式 </strong></p>
+<h3 id="1-3-汇编指令"><a href="#1-3-汇编指令" class="headerlink" title="1.3 汇编指令"></a>1.3 汇编指令</h3><p>说了这么久,终于看到直观的汇编指令了</p>
+<table>
+<thead>
+<tr>
+<th>汇编指令</th>
+<th>控制操作</th>
+<th>高级语言语法描述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mov ax,18</td>
+<td>将18送入寄存器ax</td>
+<td>AX=18</td>
+</tr>
+<tr>
+<td>add ax,8</td>
+<td>寄存器AX中的内容加上8</td>
+<td>AX += 8</td>
+</tr>
+<tr>
+<td>mov ax,bx</td>
+<td>寄存器BX中的内容送入寄存器AX</td>
+<td>AX = BX</td>
+</tr>
+<tr>
+<td>add ax,bx</td>
+<td>寄存器AX中的内容加上BX中的内容</td>
+<td>AX += BX</td>
+</tr>
+</tbody>
+</table>
+<p><strong>在汇编指令中,大小写不进行区分,效果相同</strong></p>
+<p>下面提到两个在进行进制计算的重要问题:</p>
+<p>1.在出现数据溢出时:</p>
+<p>如上例,AX,BX的求和结果,应该是1044CH,但是16位寄存器只能存储4位16进制数</p>
+<p>所以,AX最后的值位044CH,而不是1044CH,</p>
+<p>2.在进行8位寄存器操作时</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mov</span> <span class="built_in">al</span>,<span class="number">85H</span></span><br><span class="line"><span class="keyword">add</span> <span class="built_in">al</span>,<span class="number">93H</span></span><br></pre></td></tr></table></figure>
+<p>上面两条指令的结果是什么呢?</p>
+<p>根据进制计算,al的结果是108H,</p>
+<p><strong>但是,实质上,最后在寄存器AL中存储的是08H</strong></p>
+<p>那么这是为什么呢?</p>
+<p><strong>因为AL是AX的低8位,所以AL只是一个8位的寄存器,不能存储3位的16进制数据</strong></p>
+<p><strong>能进位吗? 不能,因为AL与AX并无直接关系,这一条add指令进行的是8位运算,不能进位到AH中</strong></p>
+<p><strong>所以,进行数据传送或者运算时,注意指令的两个操作对象是一致的 ! </strong></p>
+<p><strong>8位都是8位,16位都是16位</strong></p>
+<h2 id="2-物理地址"><a href="#2-物理地址" class="headerlink" title="2. 物理地址"></a>2. 物理地址</h2><p>正如之谈到的一样,计算机所有的RAM与ROM抽想成为内存地址空间</p>
+<p><strong>所以,我们可以进行访问的内存实际上是线性的,即每个内存单元都有其唯一的物理地址</strong></p>
+<p>下面就来看看8086CPU如何生成16位的物理地址</p>
+<blockquote>
+<p>Tips: 16位结构(16位机,字长为16)</p>
+</blockquote>
+<blockquote>
+<p>16这个数字,在这里描述的是1个CPU的结构特性:</p>
+</blockquote>
+<blockquote>
+<ul>
+<li>运算器一次性可以处理16位的数据</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>寄存器的最大宽度为16位</li>
+</ul>
+</blockquote>
+<blockquote>
+<ul>
+<li>寄存器与运算器之间的通路是16位</li>
+</ul>
+</blockquote>
+<blockquote>
+<p>总结一下:在8086CPU的内部,一次性可以传输,存储,计算的数据为16位</p>
+</blockquote>
+<blockquote>
+<p>同时,16一般指CPU通用寄存器的宽度</p>
+</blockquote>
+<p><strong>8086CPU有20位地址总线,</strong>,理论上是1MB的寻址空间</p>
+<p>但是,8086实际上是16位CPU,所以能生成的寻址宽度,只有64KB</p>
+<p>那么,如何实现1MB的寻址空间呢?</p>
+<p><strong>伟大创造:使用两个16位寄存器,生成20位的物理地址</strong></p>
+<p>来看一张图:</p>
+<p>我们来看一看在8086CPU中,当要读写内存时:</p>
+<ol>
+<li><p>CPU中的相关部件提供两个地址,一个CS段地址(Code),一个IP偏移地址(instrument)</p>
+</li>
+<li><p>段地址与偏移地址通过,内部总线送入地址加法器中,</p>
+</li>
+<li><p>地址加法器将两个16位地址合并成为一个20位的物理地址</p>
+</li>
+<li><p>地址加法器通过内部总线将20位物理地址送入输入输出控制电路</p>
+</li>
+<li><p>输入输出控制电路将物理地址送上地址总线(外部总线)</p>
+</li>
+<li><p>20位物理地址被地址总线送往存储器,之后进行数据的操作</p>
+</li>
+</ol>
+<p><strong>地址加法器: 物理地址 = 段地址 x 16 + 偏移地址</strong></p>
+<p>为什么乘16,因为地址是16进制,即为扩大一个数量级,之后进行偏移</p>
+<p>即可理解段地址与偏移地址的含义</p>
+<h3 id="2-1-“段地址-x-16-偏移地址-物理地址”-的本质含义"><a href="#2-1-“段地址-x-16-偏移地址-物理地址”-的本质含义" class="headerlink" title="2.1 “段地址 x 16 + 偏移地址 = 物理地址” 的本质含义"></a>2.1 “段地址 x 16 + 偏移地址 = 物理地址” 的本质含义</h3><p>套用王爽老师,进行解释的例子,</p>
+<p>使用这种段地址 + 偏移地址进行寻址的方法 原因就是:</p>
+<p><strong>因为手头只有16位的寄存器,但是为了更高效率的寻址</strong></p>
+<p><strong>同时,还要保证每一个内存单元都可以寻址到,就是用了这样的一种方法</strong></p>
+<p>在基础地址上进行偏移,可以实现访问尽可能多的地址空间,<strong>而且,每一个内存单元,都要保证能访问到</strong></p>
+<h3 id="2-2-段的含义"><a href="#2-2-段的含义" class="headerlink" title="2.2 段的含义"></a>2.2 段的含义</h3><p>上面说了很多的,段的概念,需要注意的是:</p>
+<p><strong>实质上,内存中是没有进行分段的 ! </strong></p>
+<p><strong>所谓的段,是有程序员进行程序设计,操作内存时,自行进行分段的</strong></p>
+<p>来看一个例子:</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Physical Address       <span class="built_in">CS</span>         <span class="built_in">IP</span></span><br><span class="line">	<span class="number">21F60H</span>			<span class="number">2000H</span>      <span class="number">1F60H</span></span><br><span class="line">					  <span class="number">2100H</span>      <span class="number">0F60H</span></span><br><span class="line">					  <span class="number">21F0H</span>      <span class="number">0060H</span></span><br><span class="line">					  <span class="number">21F6H</span>      <span class="number">0000H</span></span><br><span class="line">					  <span class="number">1F00H</span>      <span class="number">2F60H</span></span><br></pre></td></tr></table></figure>
+<p>上面的例子便可以看出,实质上每一个物理地址,可以有多组段地址 + 偏移地址实现访问同一物理地址</p>
+<p><strong>所以,段并非是处理器CPU自己进行划分的,实质上是程序员根据程序设计的需要,进行段的划分</strong></p>
+<p>所以,在进行编程时,我们可以根据需要进行段的划分</p>
+<p>但是,需要注意的是:</p>
+<p><strong>1. 段地址一定是16的倍数,因为 X 16</strong></p>
+<p><strong>2. 偏移地址只能达到64KB的寻址能力,因为偏移地址,也是一个16位寄存器存储的值,寻址能力只有64KB</strong></p>
+<p><strong>寻址范围: 0000H ~ FFFFH</strong></p>
+<p><strong>可以将地址连续,起始地址为16倍数的一组内存单元,视为一个段</strong></p>
+<h3 id="2-3-段寄存器"><a href="#2-3-段寄存器" class="headerlink" title="2.3 段寄存器"></a>2.3 段寄存器</h3><p><em>现在开始,来介绍另外一类十分重要的寄存器,段寄存器</em></p>
+<p><em>之前我们介绍的都是通用寄存器,而这些段寄存器,都有着其重要的作用</em></p>
+<p><strong>既然名为段寄存器,那么,这些寄存器中存储的都是段地址的信息,</strong></p>
+<p><strong>DS: 数据段地址 (Data)</strong></p>
+<p><strong>CS: 指令/代码段地址 (Code)</strong></p>
+<p><strong>SS: 栈端段地址 (Stack)</strong></p>
+<p>目前常用的是这三个. . . (另外还有一个ES)</p>
+<hr>
+<p><strong>CS 与 IP这两个寄存器是8086CPU中最为重要的寄存器之二,CS为代码段寄存器,IP为指令指针寄存器</strong></p>
+<p>我们经常要表示当前CPU要执行的指令,就是使用CS,IP进行指向的</p>
+<p><strong>常用表述方法 : </strong></p>
+<p><strong>1.执行CS:IP地址单元开始的指令,</strong></p>
+<p><strong>2.或者代码存在CS段中的IP单元中</strong></p>
+<p>具体CPU如何读取和执行指令的流程,参考 &lt; 汇编语言 &gt;  ( 王爽 ) P26 ~ P31</p>
+<blockquote>
+<p>Tips: CPU如何将内存中的数据视为指令</p>
+</blockquote>
+<blockquote>
+<p>之前我们曾经说过,CPU将内存中的数据,可以视为代码,数据,或是栈内数据</p>
+</blockquote>
+<blockquote>
+<p>那么这一切都是如何进行界定的?</p>
+</blockquote>
+<blockquote>
+<p>很简单:依靠段寄存器,进行识别,数据在内存中没有指令,数据之分,一切都是依靠CPU中的段寄存器</p>
+</blockquote>
+<blockquote>
+<p>CPU通过修改CS,DS,SS,IP,SP这些寄存器中的内容,使得</p>
+</blockquote>
+<blockquote>
+<p>CS:IP 内存单元中的数据被视为指令</p>
+</blockquote>
+<blockquote>
+<p>DS:[x] 内存单元中的数据视为数据</p>
+</blockquote>
+<blockquote>
+<p>SS:SP 内存单元中的内容视为栈内数据</p>
+</blockquote>
+<blockquote>
+<p><strong>内存中都是数据,没有指令,数据之分.划分是依靠处理器CPU如何进行代码段的读取界定的</strong></p>
+</blockquote>
+<h3 id="2-4-修改CS-IP的指令"><a href="#2-4-修改CS-IP的指令" class="headerlink" title="2.4 修改CS,IP的指令"></a>2.4 修改CS,IP的指令</h3><p>程序员对于处理器唯一能够进行操作的就是寄存器,</p>
+<p>而我们通常进行寄存器内容修改的指令便是 <strong>mov指令</strong></p>
+<p><strong>mov 指令 可以进行寄存器中指的修改.</strong></p>
+<p><strong>但是,8086CPU中不能使用mov指令进行段寄存器的修改,因为处理器设计时,就没有提供这样的功能</strong></p>
+<p>其中提供了,除传送指令(mov)外的另外一类指令,转移指令</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">jmp</span> <span class="built_in">CS</span>:<span class="built_in">IP</span>           使当前指令跳转至<span class="built_in">CS</span>:<span class="built_in">IP</span>处</span><br><span class="line"><span class="keyword">jmp</span> <span class="built_in">ax</span>              使当前<span class="built_in">IP</span>跳转至<span class="built_in">ax</span>处</span><br></pre></td></tr></table></figure>
+<p>最后还是要强调一个概念:<strong>内存中,所有的东西,都是数据.到底是指令,还是数据,由CPU来定</strong></p>
+<p>使用Debug进行汇编语言的学习,这里的Debug并非是改Bug的意思,实际上是指进行交互式的程序</p>
+<p>可以查看内存中的情况,同时还可以查看CPU寄存器中的内容</p>
+<p>常见命令:</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-R</td>
+<td>查看,改变CPU中寄存器的内容</td>
+</tr>
+<tr>
+<td>-D</td>
+<td>查看内存中的内容</td>
+</tr>
+<tr>
+<td>-E</td>
+<td>改写内存中的内容</td>
+</tr>
+<tr>
+<td>-U</td>
+<td>翻译机器指令</td>
+</tr>
+<tr>
+<td>-T</td>
+<td>单步执行指令</td>
+</tr>
+<tr>
+<td>-A</td>
+<td>以汇编指令进行指令的输入</td>
+</tr>
+</tbody>
+</table>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/11/21/Coding/Assembly/assembly_II/" data-id="cjofkwndd000wybnr9ywluok2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACxklEQVR42u3awW7jMAwE0P7/T3eBPS1QxJkhpWwPz6eiRWU9BxCZob++4uv77/X813+vn//1c4X8Nz9XPnzh4eHhjbb+6nre6Ab2atP5ms97xsPDw7vNey4GySH+88bPv0nukqzwZld4eHh4/5X3jGxb5FPNOh4eHt5v5rXBQRIiJO11W0Lw8PDwPsNLwohZG7053JP9HMta8PDw8CandDQA+w0/X5zv4eHh4S2m6smxuzmaZ9FGsU88PDy8C7ykXc7P3n0I2yKjgoGHh4d3lJd/yd/cvn2xoI16X+4KDw8P7zIvv82mPOxb6qLk4OHh4V3gnc08Z5jN+sXXADw8PLxDvNnSbSjQHuh5K//mIeLh4eFd4CW3bMdg7VHeDszyURweHh7eDV4bqiYPYhZh7Pfwpu7h4eHhXTiH8/KQNMrP5WQTFuclBA8PD+8G73m7+dKzktB+AsP5Hh4eHt4FXpFbBA8iadbbiDZvvt+EEXh4eHiHeJvXnmaDsVPt+5s94+Hh4V3gzeLUPHJtXylo/xrtBA8PD+8Cb3azfVCbRxX5am8+Qzw8PLxDvLbBnW00P9w3rwvg4eHhfYZXVI9RzclLSP5A6+YeDw8P7xovv80mztgPyeoWHA8PD+8or331aj+myh9W22q//MaAh4eHd5R3aon2iE+i4dkLB3h4eHif5LVxQDvOz5vvPLCIWn88PDy8o7x2u7PRV4uZNeVvvjHg4eHhHeW1Y/7NUCo53NvwYpVt4OHh4cW87/Jqn1xbNmYBx8tHg4eHh3eBl1+zOCCPhvP7zkoXHh4e3lle2+Ceeokqabv3r3bh4eHh3ePNIoY8ehgmJWXpqlNqPDw8vI/wZg1uO/TaBBOrwoCHh4d3lNfGr7NmPV85avfx8PDwrvGSTSTN8Wzr+1Fc0Wvj4eHhrXmzAViOzMtMHnbMPgA8PDy8Ne8PmkoiFvTxWggAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/Assembly/">Assembly</a></div><div class="post-nav"><a class="pre" href="/2017/12/03/Guide/Linux/Regx/">正则表达式</a><a class="next" href="/2017/11/20/Guide/C_code_style/">C编码风格</a></div><div id="container"></div><link rel="stylesheet" href="/css/default.css?v=0.0.0"><script src="/js/gitment.browser.js?v=0.0.0"></script><script>var gitment = new Gitment({
+  owner: 'evil-crow',
+  repo: 'evil-crow.github.io',
+  oauth: {
+    client_id: '1c81bedb1f161c78ec76',
+    client_secret: '29bf11687745096e8640698a23483cb6c643d944',
+  },
+})
+gitment.render('container')
+</script></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/stl1/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/effective5/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/effective4/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/effective3/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/13/Coding/EffC++/effective2/"><星月夜> Constructors, Destructors, and Assignment Operators</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/07/Coding/EffC++/effective1/"><星月夜> Accustoming Yourself to C++</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/08/Guide/GDB/multprocess/">GDB调试系列(一)</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/31/Guide/Fedora_KDE/">Linux的常用配置</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/28/Question_Answer/C/two_level_array/">一个C语言指针的问题让我翻车</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
