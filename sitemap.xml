@@ -2,9 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://evil-crow.github.io/2018/05/20/Coding/VimScript/Crow_Vim/</loc>
+    
+    <lastmod>2018-11-20T07:41:57.919Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://evil-crow.github.io/about/index.html</loc>
     
-    <lastmod>2018-11-13T10:30:47.099Z</lastmod>
+    <lastmod>2018-11-15T14:07:19.806Z</lastmod>
     
   </url>
   
@@ -128,14 +135,14 @@
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/11/08/Coding/EffSTL/stl1/</loc>
+    <loc>http://evil-crow.github.io/2018/11/08/Coding/EffSTL/containers/</loc>
     
     <lastmod>2018-11-10T09:38:42.121Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/10/09/Coding/EffC++/effective5/</loc>
+    <loc>http://evil-crow.github.io/2018/10/09/Coding/EffC++/implementations/</loc>
     
     <lastmod>2018-10-18T03:36:24.376Z</lastmod>
     
@@ -261,28 +268,28 @@
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/09/07/Coding/EffC++/effective1/</loc>
+    <loc>http://evil-crow.github.io/2018/09/07/Coding/EffC++/accustoming_yourself_to_C++/</loc>
     
     <lastmod>2018-09-27T15:10:54.061Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/09/13/Coding/EffC++/effective2/</loc>
+    <loc>http://evil-crow.github.io/2018/09/13/Coding/EffC++/constructors_destructors_and_assignment_operators/</loc>
     
     <lastmod>2018-09-27T15:10:45.892Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/09/19/Coding/EffC++/effective3/</loc>
+    <loc>http://evil-crow.github.io/2018/09/19/Coding/EffC++/resource_management/</loc>
     
     <lastmod>2018-09-27T15:10:38.494Z</lastmod>
     
   </url>
   
   <url>
-    <loc>http://evil-crow.github.io/2018/09/26/Coding/EffC++/effective4/</loc>
+    <loc>http://evil-crow.github.io/2018/09/26/Coding/EffC++/designs_and_declarations/</loc>
     
     <lastmod>2018-09-27T15:10:32.302Z</lastmod>
     
