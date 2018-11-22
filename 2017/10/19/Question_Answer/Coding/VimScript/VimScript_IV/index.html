@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>VimScript的学习(四) | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">VimScript的学习(四)</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">VimScript的学习(四)</h1><div class="post-meta">Oct 19, 2017<span> | </span><span class="category"><a href="/categories/Vim/">Vim</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2017/10/19/Question_Answer/Coding/VimScript/VimScript_IV/" href="/2017/10/19/Question_Answer/Coding/VimScript/VimScript_IV/#disqus_thread"></a><div class="post-content"><p><em>说在前面</em></p>
+<p><em>选择VimScript学习,真的是一腔热血,其实这门语言的局限型</em></p>
+<p><em>比想象中还要小,不只是只能用于Vim插件的开发</em></p>
+<p><em>而且,是只能跑在Vim平台上的,<code>:source</code>,执行脚本,以<code>.vim</code>为文件扩展名</em></p>
+<p><em>而且,因为小众,历史原因的问题,语法也有点混乱,算是微型PHP</em></p>
+<p><em>其中有着各种各样的奇奇怪怪的问题,很烦人的</em></p>
+<p><em>但是,兴趣既是导向,学吧,Fighting!</em></p>
+<p><strong>也感谢@kang,让我明白.想做就去做</strong></p>
+<h2 id="关于VimScript"><a href="#关于VimScript" class="headerlink" title="关于VimScript"></a>关于VimScript</h2><p><strong>这是一门将脚本语言 + Vim设置 混搭的语言</strong></p>
+<p><strong>只能运行在Vim平台上的</strong></p>
+<p><strong>在Vim中 : source  * . vim 即可运行VimScript程序</strong></p>
+<p><strong>文件扩展名为 .vim </strong></p>
+<p><strong>另外注明 : 在VimScript中进行书写的时候,是不需要 : 的,而含有”:”的都是在Vim中的命令操作</strong></p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>VimScript作为一门脚本语言,其中也是可以使用变量的</p>
+<p>来看一个简单地例子</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">:let foo = &quot;bar&quot;</span><br><span class="line">echo foo  #=&gt; &quot;bar&quot;</span><br><span class="line">:let foo = 5</span><br><span class="line">echo foo  #=&gt; 5</span><br></pre></td></tr></table></figure>
+<p>从上面可以看出,VimScript貌似是动态语言,但是,我只能说你太年轻了</p>
+<p>后面的东西会告诉你,VimScript,<strong>只能算是半动态语言</strong></p>
+<h3 id="作为变量的选项"><a href="#作为变量的选项" class="headerlink" title="作为变量的选项"></a>作为变量的选项</h3><p>VimScript是一门用于Vim脚本开发的脚本语言,所以,VimScript中既有脚本语言的内容,同时也嵌套着Vim命令</p>
+<p>那么,Vim中作为设置选项的,可以作为变量使用吗?</p>
+<p><strong>答案是肯定的</strong></p>
+<p>对于作为变量设定的选项,也是可以作为变量使用,同时可以藉此进行选项的修改,利用脚本操作Vim</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:echo &amp;numberwidth</span><br><span class="line">:let &amp;numberwidth=10</span><br><span class="line">:echo &amp;numberwidth</span><br></pre></td></tr></table></figure>
+<p>同时,我们不仅可以设置数值型选项</p>
+<p>布尔型选项也可以设置</p>
+<p><strong>truthy = 所有非0值 , false = 0</strong></p>
+<p>那么为什么要使用let呢?</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:set textwidth=100</span><br><span class="line">:let &amp;numberwidth=&amp;textwidsth-90</span><br><span class="line">:echo &amp;numberwidth</span><br></pre></td></tr></table></figure>
+<p><strong>即可看出,let是可以操作变量的.但是,set是只能操作数值型选项的,不能进行变量值的设定</strong></p>
+<p><strong>在脚本语言中,使用let是更为方便的</strong></p>
+<p><strong>但是,更为实际的建议是,能用set的时候就用set,因为let会使语法变得复杂</strong></p>
+<h3 id="本地选项"><a href="#本地选项" class="headerlink" title="本地选项"></a>本地选项</h3><p>和之前提到过的进行设置是一样的,变量也是有作用域的,可以进行本地的设置</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">:let &amp;l:number = 1</span><br><span class="line">:echo &amp;l:number</span><br><span class="line"></span><br><span class="line">切换窗口</span><br><span class="line">:let &amp;1:number = 0</span><br><span class="line">(第一个窗口无效)</span><br></pre></td></tr></table></figure>
+<p>联想之前进行的操作,相信你很容易理解,作为本地选项的含义和意义</p>
+<h3 id="将变量作为寄存器"><a href="#将变量作为寄存器" class="headerlink" title="将变量作为寄存器"></a>将变量作为寄存器</h3><p>VimScript一个强大的地方在于:<strong>可以将寄存器作为变量使用</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:let @a = &quot;hello&quot;</span><br><span class="line">:echo @a</span><br></pre></td></tr></table></figure>
+<p>同时,<code>&quot;ap</code>可以将寄存器中的内容进行粘贴</p>
+<p>有的寄存器是匿名的,”用来表示没有进行命名的寄存器</p>
+<p>比如:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">echo &quot;@</span><br></pre></td></tr></table></figure>
+<p>在文件中选中一个单词并且进行复制,之后再进行输出</p>
+<p>则这个寄存器就是未命名的</p>
+<p>可以使用<code>echo @&quot;</code>进行输出</p>
+<p><strong>即使用@表明是使用寄存器,之后为寄存器名</strong></p>
+<p><strong>:help registers中显示了可以使用的寄存器名</strong></p>
+<h2 id="变量的作用域"><a href="#变量的作用域" class="headerlink" title="变量的作用域"></a>变量的作用域</h2><p><em>了解过Python以及Ruby之后,会大体了解变量作用域的问题</em></p>
+<p><em>我们再来看看Ruby作用域</em></p>
+<ul>
+<li>局部变量</li>
+<li><strong>$</strong>全局变量</li>
+<li><strong>@@</strong>类变量</li>
+<li><strong>@</strong>实例变量</li>
+</ul>
+<p><strong>目前,当变量是一个字母与一个冒号开头的时候,它就是一个作用域变量</strong></p>
+<h2 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h2><p>VimScript中的条件语句,类似于Ruby,但是其中没有<strong>unless</strong></p>
+<p>if语句的语法为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if 条件1</span><br><span class="line">  处理1</span><br><span class="line">elseif 条件2</span><br><span class="line">  处理2</span><br><span class="line">else</span><br><span class="line">  处理</span><br><span class="line">endif</span><br></pre></td></tr></table></figure>
+<p>VimScript使用以上语法进行分支操作</p>
+<p>同时,if语句的判断条件支持表达式expr</p>
+<p>下来我们来看三个例子:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">:echo &quot;hello&quot; + 10</span><br><span class="line">:echo &quot;10hello&quot; + 10</span><br><span class="line">:echo &quot;hello10&quot; + 10</span><br></pre></td></tr></table></figure>
+<p>结果依次是:10,20,10</p>
+<p>很奇妙,对吗?这就是VimScrript比较恶心的地方了</p>
+<p><strong>1. 字符串在进行 + 运算时,会强转为数值类型</strong></p>
+<p><strong>2. 字符串强转时,以数字开头的字符串被强转为数值,否则为’0”</strong></p>
+<h2 id="比较-条件表达式"><a href="#比较-条件表达式" class="headerlink" title="比较(条件表达式)"></a>比较(条件表达式)</h2><p><strong>比较是很重要的一个东西</strong></p>
+<p><strong>比较的结果,决定了条件语句,循环语句等等的结果,所以,比较语句是必须的</strong></p>
+<p><strong>而在VimScript中,比较语句也是十分的恶心</strong></p>
+<p>VimScript中,比较随处可见的,但是因为与Vim命令混用</p>
+<p>所以,其中不乏会出现这样的东西:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">:set ignorecase              &quot; 设置大小写不敏感</span><br><span class="line">:set noignorecase            &quot; 设置大小写敏感</span><br></pre></td></tr></table></figure>
+<p>而这样,就给我们的比较带来了问题</p>
+<p><strong>进行字符串的比较时,到底是大写,还是小写,怎么选择?这不就是糊弄人么!</strong></p>
+<p><strong>所以,VimScript中提供了另外两个比较运算符</strong></p>
+<p><strong> ==? 与 ==# 分别表示比较敏感与不敏感</strong></p>
+<p><strong>这样的话,就不会出现比较前,需要注意一下,是否被人设置了敏感大小写与否</strong></p>
+<h2 id="函数-function"><a href="#函数-function" class="headerlink" title="函数(function)"></a>函数(function)</h2><p>作为一门编程语言,是一定要支持函数的,没错吧?</p>
+<p>VimScript中的函数写法是类似于Ruby,Golang的,</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function Hello( )</span><br><span class="line">  echo &quot;This is an function that is used for testing!\n&quot;</span><br><span class="line">  echo &quot;Succeed!\n&quot;</span><br><span class="line">endfunction</span><br><span class="line">call Hello( )</span><br></pre></td></tr></table></figure>
+<p>但是,他是没有Ruby中~ { ~ } ~ 块的写法的</p>
+<p>其中严格要求使用</p>
+<p>function ~ endfunction的形式进行函数的定义</p>
+<p>而且,注意了!</p>
+<p><strong>VimScript中没有函数作用域型限制的func建议使用大写字母开头</strong></p>
+<p>上面我们则愉快的定义了一个名为Test的无作用域限制的函数</p>
+<p>同时,我们在看看这个函数运行的结果</p>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%284%29hello%28%29.png" alt=""><br><img src="http://oww4cv296.bkt.clouddn.com/VimScript%284%29hello_result.png" alt=""></p>
+<p>此处有一个深坑,就是进行这些函数测试的时候,一般都是写在Vim中的,</p>
+<p><strong>因为写在.vim文件中,无法进行执行,source文件也并不能直接执行,source只是进行代码的运行</strong></p>
+<p><strong>即,要使用命令行写,就写到底.或者在.vim文件中直接进行调用,不然在Vim中是不能直接调用的</strong></p>
+<h3 id="调用函数"><a href="#调用函数" class="headerlink" title="调用函数"></a>调用函数</h3><p>在VimScript中,调用函数有两种方式,</p>
+<p><strong>一,使用call 进行函数的调用,但是这个函数只能显示函数的副作用,所以对于没有副作用的函数,无效果</strong></p>
+<p><strong>二,在表达式中进行函数的调用,不需要使用call,只要是使用函数的名字即可,同时传递函数的返回值</strong></p>
+<p>举个例子,上面的Hello( )函数</p>
+<p>可以使用<code>echom Hello( )</code>调用</p>
+<p><strong>这会调用Hello( ),并将Hello( )的返回值传递给<code>echom</code>,但是Hello( )无返回值</strong></p>
+<h3 id="隐式返回"><a href="#隐式返回" class="headerlink" title="隐式返回"></a>隐式返回</h3><p>VimScript中,使用表达式进行函数的调用时,会有<strong>返回值</strong>,对于没有显示设定返回值的函数,会隐式返回0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function Hello( )</span><br><span class="line">  echo &quot;This is an function that is used for testing!\n&quot;</span><br><span class="line">  echo &quot;Succeed!\n&quot;</span><br><span class="line">endfunction</span><br><span class="line">echom Hello( )</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%284%29_shadow_value.png" alt=""><br>例如,上面的代码执行后,会有一行为0</p>
+<p>而进行这样的修改后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function Hello( )</span><br><span class="line">  echo &quot;This is an function that is used for testing!\n&quot;</span><br><span class="line">  echo &quot;Succeed!\n&quot;</span><br><span class="line"></span><br><span class="line">  return &quot;Return_Value&quot;</span><br><span class="line">endfunction</span><br><span class="line">echom Hello( )</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%284%29_result.png" alt=""></p>
+<p>如果有C语言的编程经验,对于返回值的问题还是比较容易理解的</p>
+<p><strong>如果VimScript函数不返回一个值,则它会隐式返回0</strong></p>
+<h3 id="函数参数"><a href="#函数参数" class="headerlink" title="函数参数"></a>函数参数</h3><p>作为编程语言中的函数,<strong>一定是可以接受参数的</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">funcation DisplayName(name)</span><br><span class="line">  echo &quot;hello,my name is&quot;</span><br><span class="line">  echo a:name</span><br><span class="line">endfunction</span><br><span class="line">call DisplayName(&quot;Crow&quot;)</span><br></pre></td></tr></table></figure>
+<p>即可将字符串传入函数DisplayName(name)中,从而显示输入的字符串</p>
+<p><strong>谨记:name在该函数中,是具有函数作用域的.所以,我们需要在前面加上 a: 来进行变量作用域的限制</strong></p>
+<p><strong>如果,没有作用域限制,会变成全局作用域,VimScript会报错,无法找到变量</strong></p>
+<p><strong>所以,在写需要变量的VimScript函数时,请总在变量前加上<code>a:</code>来显示变量的作用域</strong></p>
+<h3 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h3><p>有的时候,不想规定参数个数,根据需要进行参数个数限定</p>
+<p>可以使用可变参数进行函数的设计</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function! Varg(...)</span><br><span class="line">  echo a:0</span><br><span class="line">  echo a:1</span><br><span class="line">  echo b:2</span><br><span class="line">  echo a:000</span><br><span class="line">endfunction</span><br><span class="line">call Varg(1,2)</span><br></pre></td></tr></table></figure>
+<p><strong>首先注意一点,我们从这里开始使用<code>function!</code>来进行函数的定义,为什么?</strong></p>
+<p><strong>使用function! 可以覆盖之前进行加载过的函数,对于重名函数进行覆盖,所以,建议加上 ! 更为安全</strong></p>
+<p><strong>否则,有时对于重名函数会进行报错,同时也建议使用 ! 的时候,不要使用重名函数,会进行覆盖.</strong></p>
+<p>现在,我们来看看可变参数如何使用</p>
+<p><strong>echo a:0 显示了可变参数的个数</strong></p>
+<p><strong>echo a:1 显示了第一个参数</strong></p>
+<p><strong>echo a:2 显示了第二个参数</strong></p>
+<p><strong>echo a:000 则将可变参数转换成为列表</strong></p>
+<p><strong>列表,同Python的列表,Ruby的数组</strong></p>
+<p>同时,我们还可以将可变参数与普通参数一起使用,可以写出下面这样的函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">function! A(a,...)</span><br><span class="line">  echo a:a</span><br><span class="line">  echo a:0</span><br><span class="line">  echo a:1</span><br><span class="line">  echo a:000</span><br><span class="line">endfunction</span><br><span class="line">call A(&quot;Crow&quot;,1)</span><br></pre></td></tr></table></figure>
+<p><img src="http://oww4cv296.bkt.clouddn.com/VimScript%284%29_varg.png" alt=""></p>
+<p>VimScript会自行进行判断,处理好可变参数和具名参数的赋值</p>
+<h2 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h2><p>三(四)大语句中,循环可是占了不小的分量.</p>
+<p>但是,为什么不进行循环的介绍呢?</p>
+<p>因为VimScript中,对于循环的需求是很小的,但是还是有了解的必要</p>
+<p><strong>循环有:for循环,2 while循环两种</strong></p>
+<h3 id="for循环"><a href="#for循环" class="headerlink" title="for循环"></a>for循环</h3><p>类似于Ruby中的for循环,从C转换过来,可能不是很适应</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">let foo = [1,2,3,4,5]</span><br><span class="line">for i in foo do</span><br><span class="line">  echo i</span><br><span class="line">endfor</span><br></pre></td></tr></table></figure>
+<p>上面的循环,逐次遍历输出foo列表中的元素</p>
+<h3 id="while循环"><a href="#while循环" class="headerlink" title="while循环"></a>while循环</h3><p>while的循环是与其他语言大同小异的</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">let foo = [1,2,3]</span><br><span class="line">let i = 0</span><br><span class="line">while i &lt;= 2</span><br><span class="line">  echo foo[i]</span><br><span class="line">  let i = i + 1</span><br><span class="line">endwhile</span><br></pre></td></tr></table></figure>
+<p><strong>需要注意,endwhile,endfunction,endfor不能写错</strong></p>
+<p><strong>同时,对于进行值改变时,一定要加上let,进行操作</strong></p>
+<hr>
+<p>最后,来谈谈echo与echom的区别吧</p>
+<p>echo系的的函数有很多,的那是我们常用的就是echo与echom</p>
+<p>其区别在于:</p>
+<p><strong>echo: 会将结果进行结算,并且显示完后结束</strong></p>
+<p><strong>echom: 将内容作为一个真正的消息进行显示并存储,所有消息必须时数值/字符串</strong></p>
+<p><strong>列表,字典,浮点数这些都是不被允许的</strong></p>
+<p>一般情况下,如果不是为了进行消息的存储,<strong>建议使用 echo </strong></p>
+<p>October 24, 2017 10:11 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/10/19/Question_Answer/Coding/VimScript/VimScript_IV/" data-id="cjosm456f00ana6nro8wd99j2" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN4AAADeCAAAAAB3DOFrAAACtElEQVR42u3aQVLDMBAEwPz/0/CAQJjZlSgf2icqcWS1DpaY3dcrvr7ervfPP9//+Z7kV+8jHLvw8PDw1lNPHvx5tN8+SZDJyMmc8fDw8G7zkuESar5ttAuUbBJ4eHh4T+a1pNmY+f14eHh4T+Yl8UQbVSS/xcPDw3saL49QkwNufph+UNaCh4eHF/PyKtJz/r5S38PDw8NbV9XbEv4m2M1bB4rZ4uHh4V3g5S/c/Bj9+f68eNa2LPy6fHh4eHiXebMgdXYI3ixQEXng4eHhHeXlh93N6z5frKKslXyLh4eHd5mXxwGbECGfbt6GVcQQeHh4eId4syJTEaTG5f/61b9PUPDw8PAWbQF1YSlPO8rAot1giu0BDw8P7xAvmdCpT/IFSjaGYkvDw8PDO8Tbr8qmGWtWBisaC/Dw8PAu8PLh9qWp2YYxe8ofnRF4eHh4C97spdy2jebltLaltWi6wsPDwzvKyweaTSVvbJ21FBRrjIeHh7fmzRoL8o2hbRGYBRzt+Hh4eHhneQcqafFobZNWvnxRpIuHh4c34iUH3FkJKmmWavPm/Cl4eHh493htODsrhu3bC9oyWP81Hh4eXvptW6bKW+3baSXN/fkWhYeHh3eP1x6R8/J/G7y2hbTZloaHh4d3ipe8iE/x9u0L7Sd4eHh493h5i8Ds0Dxbyryh4VgHBB4eHt6hM2d+4J7lqO0T860FDw8P7zZvFlLkU1m94kdlOTw8PLyzvH20mkw0j2VXG8D73PDw8PAu8NrXbnJo3mwqbZDxOnXh4eHhrdsF2tarfUDcRh7JCHh4eHi3eacKV+07+exVxLh4eHh4/85Lylf7sHjf7IWHh4f3HN6mWaptHdg8Fw8PD+8eL29+SspaeXjRPquOkvHw8PAu8Gb/5OcH6Bk7X9YrGQYeHh7ez9c302SmS9DvjJYAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/VimScript/">VimScript</a></div><div class="post-nav"><a class="pre" href="/2017/10/24/Question_Answer/Coding/VimScript/VimScript_V/">VimScript的学习(五)</a><a class="next" href="/2017/10/19/Coding/VimScript/VimScript_IV/">VimScript的学习(四)</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://evil-crow.github.io/2017/10/19/Question_Answer/Coding/VimScript/VimScript_IV/';
+    this.page.identifier = '2017/10/19/Question_Answer/Coding/VimScript/VimScript_IV/';
+    this.page.title = 'VimScript的学习(四)';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//Evilcrow.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//Evilcrow.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://Evilcrow.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/Question_Answer/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Question_Answer/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Question_Answer/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Question_Answer/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Question_Answer/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//Evilcrow.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

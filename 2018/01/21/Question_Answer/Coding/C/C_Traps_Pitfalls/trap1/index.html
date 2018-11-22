@@ -1,0 +1,236 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>语法陷阱与词法陷阱 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">语法陷阱与词法陷阱</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">语法陷阱与词法陷阱</h1><div class="post-meta">Jan 21, 2018<span> | </span><span class="category"><a href="/categories/C-C/">C/C++</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2018/01/21/Question_Answer/Coding/C/C_Traps_Pitfalls/trap1/" href="/2018/01/21/Question_Answer/Coding/C/C_Traps_Pitfalls/trap1/#disqus_thread"></a><div class="post-content"><p><em>最近重装了系统,/挂载在固态里面是真的快,但是,KDE的中文字体现在搞得我想吃shi,楷体是真的难受</em></p>
+<p>(upate:适应了几天,还不错,谁的Linux有我的楷体sao(滑稽));)</p>
+<p><em>不扯了,不扯了,C陷阱与缺陷是很好的一本书,这一篇是词法与语法中的陷阱</em></p>
+<p><em>其中有几个是很多人整天苦恼地问题呢</em></p>
+<h1 id="词法陷阱"><a href="#词法陷阱" class="headerlink" title="词法陷阱"></a>词法陷阱</h1><h2 id="1-不同于"><a href="#1-不同于" class="headerlink" title="1. = 不同于 =="></a>1. = 不同于 ==</h2><p>这个问题,基本上只要是使用过C语言的都是知道的,赋值运算符与比较运算符是不能混淆的</p>
+<p>尤其是在,选择或者循环控制语句中,混淆使用会导致不可预料的后果</p>
+<p>但是,平时应该如何规避这样的错误呢?</p>
+<p>显式的使用括号进行判别</p>
+<p><strong>一般情况下,在if while等控制语句中需要的是 == 运算符,但是遇到必要的使用 = 进行判断的时候呢?</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*检查新值是否为0*/</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (a = b)</span><br><span class="line">	foo( );</span><br><span class="line"></span><br><span class="line">可以写作:</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ((a = b) != <span class="number">0</span>)    <span class="comment">//显式的表示更加明确</span></span><br><span class="line">	foo( );</span><br></pre></td></tr></table></figure>
+<h2 id="2-amp-和-不同于-amp-amp-和"><a href="#2-amp-和-不同于-amp-amp-和" class="headerlink" title="2. &amp; 和 | 不同于 &amp;&amp; 和 ||"></a>2. &amp; 和 | 不同于 &amp;&amp; 和 ||</h2><p>在之前看C的书籍与CS:APP都提到了这个问题</p>
+<p>只有在限定数值范围的情况下,才能得到相同的结果</p>
+<h2 id="3-词法分析中的”贪心法”"><a href="#3-词法分析中的”贪心法”" class="headerlink" title="3. 词法分析中的”贪心法”"></a>3. 词法分析中的”贪心法”</h2><p>其实只要了解过,正则表达式的人,就可以很方便的理解贪心法</p>
+<p>即是指:<strong>进行词法分析时,尽可能多的进行运算符的匹配</strong></p>
+<p>比如:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">a---b #=&gt; a -- - b</span><br><span class="line"></span><br><span class="line">y = x<span class="comment">/*p #=&gt; y = x /* p                            */</span></span><br><span class="line"></span><br><span class="line">二义性,应该这样写:</span><br><span class="line"></span><br><span class="line">y = x/(*p)</span><br></pre></td></tr></table></figure>
+<p>而且,在ASCI标准没有出现之前,会有许许多多尴尬的情况</p>
+<p><strong>准确得讲,因为其中不标准的规范,才会有上古时期很难阅读的代码</strong></p>
+<p><strong>而在现在,基本上都支持ASCI标准,所以,好用多了</strong></p>
+<h2 id="4-整型常量"><a href="#4-整型常量" class="headerlink" title="4. 整型常量"></a>4. 整型常量</h2><p>众所周知,在C中支持,二进制,八进制,十进制,十六进制,<strong>采用不同的书写方式</strong></p>
+<p>所以,会出现下面这样的情况,<strong>将十进制误写成其他进制</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> part_number;</span><br><span class="line">	<span class="keyword">char</span> *description;</span><br><span class="line">&#125;parttab[] = &#123;</span><br><span class="line">	<span class="number">046</span>, <span class="string">"left-handed weight"</span>,</span><br><span class="line">	<span class="number">047</span>, <span class="string">"right-handed weight"</span>,</span><br><span class="line">	<span class="number">125</span>, <span class="string">"frammis"</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>上面便出现了将十进制误写成八进制的情况,需要严加防范</p>
+<h2 id="5-字符与字符串"><a href="#5-字符与字符串" class="headerlink" title="5. 字符与字符串"></a>5. 字符与字符串</h2><p>…</p>
+<h1 id="语法陷阱"><a href="#语法陷阱" class="headerlink" title="语法陷阱"></a>语法陷阱</h1><h2 id="1-理解函数声明"><a href="#1-理解函数声明" class="headerlink" title="1. 理解函数声明"></a>1. 理解函数声明</h2><p>函数声明,是C中进行程序设计所必不可少的,</p>
+<p>有难度吗?</p>
+<p><strong>有,当你遇到,函数指针,返回值为指针的函数,嵌套时,有你好受的 ! </strong></p>
+<p>来看一个例子,这是选自 &lt; C陷阱与缺陷 &gt; 的例子</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(*(<span class="keyword">void</span>(*)( ))<span class="number">0</span>)( );</span><br></pre></td></tr></table></figure>
+<p>上面这个东西是真的看的人头疼!</p>
+<p>那么,我们拆开来看吧!</p>
+<p>首先,是这一部分,</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(*(...)<span class="number">0</span>)( );</span><br></pre></td></tr></table></figure>
+<p>可以清楚的看到,</p>
+<p><strong>如果没有后面的0,那么便是进行函数指针的调用,比如 (*fp)( );</strong></p>
+<p><strong>但是,加上0,就不能解释为简单地函数指针调用了,而是进行强制类型转换!</strong></p>
+<p><strong>即,此处是将0,转换成为一个函数指针,这样才能实现需要:调用0位置的子例程</strong></p>
+<p>再来看,括号内的内容</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">void</span>(*)( ))</span><br></pre></td></tr></table></figure>
+<p>这里就要介绍一种技巧了,<strong>即是获取到类型转换符的方法</strong></p>
+<p>很简单:<strong>将标识符,分号,去掉之后.用括号封装剩下的内容即可</strong></p>
+<p>来举个例子:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (*fp)(ARGV);      <span class="comment">/*其中括号是必要的,因为优先级*/</span></span><br></pre></td></tr></table></figure>
+<p>上面的例子,便是一个返回类型为void的函数指针,函数指针标识符为fp,</p>
+<p>那么,0便是要接受这样的类型转换,将上面的式子转换为类型转换运算符即为</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="keyword">void</span>(*)())</span><br></pre></td></tr></table></figure>
+<p>这样便可以作为0的类型转换符来使用了</p>
+<p>表示含义为”返回值为void类型的函数指针的强制类型转换”</p>
+<p>现在回过头来,我们再整体分析一遍</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(*(<span class="keyword">void</span>(*)( ))<span class="number">0</span>)( );</span><br><span class="line"></span><br><span class="line">(*(强制类型转换为指针,返回值为<span class="keyword">void</span>)调用地址<span class="number">0</span>处)(函数参数);</span><br></pre></td></tr></table></figure>
+<p>上面因为直接进行对0地址处的进程调用,所以写出来的是,强制类型转换为指针类型,</p>
+<p>同时也是因为,此处要操作的是函数指针的缘故.</p>
+<p>这样的形式是真的复杂,所以我们可以使用typedef来进行别名命名</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span><span class="params">(*fp)</span><span class="params">( )</span></span>;</span><br><span class="line"></span><br><span class="line">(*(fp)<span class="number">0</span>)( );</span><br></pre></td></tr></table></figure>
+<p>同时,<strong>也让我更深刻的理解了,typedef的内容,不仅仅命名结构体,还可以命名函数指针</strong></p>
+<p>上面是一个简单地例子,下面我们来看一个更, , ,的例子,库函数中,signal函数的实现</p>
+<p><strong>首先来说说需求: 传参为int型的信号值,另一个参数,值用户制定的函数指针</strong></p>
+<p>首先,我们来设计一个基础的版本</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">signalfunc</span><span class="params">(<span class="keyword">int</span> )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>很简单对吧,就是一个返回值为空,传参为int值即可</p>
+<p>我们现在需要完成一个需求,声明一个指向signalfunc的函数指针</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (*sfp)(<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure>
+<p>没错对吧,sfp即为指向signalfunc的函数指针</p>
+<p>所以,我们的signal函数则可以这样写:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (*signal(ARGV))(<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure>
+<p>其中ARGV是signal的参数,那么signal函数的参数是什么呢?</p>
+<p>一个int型的信号值,一个用户自定义的函数</p>
+<p>那么,这就简单了,ARGV可以展开写成</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> (*signal(<span class="keyword">int</span> ,<span class="keyword">void</span> (*)(<span class="keyword">int</span>)))(<span class="keyword">int</span>);</span><br></pre></td></tr></table></figure>
+<p>所以,现在来看,我们可以这样理解:</p>
+<p><strong>使用函数指针,是为了进行简单的函数调用设计,的那是因为C语言特性</strong></p>
+<p><strong>一直以来使得,C函数原型(过去叫函数声明)理解晦涩,实质上,可以使用递归德斯向来理解(Pangda)</strong></p>
+<p><strong>即,将多层函数指针嵌套的函数原型,进行按层拆封,由内向外,一层一层的进行划分</strong></p>
+<p><strong>其中比较麻烦的就是,函数的参都不一致,所以看起来难以辨别,这种时候使用typedef就清晰明了了</strong></p>
+<p>比如:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">void</span> <span class="params">(*HANDLER)</span><span class="params">(<span class="keyword">int</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> (*signal(<span class="keyword">int</span>, <span class="keyword">void</span> (*)(<span class="keyword">int</span>)))(<span class="keyword">int</span>);</span><br><span class="line"></span><br><span class="line">#=&gt; HANDLER signal(<span class="keyword">int</span>, HANDLER);</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> *(*k(<span class="keyword">int</span> p, <span class="keyword">int</span>(*l)(<span class="keyword">int</span>, <span class="keyword">void</span>(*m)(<span class="keyword">int</span>))))(<span class="keyword">int</span> o);</span><br></pre></td></tr></table></figure>
+<p>上面这样的形式,一般是比较迷惑人的,</p>
+<p>仔细划分,函数名就是k,就是第一层,<strong>其他全部是调用的函数指针的形式参数名</strong></p>
+<p><strong>这一部分,十分重要,可以让你以后设计出,厉(ri)害(gou)的函数</strong></p>
+<h2 id="2-运算符的优先级"><a href="#2-运算符的优先级" class="headerlink" title="2. 运算符的优先级"></a>2. 运算符的优先级</h2><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>结合型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>( ) [ ] -&gt; .</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>! ~ ++ – - (type) * &amp; sizeof</td>
+<td>自右至左</td>
+</tr>
+<tr>
+<td>* / %</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>+ -</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>&lt;&lt; &gt;&gt;</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>&lt; &lt;= =&gt; &gt;</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>== !=</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>&amp;</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>^</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>｜</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>&amp;&amp;</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>｜｜</td>
+<td>自左向右</td>
+</tr>
+<tr>
+<td>?:</td>
+<td>自右向左</td>
+</tr>
+<tr>
+<td>assignments</td>
+<td>自右向左</td>
+</tr>
+<tr>
+<td>,</td>
+<td>自左向右</td>
+</tr>
+</tbody>
+</table>
+<p>上面的便是,运算符优先级表,</p>
+<p><strong>反正我觉得不会好记</strong>,一般有两种办法处理优先级问题</p>
+<p><strong>1. 加括号, 2. 背表</strong></p>
+<h2 id="3-注意语句结束标志的分号"><a href="#3-注意语句结束标志的分号" class="headerlink" title="3. 注意语句结束标志的分号"></a>3. 注意语句结束标志的分号</h2><p>C中使用” ; “作为语句的结尾,让人又爱又恨</p>
+<p>好的地方在于:<strong>清晰的标志了语句地结束</strong></p>
+<p>不好的地方在于: <strong>用错的时候,会出现爆炸般的错误</strong></p>
+<p>来看下面这几个例子:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a &gt; b);</span><br><span class="line">	func( );</span><br><span class="line"></span><br><span class="line">等价:</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (a &gt; b) &#123; &#125;</span><br><span class="line">	func( );</span><br></pre></td></tr></table></figure>
+<p>相信很多人都出过这样的错,提前结束判断/循环语句,导致程序出现不可控的错误</p>
+<p><strong>当然,有时候,有必要的话应该这样写</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a &gt; b)</span><br><span class="line">	;</span><br><span class="line">func( );</span><br></pre></td></tr></table></figure>
+<p>写空语句的形式,更加清晰明了,</p>
+<p><strong>想要以格式来进行程序的逻辑控制,在C中是痴心妄想,游标卡尺倒是还可以</strong></p>
+<p><strong>多分号,很危险.同理,少了分号也不得了,来看下面的例子</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a &gt; b)</span><br><span class="line">	<span class="keyword">return</span> </span><br><span class="line">a.one = <span class="number">1</span>;</span><br><span class="line">a.two = <span class="number">2</span>;</span><br><span class="line">a.three = <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">等价:</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (a &gt; b)</span><br><span class="line">	<span class="keyword">return</span> a.one = <span class="number">1</span>;</span><br><span class="line">a.two = <span class="number">2</span>;</span><br><span class="line">a.three = <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">test</span> &#123;</span></span><br><span class="line">	<span class="keyword">int</span> a;</span><br><span class="line">	<span class="keyword">float</span> b;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">test</span> *<span class="title">next</span>;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">main(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">则指定了main函数的返回值为test结构体,在一定的情况下,会出现爆炸现象的,(此处不会使用缺省类型<span class="keyword">int</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="4-switch语句"><a href="#4-switch语句" class="headerlink" title="4. switch语句"></a>4. switch语句</h2><p>关于switch语句,需要注意的点在于:</p>
+<p><strong>关于逻辑控制的break语句</strong></p>
+<p><strong>切记,没有break,则会顺序执行</strong></p>
+<p><del>小组面试也考过的</del></p>
+<p>当然没有绝对的错</p>
+<p>比如在写一个运算器的时候:</p>
+<p><strong>减法也可以转换成为加法</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span> (operation) &#123;</span><br><span class="line">	<span class="keyword">case</span> <span class="string">'-'</span>:operation = -operation;</span><br><span class="line">	<span class="comment">//此处没有break;</span></span><br><span class="line">	<span class="keyword">case</span> <span class="string">'+'</span>:....</span><br><span class="line">	....</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">这种时候加上注释,效果更好呦</span><br></pre></td></tr></table></figure>
+<h2 id="5-函数调用与else"><a href="#5-函数调用与else" class="headerlink" title="5. 函数调用与else"></a>5. 函数调用与else</h2><p><del>其实就是意思一下,大家都懂得</del></p>
+<p><strong>C中函数调用,必须有括号,不然只是计算函数的地址,并不调用,一般linter都会报错</strong></p>
+<p><strong>else,与最紧密相联的if构成一对(在括号不清晰时),还是那句话,不要妄图在C中间加入py那种玩艺(滑稽
+</strong></p>
+<p>这本书,怎么说,还是因为放假回来,一开始看不进入其他的书</p>
+<p>不过,怎么说,这本书,<strong>还挺好看的,<del>(虽然买的是盗版,不过也是钱啊0)</del></strong></p>
+<p>下一章开始就好玩了</p>
+<p><strong><del>另外,我也想像瑞神一样,分析一波C标准库,起码看完,C自身的特性就都懂了</del></strong></p>
+<p><strong>像Pangda那种OOP的C,我还是不想玩了,dan teng,不如直接rb</strong></p>
+<p>January 23, 2018 11:41 AM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2018/01/21/Question_Answer/Coding/C/C_Traps_Pitfalls/trap1/" data-id="cjosm457200bma6nr7w2dby9e" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADOElEQVR42u3aQXLbQAwEQP//08rVrlj0DCBXmavmKWVJy23ygOwAHx/x9fh0ff7Ls0///+31X67Xefb95NPVhY2NjX0T9uPyumbn4PYu1/jkBfywQ2xsbOzj2Pmm2y0mRa7dT1JWf1gTGxsb+43Z+eNo2UmJyn+FjY2NjT07eOSHhJY6+xU2Njb2+7CTuCcvZm3JyctV8qBfnKVhY2Nj/3l2foO//+9f6W9jY2Nj/2H2Y3Rd/3b24PKSdh1XRfvHxsbGPoidHwbaeGgzDJSssB8PwsbGxj6DnYzd5KM5G0DeGG5bFN+sj42NjX0cexbit99M7pXfsW1IfNkDNjY29nHs1zZ081GbZMhmE2w9vRc2Njb2QezXDjXOQv9XhU31ABA2Njb2Qey8XdpGUbMttmvmpRcbGxv7PHYb/eSFqi1vs3bFMMbCxsbGPog9i3JmjyyP+9s1cxE2Njb2qexZYDSLpWYDPZuDSlG9sbGxsW/InsVD+cBNXk42IVS7PjY2NvZJ7Ha5j/jat3XzBkBb3rCxsbFPYm/+658cRTajOfnYTd30xcbGxj6InScts4NEu7lNFJXXJmxsbOyT2NdFZU9KQv82VGrfavGGsbGxsY9jbwrVrJGcHFrae32zAjY2NvZx7HaAZhbct4eH/EDSHqiwsbGxT2Lnrdy2tOQR/yzAmr0wbGxs7LPZeRnIQ6hZezgvh21SFL15bGxs7Fux80V/4wAzY7Rx0g/tAWxsbOybs/MhmFchZweh/JDTNpixsbGx785+BNcs4t/E/ckjm7UcsLGxsU9lzypeW+TykpnsLf9O8cywsbGxb8iexfSbGyePdTOsU7wYbGxs7CPYbUO3HYtp19wEUsVLwsbGxj6IvS8Sm/h+Px40aydgY2Njn8R+lNcmyvm9ZnBUrtquCDY2NvZN2G0BSOKnWdlLjijtTup5JWxsbOzbsvdF67Wfbh5E8WKwsbGxj2PnAz2ztu6sebypwFF7ABsbG/vN2PnBI4+ZkvU3az79FTY2NvZbsvft2Da+3xyKot4INjY29kHsNgyaNV/3rYV8zWL4EhsbG/vm7HZcJqcmZSw/isyaxNjY2NhHs/8Bz0KWupX1FbIAAAAASUVORK5CYII=">分享</a><div class="tags"><a href="/tags/CTrapsAndPitfalls/">CTrapsAndPitfalls</a></div><div class="post-nav"><a class="pre" href="/2018/02/01/Coding/Ruby/Ruby1/">Ruby学习笔记(一)</a><a class="next" href="/2018/01/21/Coding/C/C_Traps_Pitfalls/trap1/">语法陷阱与词法陷阱</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://evil-crow.github.io/2018/01/21/Question_Answer/Coding/C/C_Traps_Pitfalls/trap1/';
+    this.page.identifier = '2018/01/21/Question_Answer/Coding/C/C_Traps_Pitfalls/trap1/';
+    this.page.title = '语法陷阱与词法陷阱';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//Evilcrow.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//Evilcrow.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://Evilcrow.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/Question_Answer/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Question_Answer/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Question_Answer/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Question_Answer/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Question_Answer/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//Evilcrow.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>关于C语言课程设计的经验总结 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">关于C语言课程设计的经验总结</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">关于C语言课程设计的经验总结</h1><div class="post-meta">Sep 22, 2017<span> | </span><span class="category"><a href="/categories/Documents/">Documents</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2017/09/22/Question_Answer/Documents/document_course_design/" href="/2017/09/22/Question_Answer/Documents/document_course_design/#disqus_thread"></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-5"><a class="toc-link" href="#C语言课程设计的内容"><span class="toc-number">1.</span> <span class="toc-text">C语言课程设计的内容</span></a></li></ol></div></div><div class="post-content"><p>最近总算把期末考试给处理完了,在暑期再也没有课业压力的烦恼了</p>
+<p>总算又可以开心的撸码了!</p>
+<p>既然之前的一段时间都在忙课程设计,那今天就说说课程设计的事吧!</p>
+<hr>
+<h5 id="C语言课程设计的内容"><a href="#C语言课程设计的内容" class="headerlink" title="C语言课程设计的内容"></a>C语言课程设计的内容</h5><p>C语言课程设计是我们计科专业在学期底需要进行的,</p>
+<p>其主要内容是设计一个信息的处理系统,</p>
+<p>主要实现的功能是:<strong>文件读取信息-&gt;程序处理信息-&gt;文件保存信息</strong></p>
+<p>下面我就功能部分进行说明:</p>
+<hr>
+<p>1.文件的读取和保存</p>
+<p>此部分主要的内容是文件部分的操作,</p>
+<p><em>其中包括文件的打开与关闭,文件的读写操作,文件的关闭,以及一些文件指针的移动操作</em></p>
+<p>只要熟练掌握了文件部分的知识,这一部分的功能实现,还是比较容易的了</p>
+<p>2.程序处理信息</p>
+<p>在这个课程设计中,对于信息的处理方式,要求是使用链表的方法</p>
+<p>但是还是有同学使用,结构数组,这个就不太恰当了</p>
+<p>相对于结构数组,链表还是有很大的优点的:</p>
+<blockquote>
+<p>一,使用链表其中所存储的数据不是连续的,当程序不能一次性的处理所有的信息时,使用链表方便</p>
+</blockquote>
+<blockquote>
+<p>二,从第一点继续往后谈,链表存储数据属于按需存取,分配内存空间,不会浪费内存空间</p>
+</blockquote>
+<blockquote>
+<p>三,使用链表,之后对于信息的增,删,改,查,十分方便</p>
+</blockquote>
+<p><em>以上两部分即为此项课程设计实现必要功能时的知识储备</em></p>
+<hr>
+<p><em>接下来,我来分享我自己在课程设计中的经验</em></p>
+<p>1.关于模块化函数设计的编程思想</p>
+<p><strong>模块化的编程思想是我在此次课程设计中感受最深的东西!</strong></p>
+<p><strong>进行编程时,建议尽可能多的使用函数,并且将函数模块化.说实在的这样看上去,</strong></p>
+<p><strong>程序的代码,美观,条理清晰</strong></p>
+<p>因为进行课程设计时,是多个班的同学一起在机房里进行的,有的同学程序有问题,在帮忙进行改Bug时</p>
+<p>我发现了这样的问题,在改代码时,没有模块化的程序设计思想,整个程序杂乱无章,没有条理</p>
+<p>不说函数原型,函数声明也没有…程序的可读性较低,</p>
+<p><strong>而且,更恶心的事是,不使用函数原型,你的函数顺序需要十分注意,否则,进行函数的相互调用时,就会报错!</strong></p>
+<p>下面我贴一张我的函数原型的图,这样的话条理清晰,而且可移植性高<br><img src="http://img.blog.csdn.net/20170710121045211?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<hr>
+<p>2.关于使用google新闻组的便利之处</p>
+<p>在进行文件读写时可以使用以下代码判断是否文件结束:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">fp = fopen(&quot;/home/Evilcrow/C/information&quot;,&quot;r+&quot;);</span><br><span class="line">if(fp != NULL)</span><br><span class="line">&#123;</span><br><span class="line">	printf(&quot;Error!&quot;);</span><br><span class="line">	return NULL;</span><br><span class="line">&#125;</span><br><span class="line">while(!feof(fp))</span><br><span class="line">&#123;</span><br><span class="line">	...........(省略)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上面的代码即可使程序在遇到文件尾以前,循环读出/写入信息</p>
+<p><strong>那么,问题来了,要是文件为空文件,程序还能正常运行吗?</strong></p>
+<p>答案,<strong>是否定的!</strong></p>
+<p><code>while(!feof(fp))</code>对于文件开头要是为空时无法处理的,会进入死循环</p>
+<p>遇到这个问题,我思考了很久,没有找到合适的方法,最后还是去了小组的google新闻组上才找到了解答</p>
+<p><img src="http://img.blog.csdn.net/20170710121126984?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p><img src="http://img.blog.csdn.net/20170710121141737?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<p>最后,我自己也进行了尝试</p>
+<p>但是,我也发现了一个问题,就是在fgtc进行首字符是否为空的判断之后,会私自吞掉一个字符</p>
+<p>这样,每次进行操作完成之后,都会少一个字符,最后,我找到了fseek函数,对代码进行了以下修改:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if(fgetc(fp) == EOF)</span><br><span class="line">&#123;</span><br><span class="line">    printf(&quot;\t\t\t\tThe file is empty!\n&quot;);</span><br><span class="line">    return pHead;</span><br><span class="line">&#125;</span><br><span class="line">fseek(fp,0L,0);</span><br><span class="line"></span><br><span class="line">while(!feof(fp))</span><br><span class="line">&#123;</span><br><span class="line">	...........(省略)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>进行这样的修改之后,便可以很顺畅的进行文件开头是否为空的判断了.</p>
+<p>在这一过程中,收获到的不仅仅是这样的一个小技巧,灵活使用,善于使用google新闻组,真的很方便</p>
+<p>不仅可以解决自己的问题,以前的前辈所留下的宝贵经验,也可以进行学习!</p>
+<hr>
+<p>3.关于链表的操作</p>
+<p>之前提到在整个课程设计中,链表的操作至关重要!</p>
+<p><strong>我之前一直以来创建的都是无头节点链表,之后在进行链表的操作时,十分困难</strong></p>
+<p><strong>于是,听从恒毅哥的指导  @Hg_yi 使用了有头节点链表,之后的增,删,改,查,排序操作十分方便</strong></p>
+<p><strong>使用有头节点的链表,头节点始终是不参与存储数据的,尤其是排序,很方便</strong></p>
+<p><strong>此篇Blog重点是课设经验的总结,下次有机会总结一篇链表操作</strong></p>
+<hr>
+<p>4.Win与Linux下的一些区别</p>
+<ul>
+<li><p>关于system函数的问题</p>
+</li>
+<li><p>关于密码回显的问题</p>
+</li>
+<li><p>getchar( )与system(“pause”)</p>
+</li>
+</ul>
+<p><strong>system函数在Win下与Linux下有很大的区别</strong></p>
+<p>但是,在Linux下可以通过其他的方式来实现Win下各式各样的system函数</p>
+<p>比如:getchar( )可以实现system(“pause”)的进程中止功能</p>
+<p>密码的回显在Win下是依靠&lt; conio.h &gt;中的getch()函数实现不回显的功能的</p>
+<p>在Linux下,则没有此函数头文件,需要依靠system(“stty (-)echo”)来实现输入的回显功能.<br><img src="http://img.blog.csdn.net/20170710121223906?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvRV92aWxjcm93/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+<hr>
+<p>以上即为，目前我自己所总结的经验，要是大家认为哪里不对，可随时留言联系我．</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2017/09/22/Question_Answer/Documents/document_course_design/" data-id="cjosm451s002qa6nrqnjidunx" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADPUlEQVR42u3ay27CMBAFUP7/p+m2EiTcO06lxpysEHUTH2cxzOPxiK/nr+v1m9e//l7z+jm5/9EdztdcfGFjY2PfhP08vXLk0cr8+2Sf7VMO74+NjY29HTt5TBuKkju3AfJoZW7BxsbGxi5uHRzEOSNZg42NjY3dsmdBqw1jSdKSHBk2Njb297BnP/fb/0qoeTjM94ONjY29N7sNNv/585/0t7GxsbH/MftZXitzL1eVny5QYGNjY2/EzgPASkGnHfqZlaLa/WNjY2PvxD5POZJwsj6g05aoZgdUZFrY2NjYN2S37dI8XLVN3DwgrRwiNjY29k7stlGat2Dz1mx+WLMX8GYlNjY29nbsvA0wC3JturLeq41qadjY2NhbsP+iVJQPR+YFrPz11A0MbGxs7Nuy26bpCmxWupo1AD60pbGxsbE3YudBpU0D1kc5k+Nu05XiHWJjY2PfhL3+Ez/fUJIPrYS04s7Y2NjYG7FXgkfOmCUMbbia7QEbGxt7P3Y7BJO3eNvPyWHl5a3DnWNjY2PfnN3+xJ+V79sQmL+APAl5k4FhY2Njb8puSzNtqShntIeSBzZsbGzs/djr45J5CnFZWT8pGJ1nXdjY2NgbsWdF9nyMsh0DalOO/Gg+FJWwsbGxb8teSR7yZm17NElxKnnWh+FLbGxs7Juz26L/rDU7W98+dzg8hI2Njb0FOwlg7RhNXmZqGwCP8ipCFzY2NvYN2Uki0ZaQZmFm1hiYpS7Y2NjY38POg9N6CFxpFbeNDWxsbOz92Pk0S1L0T75faTDPWr/Y2NjYu7KvLb7niUE7rJOHumGLFxsbG3sL9qz5moeWfKwn/9886B5Gb2xsbOyN2G0YyNfMBnpWdlLHbWxsbOwt2EnBqE0t2hZCHYRWxnewsbGxt2A/y2vWfF0f9JkVv6IsChsbG/vm7Fk5fmWjKw3g9uBWXhI2Njb2vdh5mf6yJuso5Zgd3OFOsLGxsbdjzwJD28Rtw94sUEXrsbGxsb+YfdUw5Upa0u7wzT2xsbGxv56dBIn8m/yYZk1fbGxs7G9gJ8nDynhlm7rMSv/FYBA2Njb2Ruw8AORt4FlpaaXof227AhsbG/sm7B8O4/cTMGj/SgAAAABJRU5ErkJggg==">分享</a><div class="tags"></div><div class="post-nav"><a class="pre" href="/2017/09/22/Documents/document_course_design/">关于C语言课程设计的经验总结</a><a class="next" href="/2017/09/22/Question_Answer/Documents/document_chatting_x_chatting/">Chatting_X_Chatting项目文档</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://evil-crow.github.io/2017/09/22/Question_Answer/Documents/document_course_design/';
+    this.page.identifier = '2017/09/22/Question_Answer/Documents/document_course_design/';
+    this.page.title = '关于C语言课程设计的经验总结';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//Evilcrow.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//Evilcrow.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://Evilcrow.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/Question_Answer/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Question_Answer/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Question_Answer/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Question_Answer/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Question_Answer/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//Evilcrow.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

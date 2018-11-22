@@ -1,0 +1,166 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>&lt;咸鱼书&gt; C的本源 | Road to Coding</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">&lt;咸鱼书&gt; C的本源</h1><a id="logo" href="/.">Road to Coding</a><p class="description">只要那一抹笑容尚存，我便心无旁骛。</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">&lt;咸鱼书&gt; C的本源</h1><div class="post-meta">May 17, 2018<span> | </span><span class="category"><a href="/categories/C-C/">C/C++</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2018/05/17/Question_Answer/Coding/C/Expert_C_Programming/c_origin/" href="/2018/05/17/Question_Answer/Coding/C/Expert_C_Programming/c_origin/#disqus_thread"></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#1-C的起源"><span class="toc-number">1.</span> <span class="toc-text">1. C的起源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2-早期C体验"><span class="toc-number">2.</span> <span class="toc-text">2. 早期C体验</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3-标准I-O库与函数库"><span class="toc-number">3.</span> <span class="toc-text">3. 标准I/O库与函数库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-K-amp-R-C"><span class="toc-number">4.</span> <span class="toc-text">4. K&amp;R C</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5-ANSI-C"><span class="toc-number">5.</span> <span class="toc-text">5. ANSI C</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6-K-amp-R-C与ANSI-C的区别"><span class="toc-number">6.</span> <span class="toc-text">6. K&amp;R C与ANSI C的区别</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#6-1-函数原型"><span class="toc-number">6.1.</span> <span class="toc-text">6.1 函数原型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-2-关键字"><span class="toc-number">6.2.</span> <span class="toc-text">6.2 关键字</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#6-3-Silent-Change"><span class="toc-number">6.3.</span> <span class="toc-text">6.3 Silent Change</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-1-类型转换"><span class="toc-number">6.3.1.</span> <span class="toc-text">6.3.1 类型转换</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6-3-2-相容性"><span class="toc-number">6.3.2.</span> <span class="toc-text">6.3.2 相容性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7-pragma"><span class="toc-number">7.</span> <span class="toc-text">7. #pragma</span></a></li></ol></div></div><div class="post-content"><p><em>C++打击有点大, 再翻回C看两眼, 当然只是闲着看, C++还是正事</em></p>
+<p><strong>经常有人说UNIX/Linux的发展历史, C也只是这个时期的一个附属产物, 但是我们今天就来看看C的起源</strong></p>
+<h2 id="1-C的起源"><a href="#1-C的起源" class="headerlink" title="1. C的起源"></a>1. C的起源</h2><p><img src="http://p8uroi1uf.bkt.clouddn.com/C_develop.png" alt=""></p>
+<p>首先,在这里致敬C,UNIX伟大的发明者Dennis Ritchie 及 Kenneth Thompson</p>
+<p>两位计算机先驱提出了KISS的原则(Keep it simple stupid)</p>
+<p>我们在这里也用简洁的语言来组织C的发展历史:</p>
+<p>1&gt; C的发展与UNIX息息相关,同期发明,相互依赖</p>
+<p>2&gt; 一切的开始是因为Mutics操作系统</p>
+<p>3&gt; Mutics失败后, Kenneth想要写一个个人的操作系统, 为了玩游戏,在PDP-7上</p>
+<p>4&gt; Ritchie入伙后, 他们为PDP-7编写了可以使用的操作系统UNIX,基于PDP-7 汇编</p>
+<p>5&gt; 因为PDP-7 只有8KB内存, Kenneth初始版本是基于解释器的,效率一般</p>
+<p>6&gt; 之后Kenneth又写了PDP-11版的UNIX</p>
+<p>7&gt; 创造UNIX时, 基于KISS的原则, 所有的软件都由小而简单的组件组成, 吸取了Mutics的教训</p>
+<p>8&gt; Ritchie因为解释器效率低, 实现了从BCPL而来的B得进化版,”New B” 基于编译系统, 提高效率</p>
+<p>9&gt; 很快, “New B”变成为了, 早期版本的C</p>
+<p>C的基础历史就这样,但是他在发展过程中经历了许许多多的问题与困难</p>
+<p>同时C引入了类型的概念, 不过是为了支持PDP-11的特性: 支持不同类型字长的数据</p>
+<h2 id="2-早期C体验"><a href="#2-早期C体验" class="headerlink" title="2. 早期C体验"></a>2. 早期C体验</h2><blockquote>
+<p>C诡异离奇, 缺陷重重, 确取得了巨大成功   –Dennis Ritchie</p>
+</blockquote>
+<p>早期C的体验并不是很好, 它更多的是作为面向编译器设计者的语言, 操作系统设计的语言.</p>
+<p>即系统编程语言, 即使到了今天, C在系统编程方面的地位也不是能够轻易被撼动的 !</p>
+<p>为了支持系统编程, C支持了一下特性:</p>
+<ol>
+<li><p>数组下标从0开始, 为了支持偏移量的概念</p>
+</li>
+<li><p>C语言的基本数据类型与底层硬件对应, 不像Pascal, C11开始才支持复数类型, 浮点数类型也是硬</p>
+<p> 件支持后,才加入支持的</p>
+</li>
+<li><p>auto关键字是摆设, 与静态区, 动态堆区想对应, 栈区的内存是对象缺省内存分配模式, </p>
+</li>
+<li><p>表达式数组名可以看作指针, 方便了系统编程者, 然而这个坑点, 这么多年死了多少人 !</p>
+</li>
+<li><p>float自动扩展为double, 这个没啥意思, 当年扩展, 现在不扩展, 不过从C++的经验来看, </p>
+<p> 一般建议直接写double, 两个开销差不了少, 而且double的精度也比较大</p>
+</li>
+<li><p>register关键字, 摆设, 编译器就不鸟你</p>
+</li>
+</ol>
+<p>&lt; C专家编程 &gt;是本好书，　不过要有自己的观点和看法，上面是基于我自己的看法.</p>
+<h2 id="3-标准I-O库与函数库"><a href="#3-标准I-O库与函数库" class="headerlink" title="3. 标准I/O库与函数库"></a>3. 标准I/O库与函数库</h2><p>C语言本身不提供文件I/O, 都是基于标准函数库的</p>
+<p>此处略过</p>
+<p>但是, 切记 <strong>千万不要使用C预处理器,来修改程序已有结构</strong></p>
+<h2 id="4-K-amp-R-C"><a href="#4-K-amp-R-C" class="headerlink" title="4. K&amp;R C"></a>4. K&amp;R C</h2><p>&lt; the C Programming Language &gt; 在计算机历史上留下了浓墨重彩的一笔,</p>
+<p>不过K&amp;R C 指的是布莱恩.柯尼汉 + 丹尼斯.里奇 (而非是肯.汤普逊)</p>
+<p>K&amp;R C的代码风格以及思想很重要, 可以拜读以下大作,</p>
+<p>但是, K&amp;R C中有许多已经被修改掉的特性, 这些特性是时代的眼泪, 被删除也无可厚非</p>
+<p><strong>所以, 无论怎么说, 我们如果要研究学习,便是ANSI C (C89)</strong></p>
+<h2 id="5-ANSI-C"><a href="#5-ANSI-C" class="headerlink" title="5. ANSI C"></a>5. ANSI C</h2><p><strong>任何一门语言, 在发展过程中都会衍生出许多的变体, 如果不加控制, 就会使得这门语言松散</strong></p>
+<p>e.g.: Lisp, Basic就是这样凉凉的</p>
+<p>所以, ANSI C 作为标准C就出现了</p>
+<p>ANSI C标准对于K&amp;R C做了一定程度上的修改, 在进行语言修改, 细节修订的同时, 保持语言特性及思想</p>
+<p>不发生重大变化,维护了K&amp;R C的核心思想,ANSI C 也即C89</p>
+<p>而所谓的C90是ISO C</p>
+<p>垃圾!</p>
+<blockquote>
+<p>不要添乱—–立即解散ISO工作小组          – 匿名人士</p>
+</blockquote>
+<h2 id="6-K-amp-R-C与ANSI-C的区别"><a href="#6-K-amp-R-C与ANSI-C的区别" class="headerlink" title="6. K&amp;R C与ANSI C的区别"></a>6. K&amp;R C与ANSI C的区别</h2><p>既然K&amp;R C和ANSI C是的两个重要版本, 那么就说说这两个版本的区别吧, 主要体现在下面四个方面上:</p>
+<ol>
+<li><p>本质上改变, 就只有原型一个特性</p>
+</li>
+<li><p>新的关键字 , 区别不大, 只是添加了一定类型的支持</p>
+</li>
+<li><p>“Silent Change” 保持原有语言特性不变, 只改变其中一些小细节的实现,</p>
+</li>
+<li><p>其他区别, 这些基本上是一般编程者触碰不到的</p>
+</li>
+</ol>
+<p>那么, 我们就来说说上面三个重大区别</p>
+<h3 id="6-1-函数原型"><a href="#6-1-函数原型" class="headerlink" title="6.1 函数原型"></a>6.1 函数原型</h3><p>函数原型, 在ANSI C之前是没有的, 之前的都叫作, 函数声明, 这个特性是从C++学习过来的</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span><span class="params">()</span></span>;           <span class="comment">// 函数声明</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span><span class="params">(<span class="keyword">char</span> *dest, <span class="keyword">const</span> <span class="keyword">char</span> *src)</span></span>;       <span class="comment">// 函数原型</span></span><br></pre></td></tr></table></figure>
+<p>这是一个重大变化, 主要是用于<strong>前置声明</strong></p>
+<p>K&amp;R C时,对于函数参数的检查,<strong>一直推迟到链接时</strong></p>
+<p>而ANSI C使用函数原型, 将<strong>参数检查提前到编译时期</strong></p>
+<p>同时,进行函数定义时,是这样的:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span><span class="params">()</span></span></span><br><span class="line">char *dest, const char *src;</span><br><span class="line">&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">char</span> *<span class="title">strcpy</span><span class="params">(<span class="keyword">char</span> *dext, <span class="keyword">const</span> <span class="keyword">char</span> *src)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外,我们说<strong>函数原型的引入主要是针对前置声明</strong></p>
+<p><strong>但是, C11之后,C语言风格也发生转变, 与时俱进, 逐渐向C++/Java等面向对象靠拢</strong></p>
+<p><strong>事实上, 不刻意强调, 写前置声明的机会已经很少了, Linux4.x版本后的实现可见一斑</strong></p>
+<h3 id="6-2-关键字"><a href="#6-2-关键字" class="headerlink" title="6.2 关键字"></a>6.2 关键字</h3><p>关键字其实就那么一回事, const, volatile, signed, void其中常用到的也不多</p>
+<p>C11后还加入了 _Generic, _Bool(真正意义上实现内置类型Boolen)</p>
+<p><strong>但是,说实话,意义不大(摊手), 一般写个C99就歇菜了</strong></p>
+<h3 id="6-3-Silent-Change"><a href="#6-3-Silent-Change" class="headerlink" title="6.3 Silent Change"></a>6.3 Silent Change</h3><p>这一处的改变说大不大, 说小不小.不过还是很有意思的</p>
+<h4 id="6-3-1-类型转换"><a href="#6-3-1-类型转换" class="headerlink" title="6.3.1 类型转换"></a>6.3.1 类型转换</h4><p>举个例子:</p>
+<p><strong>关于类型转换的问题, 众所周知, C是强类型,可以进行自动/强制类型转换</strong></p>
+<p>然而, 进行数值运算时, 会进行类型转换, 这里ANSI C与K&amp;R C的区别就体现出来了</p>
+<p><strong>对于&lt;=int类型的, K&amp;R C转换为无符号类型, ANSI转换为有符号类型</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span> i = <span class="number">4</span>;</span><br><span class="line">	<span class="keyword">if</span> (<span class="number">-1</span> &lt; i)</span><br><span class="line">    	<span class="built_in">printf</span>(<span class="string">"ANSI C\n"</span>);</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">"K&amp;R C\n"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然,出现了复杂类型的时候, 比如,int和unsigned int 肯定是符合下述规则的:</p>
+<p>执行算术运算时, 如果类型不同, 就会发生转换, 数据类型一般朝着浮点精度更高, 长度更长的方向转换</p>
+<p>整型数如果转换为signed不会丢失信息, 就转换为signed, 不然就转换为unsigned</p>
+<p><strong>对于, 无符号数和有符号数混用</strong></p>
+<p><strong>需要十分注意: 切记不能混用,要不直接不定义无符号,要不全部使用强制类型转换, 否则翻车!</strong></p>
+<p>比如下面常见的程序:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">-1</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> j = <span class="number">34</span>;</span><br><span class="line"><span class="keyword">if</span> (i &lt; (<span class="keyword">int</span>)j)               <span class="comment">// 否则,等着翻车吧!</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">"&lt;\n"</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="6-3-2-相容性"><a href="#6-3-2-相容性" class="headerlink" title="6.3.2 相容性"></a>6.3.2 相容性</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *str;</span><br><span class="line"><span class="keyword">char</span> c = <span class="string">'r'</span>;</span><br><span class="line"></span><br><span class="line">str = &amp;c;</span><br><span class="line">*str = <span class="string">'a'</span>;    <span class="comment">// error</span></span><br><span class="line">c = <span class="string">'a'</span>;       <span class="comment">// correct</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">test</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> **str)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span> **argv)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	test(argv);        <span class="comment">// error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的测试函数, 就是典型的相容性问题</p>
+<p>对于,str形式参数以及argv实际参数, 他们之间的关系还是类似于赋值的</p>
+<p>str与argv是可以传参的, 他们都是char ** ,相容</p>
+<p>他们指向的, *str, *argv也是相容的, </p>
+<p>但是 **str, **argv(是const的对象) 不相容, </p>
+<p>也即是说,*str与*argv本身相容, 但是指向对象不相容,</p>
+<p>因此传参操作出现错误.</p>
+<p><strong>相容性不能传递</strong></p>
+<p><strong>注: 此处的对象,指的是操作的数据,具名内存,并非OOP中的对象</strong></p>
+<h2 id="7-pragma"><a href="#7-pragma" class="headerlink" title="7. #pragma"></a>7. #pragma</h2><p>最后,说个好玩的:</p>
+<p>GNU C Complier (GCC)在1.34版本实现中,因为设计师讨厌pragma</p>
+<p>所以在有pragma的代码时,做了如操作:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">do_pragma()</span><br><span class="line">&#123;</span><br><span class="line">	close(<span class="number">0</span>);</span><br><span class="line">	<span class="keyword">if</span> (open(<span class="string">"/dev/tty"</span>,O_RDONLY, <span class="number">0666</span>) != <span class="number">0</span>)</span><br><span class="line">		<span class="keyword">goto</span> nope;</span><br><span class="line">	close(<span class="number">1</span>);</span><br><span class="line">	<span class="keyword">if</span> (open(<span class="string">"/dev/tty"</span>, O_WRONLY, <span class="number">0666</span>) != <span class="number">1</span>)</span><br><span class="line">		<span class="keyword">goto</span> nope;</span><br><span class="line">	</span><br><span class="line">	exel(<span class="string">"/usr/games/hack"</span>, <span class="string">"#pragma"</span>, <span class="number">0</span>);</span><br><span class="line">	exel(<span class="string">"/usr/games/rogue"</span>, <span class="string">"#pragam"</span>, <span class="number">0</span>);</span><br><span class="line">	exel(<span class="string">"/usr/new/emacs"</span>, <span class="string">"-f"</span>, <span class="string">"hanoi"</span>, <span class="string">"9"</span>, <span class="string">"-kill"</span>, <span class="number">0</span>);</span><br><span class="line">	exel(<span class="string">"/usr/local/emacs"</span>, <span class="string">"-f"</span>, <span class="string">"hanoi"</span>, <span class="string">"9"</span>, <span class="string">"-kill"</span>, <span class="number">0</span>);</span><br><span class="line">nope:</span><br><span class="line">	fatal(<span class="string">"you are in a maze of twisty complier features, all different"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>总之, 这位设计师, 就是不想你使用pragma与编译指令, 实际上pragma还是很好用的,它可以给编译器</p>
+<p>完成指定操作,比如: 取消结构体对齐, 要求函数内联等等操作, 多使用, 挺好的.</p>
+<p><strong>闲了, C看着还是很有意思, 当然主线不能忘了, 不说了, 又要去板砖了</strong></p>
+<p>May 17, 2018 12:25 PM</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a class="article-share-link" data-url="http://evil-crow.github.io/2018/05/17/Question_Answer/Coding/C/Expert_C_Programming/c_origin/" data-id="cjosm456w00b9a6nrzwlbkfau" data-qrcode="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPYAAAD2CAAAAADAeSUUAAADKElEQVR42u3aQY7bQAwEQP//0w6QUw7xoEnKgESXTgtDlqbGh16S83rF1/vvdf5kcr3/ufK3fPrW69plYWNjY9+e/T5eZ/bknvOizxtxXuf5HmxsbOyt7HNo5chJXlR/hmRVHz/HxsbG/kl2tWzIkfknSShiY2NjY+cvuypmkqVPvouNjY39C+wccN6UvFmfPy3fiK/00rCxsbFvz54v8T5/f3G+jY2NjX1L9rt4VRtGvRKiWrSUFdjY2NiL2NWRba9EmQwekqFCdSCNjY2NvYndi4fzgvJtrYZiteRo/s7Y2NjYj2LnN/WCqtcAmhzNrB4PwsbGxt7H7h2vmQxirwqkZsRiY2Njr2DPX5+3gQqHI+NipnlABxsbG3sFuwqY/OufN4kmz4/CDBsbG3sRe9Loz1v5eYunGkgX5DY2Njb2OnZvKfOBcW+0PNo4bGxs7EXsaw/BTFpO+Xg4HzmMwNjY2Ni3Z1eDJG/6z58wj9iPRmxsbOyl7MnANWk/9bKjOmaI1o+NjY29mp2HU3V8W2055eOBcsmEjY2NvYg9KQmqAdYrIfLv9gIYGxsb++nsyeJ6QVW9pxexr15+YmNjYz+W3Tsc8+2ipRpdhTdiY2NjL2L3DsdUF10dD/QisDxCxsbGxl7Bno91q3HSKyF644QourCxsbEfzp6HSq+plBQMvcFDYc3Y2NjY69jVQW91tJA/czKKKLSusLGxsVewkyMy+TGaJFQmg9teoP7n7djY2NiL2Emr6KpiozpsmPwk0aZgY2Njr2BXH5QUCfOm/6QQiuITGxsbexG7WmDkKVAtTpKtrHbLoik3NjY29sPZ8ybOvHl01VGe5u+MjY2NvYKdtHiqr8kHAJP47DW8sLGxsfexq4dmkrZ+NYTyFtVkkIyNjY29j51f1w50q0d/qiPhfFuxsbGxd7CrodVbYt5CmowBkjdiY2Njb2VXj9RMioSrAqnZVMLGxsb+YXZ+gKaHyd9bLWxGAYaNjY29mp238hNqNQJHR3+wsbGx17HzByXNoGpJ0yta8kJo1EvDxsbGvj27N+idlBxJZCZZkx88wsbGxl7K/gPjLxEkEcRldwAAAABJRU5ErkJggg==">分享</a><div class="tags"><a href="/tags/Expert-C-Programming/">Expert_C_Programming</a></div><div class="post-nav"><a class="pre" href="/2018/05/17/Coding/C/Expert_C_Programming/c_origin/">&lt;咸鱼书&gt; C的本源</a><a class="next" href="/2018/05/16/Question_Answer/C/c_string_array/">C/C++ char *与char [ ]</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://evil-crow.github.io/2018/05/17/Question_Answer/Coding/C/Expert_C_Programming/c_origin/';
+    this.page.identifier = '2018/05/17/Question_Answer/Coding/C/Expert_C_Programming/c_origin/';
+    this.page.title = '&lt;咸鱼书&gt; C的本源';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//Evilcrow.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//Evilcrow.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://Evilcrow.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Assembly/">Assembly</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Bible/">Bible</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/C-C/">C/C++</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Documents/">Documents</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Guide/">Guide</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Q-A/">Q&A</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Ruby/">Ruby</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/SQL/">SQL</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/ShellScript/">ShellScript</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/">Unix/Linux</a><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/Unix-Linux/Guide/">Guide</a></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/Vim/">Vim</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/Syscall/" style="font-size: 15px;">Syscall</a> <a href="/tags/CodeStyle/" style="font-size: 15px;">CodeStyle</a> <a href="/tags/Assembly/" style="font-size: 15px;">Assembly</a> <a href="/tags/Ruby/" style="font-size: 15px;">Ruby</a> <a href="/tags/CSAPP/" style="font-size: 15px;">CSAPP</a> <a href="/tags/ShellScript/" style="font-size: 15px;">ShellScript</a> <a href="/tags/EffectiveSTL/" style="font-size: 15px;">EffectiveSTL</a> <a href="/tags/VimScript/" style="font-size: 15px;">VimScript</a> <a href="/tags/EffectiveC/" style="font-size: 15px;">EffectiveC++</a> <a href="/tags/GDB/" style="font-size: 15px;">GDB</a> <a href="/tags/Binuntils/" style="font-size: 15px;">Binuntils</a> <a href="/tags/vbird/" style="font-size: 15px;">vbird</a> <a href="/tags/RegExpression/" style="font-size: 15px;">RegExpression</a> <a href="/tags/LinuxC/" style="font-size: 15px;">LinuxC</a> <a href="/tags/MySQL/" style="font-size: 15px;">MySQL</a> <a href="/tags/Expert-C-Programming/" style="font-size: 15px;">Expert_C_Programming</a> <a href="/tags/CTrapsAndPitfalls/" style="font-size: 15px;">CTrapsAndPitfalls</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/11/21/Question_Answer/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/11/08/Question_Answer/Coding/EffSTL/containers/"><STL> Containers</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Question_Answer/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/10/09/Coding/EffC++/implementations/"><星月夜> Implementations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/27/Coding/C/Expert_C_Programming/data_mem/"><咸鱼书> 运行时数据结构与内存</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/26/Question_Answer/Coding/EffC++/designs_and_declarations/"><星月夜> Designs and Declarations</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Question_Answer/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/19/Coding/EffC++/resource_management/"><星月夜> Resource Management</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//Evilcrow.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">Road to Coding.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/search.js?v=0.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
