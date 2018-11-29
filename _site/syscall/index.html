@@ -1,0 +1,518 @@
+<!DOCTYPE html> <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--> <!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8"><![endif]--> <!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9"><![endif]--> <!--[if gt IE 8]><!--> <html class="no-js"><!--<![endif]--> <head> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css"> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script> <script>hljs.initHighlightingOnLoad();</script> <meta charset="UTF-8"> <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"> <meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"> <title>Linux x86_64系统调用的实现过程 &#8211; Road to Coding</title> <meta name="description" content="只要那一抹笑容尚存, 我便心无旁骛"> <meta name="keywords" content="Syscall"> <!-- Twitter Cards --> <meta name="twitter:card" content="summary"> <meta name="twitter:image" content="http://localhost:4000/assets/img/logo.png"> <meta name="twitter:title" content="Linux x86_64系统调用的实现过程"> <meta name="twitter:description" content="在看TLPI的时候,虽然重要的是系统调用的接口使用,但是系统调用到底是怎么一回事? 虽然有点小题大做,但是还是十分重要的,网上的大多数材料提到的也是Linux在ARM的分析实现,由于我自己使用的是x86_64, 所以还是来看看Linux Syscall的具体实现吧"> <!-- Open Graph --> <meta property="og:locale" content="en_US"> <meta property="og:type" content="article"> <meta property="og:title" content="Linux x86_64系统调用的实现过程"> <meta property="og:description" content="在看TLPI的时候,虽然重要的是系统调用的接口使用,但是系统调用到底是怎么一回事? 虽然有点小题大做,但是还是十分重要的,网上的大多数材料提到的也是Linux在ARM的分析实现,由于我自己使用的是x86_64, 所以还是来看看Linux Syscall的具体实现吧"> <meta property="og:url" content="http://localhost:4000/syscall/"> <meta property="og:site_name" content="Road to Coding"> <meta property="og:image" content="http://localhost:4000/assets/img/logo.png"> <link rel="canonical" href="http://localhost:4000/syscall/"> <link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="Road to Coding Feed"> <!-- Handheld --> <meta name="HandheldFriendly" content="True"> <meta name="MobileOptimized" content="320"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- CSS --> <link rel="stylesheet" href="http://localhost:4000/assets/css/main.css"> <!-- JS --> <script src="http://localhost:4000/assets/js/modernizr-3.3.1.custom.min.js"></script> <!-- Favicons --> <link rel="apple-touch-icon" href="http://localhost:4000/assets/img/favicons/apple-icon-precomposed.png"> <link rel="apple-touch-icon" sizes="72x72" href="http://localhost:4000/assets/img/favicons/apple-icon-72x72.png"> <link rel="apple-touch-icon" sizes="114x114" href="http://localhost:4000/assets/img/favicons/apple-icon-114x114.png"> <link rel="apple-touch-icon" sizes="144x144" href="http://localhost:4000/assets/img/favicons/apple-icon-144x144.png"> <link rel="shortcut icon" type="image/png" href="http://localhost:4000/favicon.png" /> <link rel="shortcut icon" href="http://localhost:4000/favicon.ico" /> <!-- Background Image --> <style type="text/css">body {background-image:url(http://localhost:4000/assets/img/placeholder-big.jpg); background-repeat: no-repeat; background-size: cover; }</style> <!-- Post Feature Image --> </head> <body> <nav id="dl-menu" class="dl-menuwrapper" role="navigation"> <button class="dl-trigger">Open Menu</button> <ul class="dl-menu"> <li><a href="http://localhost:4000/">Home</a></li> <li> <a href="#">About</a> <ul class="dl-submenu"> <li> <img src="http://localhost:4000/assets/img/logo.png" alt="Road to Coding photo" class="author-photo"> <h4>Road to Coding</h4> <p>只要那一抹笑容尚存, 我便心无旁骛</p> </li> <li><a href="http://localhost:4000/about/"><span class="btn btn-inverse">Learn More</span></a></li> <li> <a href="mailto:evilcrow486@gmail.com" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-envelope-square"></i> Email</a> </li> <li> <a href="http://github.com/Evil-crow" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-github"></i> Github</a> </li> </ul><!-- /.dl-submenu --> </li> <li> <a href="#">Posts</a> <ul class="dl-submenu"> <li><a href="http://localhost:4000/posts/">All Posts</a></li> <li><a href="http://localhost:4000/tags/">All Tags</a></li> </ul> </li> </ul><!-- /.dl-menu --> </nav><!-- /.dl-menuwrapper --> <!-- Header --> <header class="header" role="banner"> <div class="wrapper animated fadeIn" style="background-color:rgba(255,255,255,0.97);"> <div class="content"> <div class="post-title "> <h1>Linux x86_64系统调用的实现过程</h1> <h4>07 Jun 2018</h4> <a class="btn zoombtn" href="http://localhost:4000/posts/"> <i class="fa fa-chevron-left"></i> </a> </div> <p><em>由于系统调用的分析实现其中涉及一些内核/OS方面的知识,不是十分重要的,我们不进行详细说明</em></p> <p><em>另外, 此分析,基于glibc-2.26以及Linux-Kernel-4.17,可以获取相关源码阅读</em></p> <p>从我们以往的理解上来看,系统调用就是使用OS提供的接口,不也就是调用么?</p> <p>System Call涉及了用户/内核态的切换,有些是需要进入内核态完成的,所以系统调用的存在就很有必要</p> <p>更重要的一点就是: <strong>使用系统调用,仅仅暴露接口,保证了内核不会被无意/恶意破坏</strong></p> <p>下面我们开始具体的系统调用实现分析:</p> <h2 id="一-从使用一个系统调用开始">一, 从使用一个系统调用开始</h2> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;stdio.h&gt;
+#incldue &lt;unistd.h&gt;
+#include &lt;sys/types.h&gt;
+#include &lt;fcntl.h&gt;
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+    <span class="kt">int</span> <span class="n">fd</span> <span class="o">=</span> <span class="n">open</span><span class="p">(</span><span class="s">"/tmp/file"</span><span class="p">,</span> <span class="n">O_RDONLY</span><span class="p">,</span> <span class="n">mode_t</span> <span class="n">mode</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">fd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+		<span class="n">do_something</span><span class="p">(</span><span class="n">errno</span><span class="p">);</span>
+	
+	<span class="n">close</span><span class="p">(</span><span class="n">fd</span><span class="p">);</span>
+	
+	<span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>上面便是一个简单地使用系统调用的例子,使用了open(系统调用)</p> <p>那么下一步, <strong>就是,open()函数的实现到底在哪里呢?</strong></p> <p>有两种方法查看:</p> <h3 id="1-使用gdb单步进入">1. 使用GDB单步进入</h3> <p>这个时候,GDB的Step指令就十分重要了,对于open(),函数它可以单步进入啊!</p> <p>这不就很明显的看出<code class="highlighter-rouge">open()</code>实现在哪里了?</p> <p><img src="http://p8pmsq2a4.bkt.clouddn.com/gdb_s.png" alt="gdb step指令" /></p> <p><img src="http://p8pmsq2a4.bkt.clouddn.com/locate.png" alt="locate 确定文件位置" /></p> <p>如上</p> <h3 id="2-合理推测ಡωಡ">2. 合理推测(ಡωಡ)</h3> <p>我们使用的系统调用都是C实现,而在Linux平台下,使用最多的是GNU C,依赖的libc库为glibc</p> <p>(PS: 上面是我的本机环境,各位可以根据自己的机器环境去C库进行实现的查找)</p> <p>见我们的实现依赖于glibc,那么去C可查找理所当然了</p> <p>然后使用查找关键字的方法就定位到open64.c上了</p> <p><strong>此处,有一个巨坑,关于/usr/src/debug/, 这个里面glibc不全啊</strong></p> <p><strong>只是为了调试需要,所集成的一部分glibc实现,同时需要注意我们使用的C库一般都是发行版提供</strong></p> <p><strong>需要去看glibc源码才能真正看清楚</strong></p> <h2 id="二-分析一个系统调用的源码">二, 分析一个系统调用的源码</h2> <p>那么,现在就来刺激的了,分析系统调用的源码</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//sysdeps/unix/sysv/linux/open64.c</span>
+
+<span class="cm">/* Copyright (C) 1991-2018 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   &lt;http://www.gnu.org/licenses/&gt;.  */</span>
+
+<span class="cp">#include &lt;sys/types.h&gt;
+#include &lt;sys/stat.h&gt;
+#include &lt;fcntl.h&gt;
+#include &lt;stdarg.h&gt;
+</span>
+<span class="cp">#include &lt;sysdep-cancel.h&gt;
+#include &lt;not-cancel.h&gt;
+</span>
+<span class="cp">#ifdef __OFF_T_MATCHES_OFF64_T
+# define EXTRA_OPEN_FLAGS 0
+#else
+# define EXTRA_OPEN_FLAGS O_LARGEFILE
+#endif
+</span>
+<span class="cm">/* Open FILE with access OFLAG.  If O_CREAT or O_TMPFILE is in OFLAG,
+   a third argument is the file protection.  */</span>
+<span class="kt">int</span>
+<span class="nf">__libc_open64</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="p">...)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">__OPEN_NEEDS_MODE</span> <span class="p">(</span><span class="n">oflag</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="kt">va_list</span> <span class="n">arg</span><span class="p">;</span>
+      <span class="n">va_start</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">oflag</span><span class="p">);</span>
+      <span class="n">mode</span> <span class="o">=</span> <span class="n">va_arg</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+      <span class="n">va_end</span> <span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+    <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">SYSCALL_CANCEL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span>
+			 <span class="n">mode</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__open64</span><span class="p">)</span>
+<span class="n">libc_hidden_weak</span> <span class="p">(</span><span class="n">__open64</span><span class="p">)</span>
+<span class="n">weak_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">open64</span><span class="p">)</span>
+
+<span class="cp"># if !IS_IN (rtld)
+</span><span class="kt">int</span>
+<span class="n">__open64_nocancel</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="p">...)</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+  <span class="k">if</span> <span class="p">(</span><span class="n">__OPEN_NEEDS_MODE</span> <span class="p">(</span><span class="n">oflag</span><span class="p">))</span>
+    <span class="p">{</span>
+      <span class="kt">va_list</span> <span class="n">arg</span><span class="p">;</span>
+      <span class="n">va_start</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">oflag</span><span class="p">);</span>
+      <span class="n">mode</span> <span class="o">=</span> <span class="n">va_arg</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+      <span class="n">va_end</span> <span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+    <span class="p">}</span>
+
+  <span class="k">return</span> <span class="n">INLINE_SYSCALL_CALL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span>
+			      <span class="n">mode</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="cp">#else
+</span><span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__open64_nocancel</span><span class="p">)</span>
+<span class="cp">#endif
+</span><span class="n">libc_hidden_def</span> <span class="p">(</span><span class="n">__open64_nocancel</span><span class="p">)</span>
+
+<span class="cp">#ifdef __OFF_T_MATCHES_OFF64_T
+</span><span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__libc_open</span><span class="p">)</span>
+<span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__open</span><span class="p">)</span>
+<span class="n">libc_hidden_weak</span> <span class="p">(</span><span class="n">__open</span><span class="p">)</span>
+<span class="n">weak_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">open</span><span class="p">)</span>
+
+<span class="n">strong_alias</span> <span class="p">(</span><span class="n">__open64_nocancel</span><span class="p">,</span> <span class="n">__open_nocancel</span><span class="p">)</span>
+<span class="n">libc_hidden_weak</span> <span class="p">(</span><span class="n">__open_nocancel</span><span class="p">)</span>
+<span class="cp">#endif
+</span>
+</code></pre></div></div> <p><em>备注: 在本目录下,其实是有4个于open()有关的文件,分别是open.c,open64.c, openat.c, openat64.c</em></p> <p><em>但是,事实上他们是指不同层次,不同平台上的系统调用,剥开之后,最后都是openat()函数</em></p> <p><em>但是,我本机是64为,所以是封装的64位openat()函数文件,即open64.c</em></p> <p>我们可以一行一行分析这个函数:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// function open() -&gt; __libc_open64()</span>
+
+<span class="mi">1</span> <span class="kt">int</span>
+<span class="mi">2</span> <span class="n">__libc_open64</span> <span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">file</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oflag</span><span class="p">,</span> <span class="p">...)</span>
+<span class="mi">3</span> <span class="p">{</span>
+<span class="mi">4</span>   <span class="kt">int</span> <span class="n">mode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="mi">5</span>
+<span class="mi">6</span>   <span class="k">if</span> <span class="p">(</span><span class="n">__OPEN_NEEDS_MODE</span> <span class="p">(</span><span class="n">oflag</span><span class="p">))</span>
+<span class="mi">7</span>     <span class="p">{</span>
+<span class="mi">8</span>       <span class="kt">va_list</span> <span class="n">arg</span><span class="p">;</span>
+<span class="mi">9</span>       <span class="n">va_start</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">oflag</span><span class="p">);</span>
+<span class="mi">10</span>      <span class="n">mode</span> <span class="o">=</span> <span class="n">va_arg</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+<span class="mi">11</span>      <span class="n">va_end</span> <span class="p">(</span><span class="n">arg</span><span class="p">);</span>
+<span class="mi">12</span>    <span class="p">}</span>
+<span class="mi">13</span>
+<span class="mi">14</span>  <span class="k">return</span> <span class="n">SYSCALL_CANCEL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span>
+<span class="mi">15</span>			 <span class="n">mode</span><span class="p">);</span>
+<span class="mi">16</span> <span class="p">}</span>
+<span class="mi">17</span> <span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__libc_open</span><span class="p">)</span>
+<span class="mi">18</span> <span class="n">strong_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">__open</span><span class="p">)</span>
+<span class="mi">19</span> <span class="n">libc_hidden_weak</span> <span class="p">(</span><span class="n">__open</span><span class="p">)</span>
+<span class="mi">20</span> <span class="n">weak_alias</span> <span class="p">(</span><span class="n">__libc_open64</span><span class="p">,</span> <span class="n">open</span><span class="p">)</span>
+<span class="mi">21</span>
+<span class="mi">22</span> <span class="n">strong_alias</span> <span class="p">(</span><span class="n">__open64_nocancel</span><span class="p">,</span> <span class="n">__open_nocancel</span><span class="p">)</span>
+<span class="mi">23</span> <span class="n">libc_hidden_weak</span> <span class="p">(</span><span class="n">__open_nocancel</span><span class="p">)</span>
+</code></pre></div></div> <p><em>上面的C是典型的GNU风格,两个空格,看的我想打人,写惯了K&amp;R C的人表示脑子疼</em></p> <p>6 ~ 8行就是简单的参数判断,我们可以略过</p> <p>其实你可能会奇怪,好端端的<code class="highlighter-rouge">open()</code>,系统调用怎么变成了,<code class="highlighter-rouge">__libc_open64()</code></p> <p><strong>注意17 ~ 23行的宏,他们将别名实现为了宏,事实上,调用open(),就是__libc_open64()</strong></p> <p>那么,重心来了,就是14行,它实现了,<code class="highlighter-rouge">SYSCALL_CANCEL</code>宏来进行操作</p> <p>看到这里,这一部分文件就足够了,我们已经知道了<code class="highlighter-rouge">__libc_open64()</code>只是一个warpper function了</p> <p>这便是TLPI中第一部分的,Warpper函数</p> <h2 id="三warpper-function如何warpper">三,Warpper Function如何Warpper</h2> <p>我们要去看warpper function如何工作,也就是去看它是如何进行封装,并且完成用户/系统态切换的</p> <p>首先,Warrpper的过程,各个平台上都应该是一致的,所以我们去看,sysdeps/unix/sysdeps.h</p> <p>这个文件中都是宏定义,那么,我们就一步一步来吧,我将宏定义的顺序整理了一下</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">//sort the macros 已知 SYSCALL_CANCEL</span>
+
+<span class="mi">1</span><span class="o">&gt;</span>
+<span class="cp">#define SYSCALL_CANCEL(...) \
+  ({									     \
+    long int sc_ret;							     \
+    if (SINGLE_THREAD_P) 						     \
+      sc_ret = INLINE_SYSCALL_CALL (__VA_ARGS__); 			     \
+    else								     \
+      {									     \
+	int sc_cancel_oldtype = LIBC_CANCEL_ASYNC ();			     \
+	sc_ret = INLINE_SYSCALL_CALL (__VA_ARGS__);			     \
+        LIBC_CANCEL_RESET (sc_cancel_oldtype);				     \
+      }									     \
+    sc_ret;								     \
+  })
+</span>
+<span class="o">+------------------------+</span>
+<span class="p">({</span> <span class="kt">long</span> <span class="kt">int</span> <span class="n">sc_ret</span><span class="p">;</span> <span class="k">if</span> <span class="p">(</span><span class="n">SINGLE_THREAD_P</span><span class="p">)</span> <span class="n">sc_ret</span> <span class="o">=</span> <span class="n">INLINE_SYSCALL_CALL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span> <span class="k">else</span> <span class="p">{</span> <span class="kt">int</span> <span class="n">sc_cancel_oldtype</span> <span class="o">=</span> <span class="n">LIBC_CANCEL_ASYNC</span> <span class="p">();</span> <span class="n">sc_ret</span> <span class="o">=</span> <span class="n">INLINE_SYSCALL_CALL</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span> <span class="n">LIBC_CANCEL_RESET</span> <span class="p">(</span><span class="n">sc_cancel_oldtype</span><span class="p">);</span> <span class="p">}</span> <span class="n">sc_ret</span><span class="p">;</span> <span class="p">});</span>
+<span class="o">+------------------------+</span>
+
+<span class="mi">2</span><span class="o">&gt;</span>
+<span class="cp">#define INLINE_SYSCALL_CALL(...) \
+  __INLINE_SYSCALL_DISP (__INLINE_SYSCALL, __VA_ARGS__)
+</span>
+<span class="o">+------------------------+</span>
+<span class="n">__INLINE_SYSCALL_DISP</span> <span class="p">(</span><span class="n">__INLINE_SYSCALL</span><span class="p">,</span> <span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="o">+------------------------+</span>
+
+<span class="mi">3</span><span class="o">&gt;</span>
+<span class="cp">#define __INLINE_SYSCALL_DISP(b,...) \
+  __SYSCALL_CONCAT (b,__INLINE_SYSCALL_NARGS(__VA_ARGS__))(__VA_ARGS__)
+</span>
+<span class="o">+------------------------+</span>
+<span class="n">__INLINE_SYSCALL__INLINE_SYSCALL_NARGS</span><span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">)(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="o">+------------------------+</span>
+
+<span class="mi">4</span><span class="o">&gt;</span>
+<span class="cp">#define __INLINE_SYSCALL_NARGS(...) \
+  __INLINE_SYSCALL_NARGS_X (__VA_ARGS__,7,6,5,4,3,2,1,0,)
+</span>
+<span class="o">+------------------------+</span>
+<span class="n">__INLINE_SYSCALL__INLINE_SYSCALL_NARGS_X</span> <span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,)(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="o">+------------------------+</span>
+
+<span class="mi">5</span><span class="o">&gt;</span>
+<span class="cp">#define __INLINE_SYSCALL_NARGS_X(a,b,c,d,e,f,g,h,n,...) n
+</span><span class="c1">// 这是最神奇的宏,一个计数宏,计算参数的宏</span>
+
+<span class="o">+------------------------+</span>
+<span class="n">__INLINE_SYSCALL4</span><span class="p">(</span><span class="n">openat</span><span class="p">,</span> <span class="n">AT_FDCWD</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">oflag</span> <span class="o">|</span> <span class="n">EXTRA_OPEN_FLAGS</span><span class="p">,</span> <span class="n">mode</span><span class="p">);</span>
+<span class="o">+------------------------+</span>
+
+<span class="mi">6</span><span class="o">&gt;</span>
+<span class="cp">#define __SYSCALL_CONCAT(a,b)       __SYSCALL_CONCAT_X (a, b)
+#define __SYSCALL_CONCAT_X(a,b)     a##b
+</span></code></pre></div></div> <p>所以,同一处理后,获取到的是<code class="highlighter-rouge">__INLINE_SYSCALLn(name, arguments...); [n个参数]</code></p> <p>然后用同文件下的宏继续处理后,可以获取到 <code class="highlighter-rouge">INLINE_SYSCALL (name, nr, arguments...); </code></p> <p>既然我们分析的是x86_64平台上系统调用的实现,那么我们就去x86_64下找东西吧</p> <p>下面找得到的就是具体的上述宏平台上的依赖实现了</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// sysdeps/unix/sysv/linux/x86_64/sysdeps.h</span>
+
+<span class="cp"># define INLINE_SYSCALL(name, nr, args...) \
+  ({									      \
+    unsigned long int resultvar = INTERNAL_SYSCALL (name, , nr, args);	      \
+    if (__glibc_unlikely (INTERNAL_SYSCALL_ERROR_P (resultvar, )))	      \
+      {									      \
+	__set_errno (INTERNAL_SYSCALL_ERRNO (resultvar, ));		      \
+	resultvar = (unsigned long int) -1;				      \
+      }									      \
+    (long int) resultvar; })
+</span>
+<span class="cm">/* Define a macro with explicit types for arguments, which expands inline
+   into the wrapper code for a system call.  It should be used when size
+   of any argument &gt; size of long int.  */</span>
+<span class="cp"># undef INLINE_SYSCALL_TYPES
+# define INLINE_SYSCALL_TYPES(name, nr, args...) \
+  ({									      \
+    unsigned long int resultvar = INTERNAL_SYSCALL_TYPES (name, , nr, args);  \
+    if (__glibc_unlikely (INTERNAL_SYSCALL_ERROR_P (resultvar, )))	      \
+      {									      \
+	__set_errno (INTERNAL_SYSCALL_ERRNO (resultvar, ));		      \
+	resultvar = (unsigned long int) -1;				      \
+      }									      \
+    (long int) resultvar; })
+</span>
+<span class="cp">#undef INTERNAL_SYSCALL
+#define INTERNAL_SYSCALL(name, err, nr, args...)			\
+	internal_syscall##nr (SYS_ify (name), err, args)
+</span>
+<span class="cp">#undef INTERNAL_SYSCALL_NCS
+#define INTERNAL_SYSCALL_NCS(number, err, nr, args...)			\
+	internal_syscall##nr (number, err, args)
+</span>
+<span class="cp">#undef internal_syscall0
+#define internal_syscall0(number, err, dummy...)			\
+({									\
+    unsigned long int resultvar;					\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number)							\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall1
+#define internal_syscall1(number, err, arg1)				\
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1)						\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall2
+#define internal_syscall2(number, err, arg1, arg2)			\
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg2, __arg2) = ARGIFY (arg2);			 	\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg2, _a2) asm ("rsi") = __arg2;			\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2)				\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall3
+#define internal_syscall3(number, err, arg1, arg2, arg3)		\
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg3, __arg3) = ARGIFY (arg3);			 	\
+    TYPEFY (arg2, __arg2) = ARGIFY (arg2);			 	\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg3, _a3) asm ("rdx") = __arg3;			\
+    register TYPEFY (arg2, _a2) asm ("rsi") = __arg2;			\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2), "r" (_a3)			\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall4
+#define internal_syscall4(number, err, arg1, arg2, arg3, arg4)		\
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg4, __arg4) = ARGIFY (arg4);			 	\
+    TYPEFY (arg3, __arg3) = ARGIFY (arg3);			 	\
+    TYPEFY (arg2, __arg2) = ARGIFY (arg2);			 	\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg4, _a4) asm ("r10") = __arg4;			\
+    register TYPEFY (arg3, _a3) asm ("rdx") = __arg3;			\
+    register TYPEFY (arg2, _a2) asm ("rsi") = __arg2;			\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2), "r" (_a3), "r" (_a4)		\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall5
+#define internal_syscall5(number, err, arg1, arg2, arg3, arg4, arg5)	\
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg5, __arg5) = ARGIFY (arg5);			 	\
+    TYPEFY (arg4, __arg4) = ARGIFY (arg4);			 	\
+    TYPEFY (arg3, __arg3) = ARGIFY (arg3);			 	\
+    TYPEFY (arg2, __arg2) = ARGIFY (arg2);			 	\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg5, _a5) asm ("r8") = __arg5;			\
+    register TYPEFY (arg4, _a4) asm ("r10") = __arg4;			\
+    register TYPEFY (arg3, _a3) asm ("rdx") = __arg3;			\
+    register TYPEFY (arg2, _a2) asm ("rsi") = __arg2;			\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2), "r" (_a3), "r" (_a4),		\
+      "r" (_a5)								\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span>
+<span class="cp">#undef internal_syscall6
+#define internal_syscall6(number, err, arg1, arg2, arg3, arg4, arg5, arg6) \
+({									\
+    unsigned long int resultvar;					\
+    TYPEFY (arg6, __arg6) = ARGIFY (arg6);			 	\
+    TYPEFY (arg5, __arg5) = ARGIFY (arg5);			 	\
+    TYPEFY (arg4, __arg4) = ARGIFY (arg4);			 	\
+    TYPEFY (arg3, __arg3) = ARGIFY (arg3);			 	\
+    TYPEFY (arg2, __arg2) = ARGIFY (arg2);			 	\
+    TYPEFY (arg1, __arg1) = ARGIFY (arg1);			 	\
+    register TYPEFY (arg6, _a6) asm ("r9") = __arg6;			\
+    register TYPEFY (arg5, _a5) asm ("r8") = __arg5;			\
+    register TYPEFY (arg4, _a4) asm ("r10") = __arg4;			\
+    register TYPEFY (arg3, _a3) asm ("rdx") = __arg3;			\
+    register TYPEFY (arg2, _a2) asm ("rsi") = __arg2;			\
+    register TYPEFY (arg1, _a1) asm ("rdi") = __arg1;			\
+    asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2), "r" (_a3), "r" (_a4),		\
+      "r" (_a5), "r" (_a6)						\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);			\
+    (long int) resultvar;						\
+})
+</span></code></pre></div></div> <p><strong>此文件内容超多,所以我们只截取其中重要的部分</strong></p> <p>我们可以看到下面这样的实现流程:</p> <p><code class="highlighter-rouge">INLINE_SYSCALL(name, nr, args...)</code> -&gt; <code class="highlighter-rouge">INTERNAL_SYSCALL(name, ,nr, args)</code> -&gt;</p> <p><code class="highlighter-rouge">internal_syscall##nr (SYS_ify (name), err, args);</code></p> <p>下面就是具体对应不同参数的函数实现了,其中实现了,产生软中断,进入内核态,然后参数入寄存器,传参</p> <p>那么,这一些列函数中我们可以看到:</p> <p><strong>参数只能是6个,可以传递7个参数,一个是系统调用名,是吗? 错的,传递的参数只是建议范围内为7个</strong></p> <p><strong>其余的呢? 入栈, Register参数就7个罢了</strong></p> <p>我们来具体看看函数实现,尤其是其中的内联汇编部分(其实我汇编很烂,Intel都不行,ATT就更不多说了)</p><pre><code class="language-x86asm">asm volatile (							\
+    "syscall\n\t"							\
+    : "=a" (resultvar)							\
+    : "0" (number), "r" (_a1), "r" (_a2), "r" (_a3), "r" (_a4),		\
+      "r" (_a5), "r" (_a6)						\
+    : "memory", REGISTERS_CLOBBERED_BY_SYSCALL);
+</code></pre><p>其他的不多说,其中最重要的就是, <code class="highlighter-rouge">"syscall\n\t"</code>这个东西了</p> <blockquote> <p>在32位机上,使用<code class="highlighter-rouge">int 0x80</code> 第128中断号,陷入内核,进行系统调用</p> </blockquote> <blockquote> <p>在ARM上,使用<code class="highlighter-rouge">swi </code>执行陷入内核</p> </blockquote> <blockquote> <p>唯独少有人说x86_64平台上的软中断,也就是<code class="highlighter-rouge">syscall</code>中断向量</p> </blockquote> <p>你没有听错,这个B就是叫syscall中断vector,qtmd,看了我半天</p> <p><em>不过这也是我内核基础不扎实的恶果,深感惭愧</em></p> <p>至此,Warpper function的任务顺利完成,下来就需要切换到内核态处理了.</p> <p>我们接下来就得看LinuxKernel的代码了</p> <h2 id="四关于中断的小了解">四,关于中断的小了解</h2> <p>中断是在引入保护模式(protect mode)之后很重要的一个特性,以此来陷入内核,进入内核态</p> <p><strong>一般的fault,会重复指令,syscall会vector+1, 执行下一条</strong></p> <p><em>此处,中断的内容,同样是Kernel重要知识,当然我还是不够清楚,不能清晰地翻出汇编指令解析</em></p> <p><em>但是,syscall的流程还是比较清楚的</em></p> <p>首先,来看内核的中断处理例程</p> <p>既然是64位,肯定看arch/x86/entry/entry_64.S</p> <p>简单说一下,entry这几个文件</p> <blockquote> <p>entry_32.S是32位机使用的</p> </blockquote> <blockquote> <p>entry_64.S是64位机使用的,但是说实话,很像是拼凑的,凌乱不堪,就在32基础上改得,32看着十分清晰</p> </blockquote> <blockquote> <p>entry_64_compat.S 是兼容的,在64位机器上按照32的形式运行,用的是32位的接口</p> </blockquote><pre><code class="language-x86asm">ENTRY(entry_SYSCALL_64_trampoline)
+	.....
+	movq	$entry_SYSCALL_64_stage2, %rdi
+	JMP_NOSPEC %rdi
+END(entry_SYSCALL_64_trampoline)
+
+	.popsection
+
+ENTRY(entry_SYSCALL_64_stage2)
+	UNWIND_HINT_EMPTY
+	popq	%rdi
+	jmp	entry_SYSCALL_64_after_hwframe
+END(entry_SYSCALL_64_stage2)
+
+ENTRY(entry_SYSCALL_64)
+	UNWIND_HINT_EMPTY
+	
+
+	swapgs
+	
+	movq	%rsp, PER_CPU_VAR(rsp_scratch)
+	movq	PER_CPU_VAR(cpu_current_top_of_stack), %rsp
+
+	/* Construct struct pt_regs on stack */
+	pushq	$__USER_DS			/* pt_regs-&gt;ss */
+	pushq	PER_CPU_VAR(rsp_scratch)	/* pt_regs-&gt;sp */
+	pushq	%r11				/* pt_regs-&gt;flags */
+	pushq	$__USER_CS			/* pt_regs-&gt;cs */
+	pushq	%rcx				/* pt_regs-&gt;ip */
+GLOBAL(entry_SYSCALL_64_after_hwframe)
+	pushq	%rax				/* pt_regs-&gt;orig_ax */
+
+	PUSH_AND_CLEAR_REGS rax=$-ENOSYS
+
+	TRACE_IRQS_OFF
+
+	/* IRQs are off. */
+	movq	%rax, %rdi
+	movq	%rsp, %rsi
+	call	do_syscall_64		/* returns with IRQs disabled */
+	
+	.........
+END(entry_SYSCALL_64)
+</code></pre><p>其中删去了很多内容,但是整个思路是:</p> <ol> <li> <p>去中断向量表查看中断偏移量(很惭愧,没找到),</p> </li> <li> <p>对应的entry_64.S进行section的调用</p> </li> <li> <p>对于syscall就是调用到了(其中还有两个函数被我删掉了,仅保留了核心)<code class="highlighter-rouge">entry_SYSCALL_64</code></p> </li> </ol> <p><em>其中ENTRY(), END(),都是宏用来进符号表中的函数声明</em></p> <ol> <li>在<code class="highlighter-rouge">entry_SYSCALL_64</code>中调用了<code class="highlighter-rouge">do_syscall_64()</code></li> </ol> <p><code class="highlighter-rouge">do_syscall_64()</code>这是一个外部函数,在common.c中的定义</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// arch/x86/entry/common.c</span>
+
+<span class="n">__visible</span> <span class="kt">void</span> <span class="nf">do_syscall_64</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">nr</span><span class="p">,</span> <span class="k">struct</span> <span class="n">pt_regs</span> <span class="o">*</span><span class="n">regs</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="k">struct</span> <span class="n">thread_info</span> <span class="o">*</span><span class="n">ti</span><span class="p">;</span>
+
+	<span class="n">enter_from_user_mode</span><span class="p">();</span>
+	<span class="n">local_irq_enable</span><span class="p">();</span>
+	<span class="n">ti</span> <span class="o">=</span> <span class="n">current_thread_info</span><span class="p">();</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">READ_ONCE</span><span class="p">(</span><span class="n">ti</span><span class="o">-&gt;</span><span class="n">flags</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">_TIF_WORK_SYSCALL_ENTRY</span><span class="p">)</span>
+		<span class="n">nr</span> <span class="o">=</span> <span class="n">syscall_trace_enter</span><span class="p">(</span><span class="n">regs</span><span class="p">);</span>
+
+	<span class="cm">/*
+	 * NB: Native and x32 syscalls are dispatched from the same
+	 * table.  The only functional difference is the x32 bit in
+	 * regs-&gt;orig_ax, which changes the behavior of some syscalls.
+	 */</span>
+	<span class="n">nr</span> <span class="o">&amp;=</span> <span class="n">__SYSCALL_MASK</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">likely</span><span class="p">(</span><span class="n">nr</span> <span class="o">&lt;</span> <span class="n">NR_syscalls</span><span class="p">))</span> <span class="p">{</span>
+<span class="o">*</span>		<span class="n">nr</span> <span class="o">=</span> <span class="n">array_index_nospec</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">NR_syscalls</span><span class="p">);</span>
+<span class="o">*</span>		<span class="n">regs</span><span class="o">-&gt;</span><span class="n">ax</span> <span class="o">=</span> <span class="n">sys_call_table</span><span class="p">[</span><span class="n">nr</span><span class="p">](</span><span class="n">regs</span><span class="p">);</span>
+	<span class="p">}</span>
+
+	<span class="n">syscall_return_slowpath</span><span class="p">(</span><span class="n">regs</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>其中标上*的两句就是最重要的,它会去sys_call_table[]全局例程调用表中查找我们想要调用的例程</p> <p>为什么有这样的机制呢?</p> <p>因为中断号页只有255,所有的系统调用共享syscall对应的入口,所以我们需要一个数组</p> <p><strong>在都进入内核态之后,根据每个系统调用的唯一编号来进行唯一标识与识别</strong></p> <p>这个编号的确定,是有各种各样的宏确定的,<strong>同时要保证LinuxKernel与glibc的编号一致,</strong></p> <p>我们可以来看这两个文件</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// /usr/include/asm/unistd_64.h</span>
+
+<span class="cp">#ifndef _ASM_X86_UNISTD_64_H
+#define _ASM_X86_UNISTD_64_H 1
+</span>
+<span class="cp">#define __NR_read 0
+#define __NR_write 1
+#define __NR_open 2
+#define __NR_close 3
+#define __NR_stat 4
+#define __NR_fstat 5
+#define __NR_lstat 6
+#define __NR_poll 7
+#define __NR_lseek 8
+#define __NR_mmap 9
+#define __NR_mprotect 10
+#define __NR_munmap 11
+#define __NR_brk 12
+#define __NR_rt_sigaction 13
+#define __NR_rt_sigprocmask 14
+#define __NR_rt_sigreturn 15
+#define __NR_ioctl 16
+#define __NR_pread64 17
+</span><span class="p">.........</span>
+</code></pre></div></div> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// ....</span>
+</code></pre></div></div> <p>确定好编号后,就可以访问指定函数的地址了</p> <h2 id="五真正的系统调用实现">五,真正的系统调用实现</h2> <p>我们可以查看此文件</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// /include/linux/syscalls.h</span>
+<span class="c1">// 此文件实现了所有系统调用的声明以及SYSCALL_DEFINEx宏</span>
+
+<span class="cp">#define SYSCALL_DEFINE1(name, ...) SYSCALL_DEFINEx(1, _##name, __VA_ARGS__)
+#define SYSCALL_DEFINE2(name, ...) SYSCALL_DEFINEx(2, _##name, __VA_ARGS__)
+#define SYSCALL_DEFINE3(name, ...) SYSCALL_DEFINEx(3, _##name, __VA_ARGS__)
+#define SYSCALL_DEFINE4(name, ...) SYSCALL_DEFINEx(4, _##name, __VA_ARGS__)
+#define SYSCALL_DEFINE5(name, ...) SYSCALL_DEFINEx(5, _##name, __VA_ARGS__)
+#define SYSCALL_DEFINE6(name, ...) SYSCALL_DEFINEx(6, _##name, __VA_ARGS__)
+</span>
+<span class="cp">#define __SYSCALL_DEFINEx(x, name, ...)					\
+	asmlinkage long sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))	\
+		__attribute__((alias(__stringify(__se_sys##name))));	\
+	ALLOW_ERROR_INJECTION(sys##name, ERRNO);			\
+	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__));\
+	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__));	\
+	asmlinkage long __se_sys##name(__MAP(x,__SC_LONG,__VA_ARGS__))	\
+	{								\
+		long ret = __do_sys##name(__MAP(x,__SC_CAST,__VA_ARGS__));\
+		__MAP(x,__SC_TEST,__VA_ARGS__);				\
+		__PROTECT(x, ret,__MAP(x,__SC_ARGS,__VA_ARGS__));	\
+		return ret;						\
+	}								\
+	static inline long __do_sys##name(__MAP(x,__SC_DECL,__VA_ARGS__))
+</span>	
+			<span class="p">.........</span>
+	<span class="cm">/* fs/eventfd.c */</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_eventfd2</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">count</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+
+<span class="cm">/* fs/eventpoll.c */</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_epoll_create1</span><span class="p">(</span><span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_epoll_ctl</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">op</span><span class="p">,</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span>
+				<span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">__user</span> <span class="o">*</span><span class="n">event</span><span class="p">);</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_epoll_pwait</span><span class="p">(</span><span class="kt">int</span> <span class="n">epfd</span><span class="p">,</span> <span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">__user</span> <span class="o">*</span><span class="n">events</span><span class="p">,</span>
+				<span class="kt">int</span> <span class="n">maxevents</span><span class="p">,</span> <span class="kt">int</span> <span class="n">timeout</span><span class="p">,</span>
+				<span class="k">const</span> <span class="n">sigset_t</span> <span class="n">__user</span> <span class="o">*</span><span class="n">sigmask</span><span class="p">,</span>
+				<span class="kt">size_t</span> <span class="n">sigsetsize</span><span class="p">);</span>
+
+<span class="cm">/* fs/fcntl.c */</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_dup</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fildes</span><span class="p">);</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_dup3</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">oldfd</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">newfd</span><span class="p">,</span> <span class="kt">int</span> <span class="n">flags</span><span class="p">);</span>
+<span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_fcntl</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">cmd</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">arg</span><span class="p">);</span>
+<span class="cp">#if BITS_PER_LONG == 32
+</span><span class="n">asmlinkage</span> <span class="kt">long</span> <span class="n">sys_fcntl64</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">fd</span><span class="p">,</span>
+				<span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">cmd</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">arg</span><span class="p">);</span>
+				
+				<span class="p">.......</span>
+</code></pre></div></div> <p>经常看到其他文档上说到sys_open()是入口,这其实都是早期的说法,实际上,是由宏生成真正的函数定义</p> <p>同时我们可以根据,此文件中的注释,找到根本意义上的Syscall定义,比如<code class="highlighter-rouge">epoll_ctl()</code></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * The following function implements the controller interface for
+ * the eventpoll file that enables the insertion/removal/change of
+ * file descriptors inside the interest set.
+ */</span>
+<span class="n">SYSCALL_DEFINE4</span><span class="p">(</span><span class="n">epoll_ctl</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">epfd</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">op</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="n">fd</span><span class="p">,</span>
+		<span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">__user</span> <span class="o">*</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="kt">int</span> <span class="n">error</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">full_check</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">fd</span> <span class="n">f</span><span class="p">,</span> <span class="n">tf</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">eventpoll</span> <span class="o">*</span><span class="n">ep</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">epitem</span> <span class="o">*</span><span class="n">epi</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">epoll_event</span> <span class="n">epds</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">eventpoll</span> <span class="o">*</span><span class="n">tep</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+	<span class="n">error</span> <span class="o">=</span> <span class="o">-</span><span class="n">EFAULT</span><span class="p">;</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">ep_op_has_event</span><span class="p">(</span><span class="n">op</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+	    <span class="n">copy_from_user</span><span class="p">(</span><span class="o">&amp;</span><span class="n">epds</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">epoll_event</span><span class="p">)))</span>
+		<span class="k">goto</span> <span class="n">error_return</span><span class="p">;</span>
+
+	<span class="n">error</span> <span class="o">=</span> <span class="o">-</span><span class="n">EBADF</span><span class="p">;</span>
+	<span class="n">f</span> <span class="o">=</span> <span class="n">fdget</span><span class="p">(</span><span class="n">epfd</span><span class="p">);</span>
+	<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">f</span><span class="p">.</span><span class="n">file</span><span class="p">)</span>
+		<span class="k">goto</span> <span class="n">error_return</span><span class="p">;</span>
+<span class="p">................</span>
+</code></pre></div></div> <p><strong>上述即为真真正正最底层,最底层<code class="highlighter-rouge">epoll_ctl()</code>的实现</strong></p> <p><strong>至此,我们便真正追踪到了,系统调用的实现了,其他系统调用的源码,查看方法同理</strong></p> <h2 id="六扩展阅读">六,扩展阅读</h2> <p><a href="https://my.oschina.net/fileoptions/blog/908682">关于ARM实现</a></p> <p><a href="https://zhuanlan.zhihu.com/c_144857088">关系不大,但有价值的glibc分析(脚本Warpper)</a></p> <p>书籍推荐: &lt; Linux内设设计与实现 &gt; (PS: 虽然是基于2.6.32,但还是很有意义)</p> <h2 id="其他的一些闲杂事情">其他的一些闲杂事情</h2> <p>主要还是最近烦,感觉自己要玩了(beibei狗),看TLPI,突发奇想,想看看syscall的真正实现</p> <p>但是网上都是ARM,X86是实现(2.6.32),没有X86_64,4版本内核的实现</p> <p>于是乎我决定来稿一搞</p> <p>但是自身水平又不行,所以也比较磕绊,其实分析也是不完整的</p> <p>最后,系统调用的退出,如何添加自己的系统调用这些内容都是不全面的</p> <p><strong>还是自己学习不扎实,后面落实后会补充的,起码这两天干的事,还是挺有意义的</strong></p> <p><em>接下来,回归主要任务,TLPI作为辅修,是时候C3P就绪了</em></p> <p><strong>虽然很烦,但还是那句话:</strong></p> <blockquote> <p>生命转瞬即逝, 没时间丧,Fighting!</p> </blockquote> <p>June 8, 2018 2:00 AM</p> <div class="entry-meta"> <br> <hr> <span class="entry-tags"><a href="http://localhost:4000/tags/#Syscall" title="Pages tagged Syscall" class="tag"><span class="term">Syscall</span></a></span> <span class="social-share"> <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/syscall/" title="Share on Facebook" class="tag"> <span class="term"><i class="fa fa-facebook-square"></i> Share</span> </a> <a href="https://twitter.com/intent/tweet?text=http://localhost:4000/syscall/" title="Share on Twitter" class="tag"> <span class="term"><i class="fa fa-twitter-square"></i> Tweet</span> </a> <a href="https://plus.google.com/share?url=http://localhost:4000/syscall/" title="Share on Google+" class="tag"> <span class="term"><i class="fa fa-google-plus-square"></i> +1</span> </a> </span> <div style="clear:both"></div> </div> </div> </div> <section id="disqus_thread" class="animated fadeInUp"></section><!-- /#disqus_thread --> </header> <!-- JS --> <script src="http://localhost:4000/assets/js/jquery-1.12.0.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.dlmenu.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.goup.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.magnific-popup.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.fitvid.min.js"></script> <script src="http://localhost:4000/assets/js/scripts.js"></script> <script type="text/javascript"> var disqus_shortname = 'Evilcrow'; (function() { var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); })(); (function () { var s = document.createElement('script'); s.async = true; s.type = 'text/javascript'; s.src = '//' + disqus_shortname + '.disqus.com/count.js'; (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); }()); </script> <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> <!-- MathJax --> <script async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> </body> </html>

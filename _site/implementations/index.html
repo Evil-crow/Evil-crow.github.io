@@ -1,0 +1,336 @@
+<!DOCTYPE html> <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--> <!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8"><![endif]--> <!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9"><![endif]--> <!--[if gt IE 8]><!--> <html class="no-js"><!--<![endif]--> <head> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/styles/github.min.css"> <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js"></script> <script>hljs.initHighlightingOnLoad();</script> <meta charset="UTF-8"> <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"> <meta http-equiv=X-UA-Compatible content="IE=edge,chrome=1"> <title><星月夜> Implementations &#8211; Road to Coding</title> <meta name="description" content="只要那一抹笑容尚存, 我便心无旁骛"> <meta name="keywords" content="EffectiveC++"> <!-- Twitter Cards --> <meta name="twitter:card" content="summary"> <meta name="twitter:image" content="http://localhost:4000/assets/img/logo.png"> <meta name="twitter:title" content="<星月夜> Implementations"> <meta name="twitter:description" content="Chapter V 实现. 之前讨论了设计与声明的细节, 那么完成设计之后, 就要进行实现. 在实现上又有哪些值得注意的问题呢?"> <!-- Open Graph --> <meta property="og:locale" content="en_US"> <meta property="og:type" content="article"> <meta property="og:title" content="<星月夜> Implementations"> <meta property="og:description" content="Chapter V 实现. 之前讨论了设计与声明的细节, 那么完成设计之后, 就要进行实现. 在实现上又有哪些值得注意的问题呢?"> <meta property="og:url" content="http://localhost:4000/implementations/"> <meta property="og:site_name" content="Road to Coding"> <meta property="og:image" content="http://localhost:4000/assets/img/logo.png"> <link rel="canonical" href="http://localhost:4000/implementations/"> <link href="http://localhost:4000/feed.xml" type="application/atom+xml" rel="alternate" title="Road to Coding Feed"> <!-- Handheld --> <meta name="HandheldFriendly" content="True"> <meta name="MobileOptimized" content="320"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- CSS --> <link rel="stylesheet" href="http://localhost:4000/assets/css/main.css"> <!-- JS --> <script src="http://localhost:4000/assets/js/modernizr-3.3.1.custom.min.js"></script> <!-- Favicons --> <link rel="apple-touch-icon" href="http://localhost:4000/assets/img/favicons/apple-icon-precomposed.png"> <link rel="apple-touch-icon" sizes="72x72" href="http://localhost:4000/assets/img/favicons/apple-icon-72x72.png"> <link rel="apple-touch-icon" sizes="114x114" href="http://localhost:4000/assets/img/favicons/apple-icon-114x114.png"> <link rel="apple-touch-icon" sizes="144x144" href="http://localhost:4000/assets/img/favicons/apple-icon-144x144.png"> <link rel="shortcut icon" type="image/png" href="http://localhost:4000/favicon.png" /> <link rel="shortcut icon" href="http://localhost:4000/favicon.ico" /> <!-- Background Image --> <style type="text/css">body {background-image:url(http://localhost:4000/assets/img/placeholder-big.jpg); background-repeat: no-repeat; background-size: cover; }</style> <!-- Post Feature Image --> </head> <body> <nav id="dl-menu" class="dl-menuwrapper" role="navigation"> <button class="dl-trigger">Open Menu</button> <ul class="dl-menu"> <li><a href="http://localhost:4000/">Home</a></li> <li> <a href="#">About</a> <ul class="dl-submenu"> <li> <img src="http://localhost:4000/assets/img/logo.png" alt="Road to Coding photo" class="author-photo"> <h4>Road to Coding</h4> <p>只要那一抹笑容尚存, 我便心无旁骛</p> </li> <li><a href="http://localhost:4000/about/"><span class="btn btn-inverse">Learn More</span></a></li> <li> <a href="mailto:evilcrow486@gmail.com" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-envelope-square"></i> Email</a> </li> <li> <a href="http://github.com/Evil-crow" target="_blank" rel="noopener noreferrer"><i class="fa fa-fw fa-github"></i> Github</a> </li> </ul><!-- /.dl-submenu --> </li> <li> <a href="#">Posts</a> <ul class="dl-submenu"> <li><a href="http://localhost:4000/posts/">All Posts</a></li> <li><a href="http://localhost:4000/tags/">All Tags</a></li> </ul> </li> </ul><!-- /.dl-menu --> </nav><!-- /.dl-menuwrapper --> <!-- Header --> <header class="header" role="banner"> <div class="wrapper animated fadeIn" style="background-color:rgba(255,255,255,0.97);"> <div class="content"> <div class="post-title "> <h1><星月夜> Implementations</h1> <h4>09 Oct 2018</h4> <a class="btn zoombtn" href="http://localhost:4000/posts/"> <i class="fa fa-chevron-left"></i> </a> </div> <p><em>讨论过设计与声明的细节之后, 实现自然水到渠成, 但是在实现的时候也不是那么顺利的, 其中也有许多坑</em> <em>那么, 常见的坑都有哪些, 又有哪些方便易用的facilities呢, 如何提高效率是我们一直要关心的问题</em></p> <h2 id="item-26-postpone-variable-definitions-as-long-as-possible">Item 26: Postpone variable definitions as long as possible</h2> <p>核心正如标题: <strong>尽量延长定义式出现的时间</strong></p> <p>你可能会疑惑,** C中都是在顶层声明定义所有变量<em>*, 为何C++中变成如此 ? *C++程序员都有C基础, 这句话可能在1990s还比较适用, 现在是有点扯淡, 不过我有幸还是这样一批人</em> <del>也不知道该说是我邮的教育方针好, 还是教育方针好呢 ?</del></p> <p>先来看个例子吧, 为什么要尽量拖晚定义式出现的时间, 不显得不好看吗?</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">func_deal_something</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+    <span class="n">string</span> <span class="n">test_string</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(...)</span>
+        <span class="k">throw</span> <span class="n">runtime_error</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>    <span class="c1">// 症结所在</span>
+    <span class="n">deal_with</span><span class="p">(</span><span class="n">test_string</span><span class="p">);</span>
+    <span class="p">...;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>众所周知, C++是支持异常系统的, 再没有任何一个catch的情况下, 最后会被<code class="highlighter-rouge">std::terminate()</code>终止 假设上述例子, 我们在异常之前定义变量, 然后抛出异常, GG了, 有一个问题: <strong>没错, 变量还没有被使用, 就析构了</strong>, 这便是有时候浪费资源的一种情况.</p> <p>那么, 我们可以这样修改:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">func_deal_something</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(...)</span>
+        <span class="k">throw</span> <span class="n">runtime_error</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
+    <span class="n">string</span> <span class="n">test_string</span><span class="p">;</span>
+    <span class="n">test_string</span> <span class="o">=</span> <span class="s">"..."</span><span class="p">;</span>
+    <span class="n">deal_with</span><span class="p">(</span><span class="n">test_string</span><span class="p">);</span>
+    <span class="p">...;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><em>这样可以吗 ? 虽然很抱歉, 但还是不合适的</em> 在了解了C++之于构造和赋值的问题之后, 我们是建议: <strong>使用 初始化 &lt;= 构造 + 赋值的</strong> 为什么呢? 根本原因: 提高效率</p> <p>即,应该如此编码:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">func_deal_somthing</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(...)</span>
+        <span class="k">throw</span> <span class="n">runtime_error</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
+    <span class="n">string</span> <span class="n">test_string</span><span class="p">(</span><span class="s">"..."</span><span class="p">);</span>
+    <span class="n">deal_with</span><span class="p">(</span><span class="n">test_string</span><span class="p">);</span>
+    <span class="p">...;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>虽然只是一点小变动, 但是它说明了一个核心问题: <strong>定义式应该 推迟到能初始化它的时刻 才合适</strong></p> <p>下面来聊聊C/C++中的定义(还有声明)出现位置的问题:</p> <p>为什么推迟定义呢? 还不是因为怕中间出意外, 造成无用开销. 所谓无用开销, 指的就是: 类似于上面的string一样的东西, 懂了吧?</p> <p>那么, C中为什么还是顶层定义呢? <strong>1. C++中的异常机制, 更容易导致无用开销, 同时C与C++的内存布局也限制了这一部分内容</strong> <strong>2. 还在使用顶层定义, 起码你用的是C99之前的标准, 最新的C标准支持使用时定义</strong> <del>这里慨叹一下我们学校仍在给学弟学妹使用VC++6.0 甚至于Turbo C此类上古神器</del></p> <p>现在有一个问题: 既然推迟定义位置, 那么loop的两种写法如何决断呢?</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 1.</span>
+<span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div></div> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 2.</span>
+<span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> <span class="p">...</span> <span class="p">}</span>
+</code></pre></div></div> <p>如何选择呢? 这里我们要考虑的是开销问题,</p> <ol> <li>1个构造 + 1个析构 + n重赋值</li> <li>n个构造 + n个析构</li> </ol> <p>当赋值的开销 &gt; 析构 + 构造(1组) 时, 选用方式二更合适一点 当然, 在有多次构造, 析构的时候, 开销也是不容小觑的, 方法一就显得更合适了</p> <p>但是, 方法一还存在着污染命名空间的问题, 总体上而言, 方法二用的更多</p> <h2 id="item-27-minimize-casting">Item 27: Minimize casting</h2> <p>转型(casting) 其实是一个相当花式的玩意, 用这个可以写出很多秀的操作 但是, 作为开发来说, 是有点恶心. 而且, 转型并非无损, 还是有一定程度上开销的.</p> <p>其他语言不太了解, 但是C/C++中的转型, 我们概括一下, 有下面几种:</p> <ul> <li>旧式转型 <ul> <li><code class="highlighter-rouge">(Type) var</code>:一般形式上的转型</li> <li><code class="highlighter-rouge">Type (var)</code>: 函数形式的转型(非FP), 联想构造</li> </ul> </li> <li>新式转型 <ul> <li><code class="highlighter-rouge">static_cast&lt;T&gt;(var)</code>: 静态转型, 一般转型比较通用, 不过必须是继承体系链上的</li> <li><code class="highlighter-rouge">const_cast&lt;T&gt;(var)</code>: const转型, 一般用于取消常量性的转换, 仅此转型可达到</li> <li><code class="highlighter-rouge">reinterpret&lt;T&gt;(var)</code>: 位层面上的转型, 可以理解为C中进行的指针强制类型转换等</li> <li><code class="highlighter-rouge">dynamic_cast&lt;T&gt;(var)</code>: 动态转型, 一般用于多态需求, 可以自上向下转换, 当然开销很大</li> </ul> </li> </ul> <p>大概说说几种转型的作用范围及作用:</p> <ol> <li>一般进行的类型转换就使用<code class="highlighter-rouge">static_cast</code>就好了</li> <li>用于函数重载取消常量性, 即使用const版本实现non-const版本时使用<code class="highlighter-rouge">const_cast</code>, 一般也仅此使用</li> <li>进行<del>花式指针操作</del>, 在确保正确的时候, 进行指针层面的位解释时使用<code class="highlighter-rouge">reinterpert_cast</code></li> <li>拥有基类handle, 想要调用派生类的func时, 使用<code class="highlighter-rouge">dynamic_cast</code>, 不过我们一般用其他手法规避</li> </ol> <p>使用程度: <code class="highlighter-rouge">static_cast, reinterpert_cast &gt;&gt; const_cast &gt; dynamic_cast</code></p> <p>下面来处理两个问题:</p> <h3 id="对于新式转型的理解">对于新式转型的理解</h3> <p>新式转型为何出现呢? <strong>仍然是C++最核心的目的: 避免错误, 明确语义的目的</strong></p> <p>原来的<code class="highlighter-rouge">(Type)var 或者 Type(var)</code>涵盖了所有的转型动作, 语义十分混杂 C++将与拿来的转型拆成了, 四部分. 明确了语言, 使得coding也更加合理</p> <p>比如说, 我们可以看看这个: <code class="highlighter-rouge">static_cast&lt;T&gt;(var)</code>与<code class="highlighter-rouge">Type(var)</code></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="k">do</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">func1</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">a</span><span class="p">;</span>
+    <span class="k">do</span><span class="p">(</span><span class="kt">int</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>      <span class="c1">// 即使我们不这样做, 隐式的类型转换也会这样干</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">func2</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="kt">double</span> <span class="n">a</span><span class="p">;</span>
+    <span class="k">do</span><span class="p">(</span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>     <span class="c1">// 新式转型应该这么写</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>真的要说的话,其实使用就是类型转换更加符合我们的常识认知: <strong>构造一个符合类型的对象</strong></p> <p>对于<code class="highlighter-rouge">explicit constructor</code>, <strong>是我们如今唯一值得使用旧式转型的地方</strong></p> <p><strong>在其他之处, 我们建议, 使用新式转型来达到更加安全的转型, (毕竟C的旧式转型是不安全的)</strong></p> <p>那么, 还有要讨论的吗? <strong>有 !</strong> <em>我们有时候会被新式转型迷惑</em></p> <p>情境: 现在持有一个派生类D的handle, 我们要在其上调用基类部分的操作, 怎么办? 最现实的情况, 派生类上使用基类版本的虚函数, (别问为什么, 就是这么恶心的需求)</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="p">...</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">func</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="p">...</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">func</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="c1">// User code</span>
+<span class="kt">void</span> <span class="n">Derived</span><span class="o">::</span><span class="n">func</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="k">static</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">&gt;</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">).</span><span class="n">func</span><span class="p">();</span>   <span class="c1">// Error!</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>上面的代码乍看一下, 可能会觉得并没有错误, 在看一眼: <code class="highlighter-rouge">static&lt;Base&gt;(*this).func();</code> <code class="highlighter-rouge">==</code> <code class="highlighter-rouge">Bse(*this).func();</code></p> <p>那么, 问题来了: 实际上并非在本对象上使用基类版本的<code class="highlighter-rouge">func()</code> 而是本对象基类副本上使用, (成员函数只有一个, 无所谓) 可以说, <strong>这与我们的预期大相径庭, 基类部分是操作失败的,</strong> <del>用侯捷先生的话来说, 就是 败坏数据结构之始</del></p> <p>该如何正确使用呢?</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">Derived</span><span class="o">::</span><span class="n">func</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Base</span><span class="o">::</span><span class="n">func</span><span class="p">();</span>     <span class="c1">// Right !</span>
+    <span class="p">...</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>直接访问公共接口即可, *this是被默认传入的.</p> <p>关于新式转型与旧式转型, 还有问题吗 ? <strong>有 !</strong> 就是关于C++内存模型的问题</p> <p>在C++中, 对于同一个对象, 如果它的继承体系比较复杂的时候, <strong>他会有多个指针, 指向同一对象</strong> <code class="highlighter-rouge">inhertiance: A, B -&gt; C</code> 则, 对于<code class="highlighter-rouge">C c;</code>中c的handles, 如果你使用<code class="highlighter-rouge">A *, B *, C *</code>极有可能是不同的值 (单继承少, 多继承经常出现此问题) 在<code class="highlighter-rouge">Java/C#</code>中, 因为他们有<code class="highlighter-rouge">header</code>, 所以是一致的</p> <p>这说明什么呢? =&gt; <strong>我们不能assume C++ memory model, 因此乱用转型, 自找苦吃</strong> 即使是某一平台上的内存模型你清楚, 也不能如此, <strong>这样会失去兼容性</strong></p> <p>关于新式转型与旧式转型, 还有问题吗 ? <strong>这次真的没有了</strong></p> <h3 id="dynamic_cast的杂七杂八">Dynamic_cast的杂七杂八</h3> <p>至于<code class="highlighter-rouge">const_cast/reinterpert_cast</code>的使用, 其实也就那么一回事, 了解一下, 并没有那么多事</p> <p>但是<code class="highlighter-rouge">dynamic_cast</code>是个恶心的东西. 它是C中没有的, 因为C不支持继承机制. 那么, 他有什么问题呢?</p> <p>就是: 它的机制是比较字符串判断是否是继承体系中的类型 <strong>一旦继承体系足够复杂, 你也懂得吧 (一般4层是个界限)</strong></p> <p>在足够复杂的继承体系中使用运行时类型断定 (一般结合RTTI使用), 无疑是自寻死路</p> <p>我们在什么时候使用它呢 ? <strong>与之前的例子相反: 手持基类handle, 想要调用派生类版本内容时, 使用dynamic_cast</strong> 你会说, 那不是有虚函数么, \抠鼻, 问题来了, 这个对象是你估计可能是D类, 但是只有一个B的指针, 你又想正常使用它的函数(non-virtual) 这个时候, 就要运行时类型判定, 懂了吧</p> <p>看个例子:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Base</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Base</span><span class="p">(){};</span>
+<span class="p">};</span>
+
+<span class="k">class</span> <span class="nc">Derived</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Base</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">func</span><span class="p">()</span> <span class="p">{</span> <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Hello World"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span> <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">func_do</span><span class="p">(</span><span class="n">Base</span> <span class="o">*</span><span class="n">ptr</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="n">Derived</span> <span class="o">*&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span><span class="o">-&gt;</span><span class="n">func</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="n">Derived</span> <span class="n">d</span><span class="p">;</span>
+    <span class="n">Base</span> <span class="o">*</span><span class="n">ptr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="n">d</span><span class="p">;</span>
+
+    <span class="n">func_do</span><span class="p">(</span><span class="n">ptr</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>直接是不能使用<code class="highlighter-rouge">func()</code>的, 道理你也懂吧 <code class="highlighter-rouge">(undefine reference to.....)</code></p> <p>之后, 就是如何规避 使用<code class="highlighter-rouge">dynamic_cast</code></p> <p>两个手法: <strong>1. 使用类型安全的容器(Containor)存储相关的派生类handle, 直接根除问题</strong> <strong>2. 使用virtual-func机制, (当然你要承担virtual的开销)</strong></p> <p>因为这两个手法是比较容易理解的, 我们在这里就不举例子了.</p> <h2 id="item-28-avoid-returning-handles-to-object-internals">Item 28: Avoid returning “handles” to object internals</h2> <p>emmm, 这一个主题, 其实容易被人误解, 这里的”handles” 指的是 <strong>句柄</strong>, 即指针, 引用, 智能指针等</p> <p>它不同于我们封装数据后, 使用的<code class="highlighter-rouge">get()</code>系列函数</p> <p>为什么呢?</p> <p><strong>因为句柄可以直接控制数据,可能会引发败坏数据结构的问题</strong> <del>侯捷先生翻译, 某些方面还是可取的</del> 那么, 这一主题, 我们强调<strong>不要返回句柄</strong>, 原因在哪里呢?</p> <h3 id="破坏数据结构的封装性">破坏数据结构的封装性</h3> <p>虽然经常说的, OOP核心特性: 封装, 继承, 多态. 个人认为, 重要性排序: <code class="highlighter-rouge">封装 &gt; 继承 &gt;&gt; 多态</code> 然而, handles的返回, 却严重破坏了<strong>封装</strong>的特性</p> <p>来思考下面的例子:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Temp</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">string</span> <span class="n">getString</span><span class="p">()</span> <span class="p">{</span>            <span class="c1">// 合格的get()函数</span>
+        <span class="k">return</span> <span class="n">str</span><span class="p">;</span>
+	<span class="p">}</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">getHandles</span><span class="p">()</span> <span class="p">{</span>     <span class="c1">// 危险的返回句柄</span>
+        <span class="k">return</span> <span class="n">str</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">str</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>正如上述例子: <code class="highlighter-rouge">getString()</code>是合格的get()函数, 保护了数据的封装性 <code class="highlighter-rouge">getHandles()</code>则是危险的函数, 因为他将类中的数据开放出接口, 是极大的隐患 (结合bitwise const以及<code class="highlighter-rouge">mutable</code>关键字)</p> <p>因为可能会产出下面的代码:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Temp</span> <span class="n">p</span><span class="p">;</span>
+<span class="n">p</span><span class="p">.</span><span class="n">getHandles</span><span class="p">()</span> <span class="o">=</span> <span class="s">"..."</span><span class="p">;</span>    <span class="c1">// Error</span>
+</code></pre></div></div> <p>在只是想要使用封装数据的时候, 意外修改了数据, 破坏了封装性</p> <p>那么, 这样呢?</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Temp</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="p">...</span>
+    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">getHandles</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">str</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+   <span class="p">...</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>是否会更好一点?</p> <p>也仅仅是好一点, 因为有的时候, 还需要<code class="highlighter-rouge">mutable</code>修饰可修改的部分 那么, 合理的办法呢? <strong>既然只是使用数据, pass-by-value有何尝不可</strong> <strong>不能因为一部分的效率, 就置数据于不复深渊</strong></p> <h3 id="悬垂指针的问题">悬垂指针的问题</h3> <p>其实, 返回handles更严重的一个问题在于: 导致悬垂指针的产生</p> <p>悬垂指针: <strong>指针指向的已经是无效的内存</strong>, 可怖的是: 这个指针仍可以使用 (这也是我们引入智能指针的原因)</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Temp</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Temp</span><span class="p">(</span><span class="n">A</span> <span class="o">*</span><span class="n">ptr</span><span class="p">);</span>
+    <span class="n">string</span> <span class="o">&amp;</span><span class="n">get</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">str</span><span class="p">;</span>
+	<span class="p">}</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">string</span> <span class="n">str</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// User code</span>
+<span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">A</span><span class="p">;</span>
+<span class="k">const</span> <span class="k">auto</span> <span class="o">*</span><span class="n">pstr</span> <span class="o">=</span> <span class="o">&amp;</span><span class="p">(</span><span class="n">Temp</span><span class="p">(</span><span class="n">ptr</span><span class="p">).</span><span class="n">get</span><span class="p">());</span>  <span class="c1">//Error</span>
+</code></pre></div></div> <p>即使此处<code class="highlighter-rouge">const</code>, 仍然是错误!</p> <p>为什么, 这是一个临时对象的handles, 下一行之后. <strong>临时对象被析构</strong>, pstr就已经是一个<code class="highlighter-rouge">dangling pointer</code>了</p> <p>之后使用pstr就会造成无法挽回的错误 !</p> <p>忠告: 为了保护我们数据的完整性, 封装性不被破坏, <strong>避免返回封装数据的handles</strong></p> <h2 id="item-29-strive-for-exception-safe-code">Item 29: Strive for exception-safe code</h2> <p><em>异常安全, emmm怎么说呢, OOP机制下, 这个是一定不可或缺的.为何要维护异常安全 ?</em> <em>如何维护异常安全 ? 这些都是我们要讨论的问题</em></p> <p>关于维护异常安全, 原因在于: 异常机制是会打断程序的正常控制流, 从而有可能造成资源, 数据的破坏 因此我们在异常机制中, 要关注: 如何做到异常安全</p> <p>异常安全有两个要点:</p> <ol> <li><strong>不泄漏任何资源</strong></li> <li><strong>不破坏任何数据</strong></li> </ol> <p>这便是异常安全的基准</p> <h3 id="泄漏资源">泄漏资源</h3> <p>说到这个, 是不是觉得有一丝丝熟悉, 使得没错, 就是我们Chapter III的 Resource Management</p> <p>资源, 一般指: 内存, 套接字, 线程, 互斥器, 条件变量等等resource 那么, 资源泄漏(leak resource)一般指的就是: <strong>未释放资源</strong>或者<strong>重复释放资源</strong></p> <p>这里就不多扯淡了, <strong>就是用RAII来进行资源管理</strong> 在如今(2018), 经历社区积淀, 官方FAQ之后, 使用RAII管理资源已经被证明是C++再没有GC情况下, 管理资源最方便, 安全的手段 C++11 STL中增加了facility – <code class="highlighter-rouge">std::lock_guard&lt;T&gt;</code></p> <h3 id="破坏数据">破坏数据</h3> <p>什么叫破坏数据呢? <strong>恶意/无意修改</strong>或<strong>失效</strong> 这些都会对我们的开发造成不利影响或者隐患</p> <p>因此,我们要做到异常安全.</p> <p>保证数据不被破坏, 有三个层次的异常安全:</p> <ol> <li>基本承诺: 保证操作结束后, 数据一定有效</li> <li>强烈保证: 失败为原数据, 只有失败成功两种结果</li> <li>不抛出</li> </ol> <p>我们用代码来看例子:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">Data</span><span class="o">::</span><span class="n">change_the_data</span><span class="p">(</span><span class="n">data</span> <span class="n">t</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="nb">nullptr</span><span class="p">;</span>
+    <span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="n">data</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+    <span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>其中可以看到, 先对数据进行置空, 之后重新设置新的数据. 那么, 问题来了: **如果定义智能指针抛出异常, 现在的数据是什么样子 ? **</p> <p>毫无疑问: 数据已经被设置为nullptr, 这个时候data被其他用户使用的结果, 可想而知.</p> <p>这便是典型非异常安全.</p> <p>那么, 我们首先来做到<code class="highlighter-rouge">基本承诺: 保证数据有效.</code></p> <p>调换一下顺序</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">Data</span><span class="o">::</span><span class="n">change_the_data</span><span class="p">(</span><span class="n">data</span> <span class="n">t</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="n">data</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+	<span class="k">this</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>这样我们可以保证, 数据一定是有效的. 但是, 这个仅仅只是最低层次的保证. <strong>通过语句顺序的调整基本可以做到</strong></p> <p>我们再来看看高层次一点的需求<code class="highlighter-rouge">强烈保证: 只有成功/失败. 失败不对数据改变</code></p> <p><em>也可以通过调换语句顺序实现, 但是我们提供更加合适的手法: Copy-And-Swap</em></p> <p><del>说点私货, 另一个CAS指的是Compare-and-set 或 Compare-and-swap</del></p> <p>这种手法叫做”拷贝-交换”手法: <strong>将改变实现在对象的副本上, 成功后进行交换</strong></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">Data</span><span class="o">::</span><span class="n">change_the_data</span><span class="p">(</span><span class="n">data</span> <span class="o">*</span><span class="n">t</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">using</span> <span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shatrd_ptr</span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span> <span class="n">pNew</span><span class="p">(</span><span class="k">new</span> <span class="n">data</span><span class="p">(</span><span class="o">*</span><span class="n">t</span><span class="p">));</span>       <span class="c1">//  Copy</span>
+    <span class="k">auto</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">data</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="n">data</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+    <span class="n">pNew</span> <span class="o">=</span> <span class="n">ptr</span><span class="p">;</span>
+	<span class="n">std</span><span class="o">::</span><span class="n">swap</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pNew</span><span class="p">);</span>                          <span class="c1">// Swap</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>这便可以帮助我们做到: 强烈保证. 在异常安全的道路上更进一步.</p> <p>一般情况下: <strong>无抛出 no-execpt</strong>其实十分困难. 最简单的: *有<code class="highlighter-rouge">new</code>的地方, 你能保证没有异常 ? *</p> <p>一般无抛出: <strong>仅仅用在内置类型, STL中</strong>, 用户自定义类型的时候, 基本上做到强烈保证就已经相当到位了</p> <p><del>这里婊一下侯捷先生的翻译: (execption-safe code)异常安全代码, 翻译为”异常安全码”,真的很有误解性</del></p> <h3 id="异常安全级别">异常安全级别</h3> <p>我们在开发一个大型系统的时候, 不可能只有一处异常, 而且异常套异常的情况多得是. 如何评价一个系统的异常级别呢? <strong>木桶效应</strong>. 如果哪一处, 没有异常安全, 那么这个系统就是非异常安全的.</p> <p>这就和女性怀孕一样: 你只能说怀孕, 或者未怀孕, 不能部分怀孕 (Scott Meyers先生的比喻)</p> <p>因此, 做到基本承诺其实已经十分难得了, <strong>但是, 我们建议异常安全级别越高越好, 也就是说强烈保证是我们追求的目标</strong></p> <p>做到系统的异常安全十分不易, 但我们应该为之不懈努力.</p> <h2 id="item-30-understand-the-ins-and-outs-of-inlining">Item 30: Understand the ins and outs of inlining</h2> <p>Emmm, 之前我们在Item 02中也提到过了 <code class="highlighter-rouge">用inline, const, enum较少预处理器的使用</code> 而且, 在c99(C语言标准1999)中也提到过了<code class="highlighter-rouge">inline</code>关键字</p> <p>那么, 真正清楚inline吗?</p> <p>我们从最简单的起步, 什么是inline?</p> <h3 id="inline的内容">inline的内容</h3> <p><code class="highlighter-rouge">inline</code>,即内联函数. 它是指将函数调用时, 使用函数本体去替换函数调用. 看着与<code class="highlighter-rouge">#define</code>类似, 实际上有很大不同.</p> <p>因为<code class="highlighter-rouge">inline function</code>实际上仍然为函数, 他有着函数的行为, 不过减少了函数调用开销 但是<code class="highlighter-rouge">#define (marco function)</code>实际上是文本替换, 并非真正的函数行为. 不然我们写个<code class="highlighter-rouge">#define max(a, b) ((a &gt; b) ? (a) : (b))</code>里面为什么这么多括号…</p> <p>一个简单的例子:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Is this an inline function"</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p>(其实这个例子是有问题的, 我们后面再说)</p> <h3 id="如何inline">如何inline</h3> <p>再来说说如何inline, 有两种手法: <code class="highlighter-rouge">显示inline</code>和<code class="highlighter-rouge">隐式inline</code></p> <p><code class="highlighter-rouge">隐式inline</code>, 就是<strong>在类中定义的成员函数(注意是定义, 不是声明)</strong></p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Temp</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Temp</span><span class="p">()</span> <span class="p">{</span>
+        <span class="p">...</span>
+	<span class="p">}</span>              <span class="c1">// 隐式的inline函数  (当然Constructor, Destrucotr inline十分危险)</span>
+<span class="p">};</span>
+</code></pre></div></div> <p><code class="highlighter-rouge">显示inline</code>, 就是在类体外,使用<code class="highlighter-rouge">inline</code>关键字来定义函数</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Temp</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="kt">void</span> <span class="n">func</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="kr">inline</span> <span class="kt">void</span> <span class="n">Temp</span><span class="o">::</span><span class="n">func</span><span class="p">()</span>        <span class="c1">// inline key-word 用在函数定义上</span>
+<span class="p">{</span>
+    <span class="p">...;</span>
+<span class="p">}</span>
+</code></pre></div></div> <h3 id="inline-和-template的纠葛">inline 和 template的纠葛</h3> <p><code class="highlighter-rouge">inline</code>和<code class="highlighter-rouge">template</code>能有什么纠葛呢? <strong>他们一般情况下都要写在headers中, 所以会给人产生误解: template一定inline</strong></p> <p>这个一般不会提高效率, 甚至会带来严重危害!</p> <p>我们inline为什么写在headers中: 一般情况下, <strong>C++的inline都发生在编译期间, 有极少的运行环境, 可以在运行期间完成inline</strong></p> <blockquote> <p>建议把inline函数的定义放到头文件中，在每个调用该inline函数的文件中包含该头文件。 这种方法保证了每个inline函数只有一个定义，且程序员无需复制代码， 并且不可能在程序的生命周期中引起无意的不匹配的事情。</p> <p>摘自 C++ Primer 第三版</p> </blockquote> <p>也就是说inline定义式可以放在头文件中, 因为要保持一致. non-inline则反而会导致”重定义”, 所以只能放声明.</p> <p>在来说说template, template毕竟只是模板, 一定要进行实例化, 实例化就必须编译器可见, 所以也放在头文件中 (当然也有极少的运行环境, 允许运行其进行实例化, 很少)</p> <p>所以, <strong>template 与 inline没有必然关系</strong>, 不是模板就必须inline (指function template) <strong>甚至会酿成大祸(后面inline的缺点)</strong></p> <p>再来点私货: <code class="highlighter-rouge">static variable</code>也是在头文件中</p> <p>静态变量是脱离对象, 与类直接关联的变量, 一般放在头文件中 <strong>但是, 因为.h可能会被多个文件引用, 所以头文件中的静态变量, 并不会实例化</strong> <strong>因此就需要在每个文件中, 声明静态变量, 否则不可见名字的</strong></p> <h3 id="是否inline">是否inline</h3> <p>其实这里, “是否inline”的小标题是有一定程度上的误解性的. 这里的<em>是否</em>, 指的是, 有没有成功inline</p> <ol> <li> <p>编译器建议, 并非强制 inline之后不是一定就能成功的, 要看编译器优化. <code class="highlighter-rouge">inline</code>只是表示有可能被编译器接受</p> </li> <li> <p>实现关键字 inline是实现上用的, 在函数声明(现在应该叫函数原型 <code class="highlighter-rouge">function prototype</code>)上inline, 不接受inline</p> </li> <li> <p>对于取地址的inline建议函数, 不会inline 看看下面这个例子:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kr">inline</span> <span class="kt">void</span> <span class="nf">func</span><span class="p">()</span> <span class="p">{...}</span>
+<span class="kt">void</span> <span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">)();</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">func</span><span class="p">;</span>
+<span class="n">p</span><span class="p">();</span>      <span class="c1">// out-line</span>
+<span class="n">func</span><span class="p">();</span>   <span class="c1">// inline</span>
+</code></pre></div> </div> <p>p是函数指针, 需要确定的地址, 这次调用时不会被inline的 func()调用, 则会被inline</p> </li> </ol> <p><strong>上面这一点也说明: inline不是指完全被inline, 而是对每一处调用而言.</strong></p> <h3 id="inline优劣之分析">inline优劣之分析</h3> <p>终于分析到inline的优劣!</p> <p><code class="highlighter-rouge">inline</code>实际上是将对函数的调用替换为函数本体. 它是真正的函数, 不过减少了函数调用的开销. 可以说是<code class="highlighter-rouge">#define宏函数</code>的语义明确版本, <code class="highlighter-rouge">#define</code>内容过于复杂, C++中将其含义明确</p> <p>那么, 问题来了: 对于本体复杂的函数, <code class="highlighter-rouge">inline</code>会有什么下场 ?</p> <p>代码膨胀 -&gt; 目标码膨胀(obj) -&gt; 换页机率增加 -&gt; Cache命中机率降低 -&gt; 换页失败更多 <del>如果严重了, 甚至会导致系统抖动(System spooling), 不过这个就有点夸张了</del></p> <p>也就是换句话说: <strong>如果本体够小, 直接本体替换的代价小于函数调用的开销, 那么反而会降低code大小</strong> 即<code class="highlighter-rouge">inline</code>最大的优势: <strong>降低函数调用开销, 对于短小, 频繁调用的函数, 提高系统效率</strong></p> <p>既然使用了inline, 你便要接受它的种种, 尤其是隐患:最严重的有两点. ( 1 + 2 )</p> <ol> <li>Debug十分不方便: 你无法追踪一个没有地址的函数 (全都inline了)</li> <li>编译依赖性十分严重</li> <li>代码膨胀(目标码亦是)</li> </ol> <p>我们重点说说2, 因为<code class="highlighter-rouge">inline</code>是将函数展开, 所以只要有变动, 客户代码一定要重新编译 如果使用静态链接, 只要重新链接即可 (link 即可) 如果使用动态链接, 甚至你都没有察觉改变(去看链接文件的变化, 例外)</p> <p>虽然有优有劣, 只要我们合理使用<code class="highlighter-rouge">inline</code>, 则能发挥其作用, 规避其危险</p> <h2 id="item-31-minimize-compilation-dependencies-between-files">Item 31: Minimize compilation dependencies between files</h2> <p>这一条款我们讨论的是: 关于文件之间编译依存性的问题</p> <p>这个问题会有什么影响呢? 当我们修改Class内容之后, 点击一下编译/建立(Compile/Build) 本来以为1s的时间, 结果等待了足足10s, 为什么会有这种情况, 我明明只改了一个变量名啊!</p> <p><em>何况这还是我们平时的小项目, 体量足够大的项目, 会有什么后果呢, 想像就知道了</em></p> <p>这个问题真的这么严重吗? <strong>是的, 文件之间的编译依赖性过与复杂, 是软件设计的缺陷.(文件编译是恶心, 不及模块编译)</strong></p> <p>我们来用例子看看应该如何解决这样的问题:</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">class</span> <span class="nc">Person</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Person</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">Person</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_name</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">get_age</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Date</span> <span class="n">get_birthday</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+    <span class="n">Date</span> <span class="n">birthday</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>上面其实是我们经常说到的一个东西: Class (<del>废话,我不说你也知道</del>) 这个类其实是将接口(interface)与实现(immplementation)糅合在一起的.</p> <p>那么, 这个东西具体会导致什么问题呢? <strong>如果, Person Class发生改变, 你的用户代码, 就得直接重新编译 !</strong></p> <p>看上去是一个小问题, 那么要是多个<code class="highlighter-rouge">#include</code>呢? 那个体量基本上就是超出你预期估计的了.</p> <p><del>因为我一直接触的就是C/C++, 文件编译在我看来其实是很常见的, 但是模块编译才是主流</del> <del>以文件划分编译层次, 被证明的确是不好的组织形式, 不过也是历史原因</del> <del>仔细想想, 一旦文件划分的不好, 强耦合的代码, 互相依赖性大</del> <del>相比于层次区分明显地Java/C#/…模块编译的语言,</del></p> <p>既然有这样的问题, 那么我们能否手工解决呢? (<del>又是句废话</del>) <strong>肯定能咯</strong></p> <h3 id="尝试减少编译依存性">尝试减少编译依存性</h3> <p>上面说到: 根本原因是繁杂的<code class="highlighter-rouge">#include机制</code>, 那么, 我让他不<code class="highlighter-rouge">#include</code>不就行了？　( ͡° ͜ʖ ͡°)</p> <p>那么, 看看这样写如何？</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// person.h</span>
+
+<span class="k">namespace</span> <span class="n">std</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="n">Date</span> <span class="n">birthday</span><span class="p">;</span>
+
+<span class="k">class</span> <span class="nc">Person</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Person</span><span class="p">();</span>
+    <span class="o">~</span><span class="n">Person</span><span class="p">();</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">get_name</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">get_age</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="n">Date</span> <span class="n">get_birthday</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div> <p>两个问题:</p> <ol> <li><code class="highlighter-rouge">std::string</code>的写法是错误的, 实际上是<code class="highlighter-rouge">typedef basic_string&lt;char&gt; string</code>特化版本 而且标准库设施不应该成为桎梏 <em>毕竟标准库都是大佬写的对吧</em></li> <li>来你说说看, Person有多大 ( ՞ټ՞) 你也懂得吧, C++实例化, 你要是不知道类多大, 怎么玩? 关于这个内容, 我们已知的是: 实例化类之前, 你得知道类的大小, 就得可见类的定义式. 但是, 我们目前的各种举措, 就是要避免”实现部分的内容”也嵌套在”接口部分中”.</li> </ol> <p>这个时候, 我们可以去其他语言中寻求帮助: 比如Java/C#</p> <p><em>据说他们都是有一种文件, 直接就叫interface, 其他都是class, 不得不说模块编译的确是很好的设计</em></p> <div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="o">;</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Main</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span> <span class="n">Args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">Scanner</span> <span class="n">sc</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Scanner</span><span class="o">(</span><span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">);</span>
+        <span class="o">...</span>
+	<span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div> <p>上面是一段简单地Java代码, 在创建类的实例化对象的时候, 产出的, 都是指针 <strong>也就是说, 我们不需要知道类的实现细节, 我们只需要一个指向它的指针即可</strong></p> <p>这不就是我们现在亟待解决的问题: 如果我们也用<strong>一个指针隐藏实现细节</strong>,那么这个接口文件岂不就是与实现<strong>独立</strong>开来, 用户代码就可以不用进行编译, <strong>这样实现归实现的改变, 不会影响到接口文件,</strong> 当然接口文件改变, 不重新编译就怪了…</p> <p>那么, 怎么做呢?</p> <blockquote> <p>Opaque Pointer, D pointer, pimpl idiom</p> <p>Wiki上叫做Opaque Pointer, Effective叫做pimpl idiom, 编译防火墙, Bridge Pattern 常见语言: Ada, C/C++, D, Modula-2 指: 将实现细节隐藏在指针之后, 使得用户不可见, 同时将实现从接口分离出去 作用:</p> <blockquote> <p>在实现修改后, 使用的模块(module)不需要重新编译, 更多的细节可以隐藏在其他文件, 更重要的是可以提供不同版本, 二进制目标码的兼容性</p> </blockquote> </blockquote> <p>看着是不是还挺不错, <del>(让我说, 就是因为语言的历史原因, 不支持模块编译, 以及interface, 总是在模拟)</del></p> <h3 id="pimpl-idiom">Pimpl Idiom</h3> <p>那么, 这种手法的要点在哪里呢?</p> <p>有下面几个要点: (Effective总结的是真的到位, 不过我会改变一些说法)</p> <ol> <li>能用handle, 就不用entity</li> <li>用Declaration取代Definition</li> <li>提供两份文件</li> </ol> <p>pimpl手法的核心是: <strong>尽量自满足, 不依赖其他#include, 否则依赖其他文件的声明式而非定义式</strong></p> <ol> <li>这点是核心, 我们使用只需要曝光名字(通过声明式)创建的handle,取代需要定义式才能创建的实体</li> <li>使用声明式, 最好自满足就不依赖其他文件, 即使依赖其他文件,也是其他文件的声明式</li> <li>规范化,提供两份头文件, “xxx.h” + “xxxfwd.h”</li> </ol> <p>这里分享, 我个人理解时的一个疑惑:</p> <blockquote> <p>Q:只提供声明, 没有定义, 那他怎么用啊? 而且只提供声明, … 反正就是各种不舒服</p> <p>A:在 interface 中, 我们不提供定义.只有声明, 这种叫做 forward declaration 只要不使用 class 的细节(即实现部分), 可以不知道定义式. 因为我们的 interface 只负责说明它开放什么接口, 所以细节部分不知道最好.</p> </blockquote> <h3 id="handle-class">Handle Class</h3> <p>使用Pimpl手法的类, 我们习惯意义上叫做”Handle Class”</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Personfwd.h</span>
+<span class="cp">#ifndef _PERSONFWD_H
+#define _PERSONFWD_H
+</span>
+<span class="cp">#include &lt;memory&gt;
+#include &lt;string&gt;
+</span><span class="k">class</span> <span class="nc">PersonImpl</span><span class="p">;</span>
+
+<span class="cp">#endif
+</span>
+<span class="c1">// Person.h</span>
+<span class="cp">#ifndef _PERSON_H
+#define _PERSON_H
+</span>
+<span class="cp">#include "personfwd.h"
+</span><span class="k">class</span> <span class="nc">Person</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">Person</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+    <span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="n">Person</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">Person</span><span class="p">(){};</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">getName</span><span class="p">()</span> <span class="k">const</span> <span class="p">;</span>
+    <span class="kt">int</span> <span class="n">getAge</span><span class="p">()</span> <span class="k">const</span> <span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">PersonImpl</span><span class="o">&gt;</span> <span class="n">pImpl</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif
+</span>
+<span class="c1">// Person.cc</span>
+<span class="cp">#include &lt;iostream&gt;
+#include &lt;memory&gt;
+#include "person.h"
+#include "personfwd.h"
+</span>
+
+<span class="k">class</span> <span class="nc">PersonImpl</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="n">PersonImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">);</span>
+    <span class="o">~</span><span class="n">PersonImpl</span><span class="p">(){};</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">getName</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">getAge</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="n">PersonImpl</span><span class="o">::</span><span class="n">PersonImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span> 
+    <span class="o">:</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="p">{}</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">PersonImpl</span><span class="o">::</span><span class="n">getName</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">name</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">PersonImpl</span><span class="o">::</span><span class="n">getAge</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="k">this</span><span class="o">-&gt;</span><span class="n">age</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Person</span><span class="o">::</span><span class="n">Person</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span>
+    <span class="o">:</span> <span class="n">pImpl</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">PersonImpl</span><span class="o">&gt;</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">))</span> <span class="p">{}</span>
+
+<span class="n">Person</span><span class="o">::</span><span class="n">Person</span><span class="p">(</span><span class="k">const</span> <span class="n">Person</span> <span class="o">&amp;</span><span class="n">p</span><span class="p">)</span> <span class="o">:</span> <span class="n">pImpl</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">pImpl</span><span class="p">)</span> <span class="p">{}</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">Person</span><span class="o">::</span><span class="n">getName</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">pImpl</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">Person</span><span class="o">::</span><span class="n">getAge</span><span class="p">()</span> <span class="k">const</span>
+<span class="p">{</span>
+    <span class="k">return</span> <span class="n">pImpl</span><span class="o">-&gt;</span><span class="n">getAge</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// main.cc</span>
+<span class="cp">#include &lt;iostream&gt;
+#include "person.h"
+</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="p">(</span><span class="s">"Crow"</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+	
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Name: "</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">getName</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"Age: "</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="o">-&gt;</span><span class="n">getAge</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div> <p><em>以上便是一个pImpl的例子, 我们稍作分析: * *Class Person是我们使用的类, 它仅仅依赖于”person.h”, 我们将所有的Person实现细节都隐藏于</em> *class Person {… private: std::shared_ptr<PersonImpl> pImpl;}; 背后* *即使PersonImpl的实现改变, 也不会丝毫影响Person的Build, 不会导致UserCode的Recomplie*</PersonImpl></p> <p>理论上, 是仍然要提供一个 <code class="highlighter-rouge">XXXfwd.h</code> 来进行前置声明的</p> <p><del>但是, 事实意义上: 没啥用, 首先是前置声明没多少, 因为我们合理的设计应该是模仿模块编译,类对应文件</del> <del>平白增加文件数目, 而且是意义不大的文件, 并没有什么意义,反而造成目录文件冗余, <iosfwd>实在是东西太多</iosfwd></del></p> <p>分离接口于实现, Pimpl是在使用上模拟, Java/C#的指针写法, 那么,我们有没有直接设计interface的方法</p> <p><strong>有, Abstract Class</strong></p> <h3 id="abstract-class">Abstract Class</h3> <p>我们在Pimpl习语的使用, 是将实现隐藏起来.</p> <p>下面的抽象基类手法, 则是真正意义上来描述接口 核心: <strong>抽象基类, 指具有至少一个 pure-virtual的Base Class</strong></p> <p>pure-virtual的设计含义, 就是仅仅继承接口, 同时因为抽象基类是残缺类 (因为没有pure-virtual的实现) 所以,我们不能为其实例化.</p> <p><del>怎么说呢, 抽象基类,是我觉得活生生模仿Java/C#而搞出来的东西</del>, 但是它里面可以存数据, 后面再说</p> <p>那么, Abstract Class的核心在哪里呢? 即是: 抽象基类设计接口, + Virtual函数实现功能</p> <p><strong>是的, 没错. 这同样是一种接口与实现的分离, 也是降低编译依存性的手段</strong> <strong>只要接口不变, 根本无需Recomplie</strong></p> <p>既然我们使用了继承体系, 那么, 梗句不同的参数, 环境变量, 场景. 我们便可以设计不同的继承来建模</p> <p>之后, 同样是使用基类指针, 来完成多态功能实现 (之前的TimeKeper).</p> <p>那么, 产出派生类指针的函数, 即为<strong>工厂函数 factory function</strong> <del>婊一下侯捷先生的翻译: 这里是指虚拟的构造函数, 它直接翻译 virtual 构造函数, 误解性比较深</del> <del>另一方面: 抽象基类基本不要构造, 同时virtual constructor确实太过分了 ( ՞ټ՞)</del></p> <p>那么, 我们就来说说这个<code class="highlighter-rouge">factory function</code>怎么写</p> <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// 我们同样以Person Class为例子</span>
+<span class="k">class</span> <span class="nc">Person</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// Factory function</span>
+    <span class="k">static</span> <span class="k">auto</span> <span class="n">create</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="o">~</span><span class="n">Person</span><span class="p">(){};</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">printName</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">printAge</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">void</span> <span class="n">printJob</span><span class="p">()</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// inheriting class</span>
+<span class="k">class</span> <span class="nc">Student</span> <span class="o">:</span> <span class="k">public</span> <span class="n">Person</span> <span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+    <span class="c1">// 保持形式统一, 加上Person的构造函数</span>
+    <span class="n">Student</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="o">:</span> <span class="n">Person</span><span class="p">(),</span> <span class="n">name</span><span class="p">(</span><span class="n">name</span><span class="p">),</span> <span class="n">age</span><span class="p">(</span><span class="n">age</span><span class="p">)</span> <span class="p">{</span> <span class="p">;</span> <span class="p">}</span>
+    <span class="kt">void</span> <span class="n">printName</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="n">printAge</span><span class="p">();</span>
+    <span class="kt">void</span> <span class="n">printJob</span><span class="p">();</span>
+<span class="k">private</span><span class="o">:</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">name</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">age</span><span class="p">;</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">job</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="c1">// Factory function</span>
+<span class="k">auto</span> <span class="n">Person</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="kt">int</span> <span class="n">age</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span><span class="p">(</span><span class="k">new</span> <span class="n">Student</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">age</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="c1">//User Code</span>
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="k">auto</span> <span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="o">::</span><span class="n">create</span><span class="p">(</span><span class="s">"Crow"</span><span class="p">,</span> <span class="mi">20</span><span class="p">);</span>
+    <span class="n">p</span><span class="o">-&gt;</span><span class="n">printName</span><span class="p">();</span>
+    <span class="n">p</span><span class="o">-&gt;</span><span class="n">printAge</span><span class="p">();</span>
+    <span class="n">p</span><span class="o">-&gt;</span><span class="n">printJob</span><span class="p">();</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+</code></pre></div></div> <p>我们着重要说的就是, factory function. 关键点有:</p> <ol> <li><strong>static</strong>, 抽象基类是残缺类,不能实例化, 我们调用只能使用静态函数</li> <li><strong>arguments</strong>, 我们根据不同的参数, 配置, 环境,可以生成不同的基类指针(意为: 指向不同派生类的)</li> <li><strong>shared_ptr</strong>, 使用智能指针, 更方便进行管理</li> </ol> <p>好了, 至此我们降低编译依存性的两种手法, 介绍至此. 还有内容吗, <strong>有</strong></p> <p><em>关于使用哪种手法的判断</em></p> <ol> <li>考虑我们的项目是否大到考虑项目的耦合程度.如果没到一定程度, 其实具象类(相对于抽象类)也不错</li> <li>评价Handle Class 以及 Abstract Class的选择 Handle Class: 中间存在指针的间接访问. 而且,建议只有一层pImpl即可, 多层,想想就算了 Abstract Class: 设计优秀, 但是vptr的开销不容小觑, 加上虚表的查询, 推断. 也, 你懂得…</li> </ol> <p>上面虽然这么分析, 但是, 在良好的设计面前, 一定程度的开销, 也可以接受, 不是吗? <strong>其实个人更喜欢这种明确的设计, 虽然有开销, 具象类, 有的时候是真的冗杂</strong></p> <hr /> <p>说点题外话: 其实最近压力挺大的, 100天倒计时想想有点慌. 只希望这最后的100天能够把自己提升上去,最简单的, 提高效率, 逼自己努力! <del>不过,这中间, 期中考试, 期末考试, 纳新, 是有点操蛋, 靠</del></p> <p><em>至此, Chapter V结束, 请期待下一篇, 另外添加RSS订阅之后, 还请点个订阅呗</em></p> <div class="entry-meta"> <br> <hr> <span class="entry-tags"><a href="http://localhost:4000/tags/#EffectiveC++" title="Pages tagged EffectiveC++" class="tag"><span class="term">EffectiveC++</span></a></span> <span class="social-share"> <a href="https://www.facebook.com/sharer/sharer.php?u=http://localhost:4000/implementations/" title="Share on Facebook" class="tag"> <span class="term"><i class="fa fa-facebook-square"></i> Share</span> </a> <a href="https://twitter.com/intent/tweet?text=http://localhost:4000/implementations/" title="Share on Twitter" class="tag"> <span class="term"><i class="fa fa-twitter-square"></i> Tweet</span> </a> <a href="https://plus.google.com/share?url=http://localhost:4000/implementations/" title="Share on Google+" class="tag"> <span class="term"><i class="fa fa-google-plus-square"></i> +1</span> </a> </span> <div style="clear:both"></div> </div> </div> </div> <section id="disqus_thread" class="animated fadeInUp"></section><!-- /#disqus_thread --> </header> <!-- JS --> <script src="http://localhost:4000/assets/js/jquery-1.12.0.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.dlmenu.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.goup.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.magnific-popup.min.js"></script> <script src="http://localhost:4000/assets/js/jquery.fitvid.min.js"></script> <script src="http://localhost:4000/assets/js/scripts.js"></script> <script type="text/javascript"> var disqus_shortname = 'Evilcrow'; (function() { var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true; dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq); })(); (function () { var s = document.createElement('script'); s.async = true; s.type = 'text/javascript'; s.src = '//' + disqus_shortname + '.disqus.com/count.js'; (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s); }()); </script> <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript> <!-- MathJax --> <script async src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> </body> </html>
