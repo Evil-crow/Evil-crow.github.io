@@ -252,7 +252,7 @@ Scott Meyers先生首先提出了一个**将某容器c后半部分如何拷贝�
 *那么, 我们的分析还实用吗 ? *
 
 我们对于关联容器要从这一方面来切入: 就拿list来说.
-![std::list::insert](http://phxjezimr.bkt.clouddn.com/STL_list.png)
+![std::list::insert](http://www.qiniu.evilcrow.site/EffSTL_list.png)
 
 其中要干什么? **修改指针指向, 没错吧?**
 
@@ -644,7 +644,7 @@ allocator<ListNode> [即为所需分配器] [rebind这个叫法也挺形象的]
 
 下面是C++Reference中, 对线程安全的描述: [其中标识了一部分保证的线程安全操作]
 
-![线程安全](http://phxjezimr.bkt.clouddn.com/thread_safety.png)
+![线程安全](http://www.qiniu.evilcrow.site/EffSTL_thread_safety.png)
 
 ***
 

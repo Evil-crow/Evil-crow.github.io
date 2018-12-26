@@ -66,7 +66,7 @@ sudo dnf makecache
 
 对于KDE,可以这样来设置
 
-![setting shortcuts](http://p8pmsq2a4.bkt.clouddn.com/kde_shortcuts.png)
+![setting shortcuts](http://www.qiniu.evilcrow.site/KDE_shortcuts.png)
 
 ### 4. 关闭神油SElinux
 
@@ -132,23 +132,23 @@ Breeze Dark则是暗色调, 个人不习惯.
 
 ,喜欢的话,右下角还有 `Get New Looks...`按钮,可以自行挑选,商店就那样子...
 
-![Look And Feel](http://p8pmsq2a4.bkt.clouddn.com/LookAndFeel.png)
+![Look And Feel](http://www.qiniu.evilcrow.site/KDE_LookAndFeel.png)
 
 ##### Desktop Theme
 
 这部分设置主要体现在任务栏的显示上. 见下:
 
-![Air](http://p8pmsq2a4.bkt.clouddn.com/air.png)
+![Air](http://www.qiniu.evilcrow.site/KDE_air.png)
 
-![Dark](http://p8pmsq2a4.bkt.clouddn.com/dark.png)
+![Dark](http://www.qiniu.evilcrow.site/KDE_dark.png)
 
-![breeze](http://p8pmsq2a4.bkt.clouddn.com/breeze.png)
+![breeze](http://www.qiniu.evilcrow.site/KDE_breeze.png)
 
 ##### Cursor Theme
 
 这部分设置主要是鼠标指针的设置,自行适配即可.
 
-![Cursor Theme](http://p8pmsq2a4.bkt.clouddn.com/CursorTheme.png)
+![Cursor Theme](http://www.qiniu.evilcrow.site/KDE_CursorTheme.png)
 
 ##### Splash Screen
 
@@ -162,7 +162,7 @@ Breeze Dark则是暗色调, 个人不习惯.
 
 此处没有子选项,而且变化不大.这里的颜色选项.主要是用来控制Dialog的色彩的.还可以自行再进行编辑
 
-![Color Scheme](http://p8pmsq2a4.bkt.clouddn.com/ColorScheme.png)
+![Color Scheme](http://www.qiniu.evilcrow.site/KDE_ColorScheme.png)
 
 #### Fonts
 
@@ -188,7 +188,7 @@ Breeze Dark则是暗色调, 个人不习惯.
 
 *我的字体设置也不是很好看,但是还凑合能看,诸君可做参考*
 
-![Fonts](http://p8pmsq2a4.bkt.clouddn.com/Fonts.png)
+![Fonts](http://www.qiniu.evilcrow.site/KDE_Fonts.png)
 
 #### Icons
 
@@ -202,7 +202,7 @@ Breeze Dark则是暗色调, 个人不习惯.
 
 个人比较推荐 [plane>>](https://store.kde.org/p/1178976/) 这一套图标的,(*VSC很好看,除了chrome中间的空洞勉强接受,其他完美*)
 
-![Window Decorations](http://p8pmsq2a4.bkt.clouddn.com/WindowsDescl.png)
+![Window Decorations](http://www.qiniu.evilcrow.site/KDE_WindowsDescl.png)
 
 #### Application Style
 
@@ -240,7 +240,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 任务切换者,是在进行任务切换的时候.选择的方式,有多种.推荐`Flip Switch`,不过还是看个人喜好了
 
-![Task Switcher](http://p8pmsq2a4.bkt.clouddn.com/TaskSwitcher.png)
+![Task Switcher](http://www.qiniu.evilcrow.site/KDE_TaskSwitcher.png)
 
 #### Startup and Shutdown
 
@@ -266,7 +266,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 *KDE的基础配置差不多这么多,还有很多等待我们去发掘,如有其他有意思的设置,可以分享出来*
 
-![Double-click to Open file](http://p8pmsq2a4.bkt.clouddn.com/OpenFIle.png)
+![Double-click to Open file](http://www.qiniu.evilcrow.site/KDE_mouse.png)
 
 ## Software
 
@@ -282,7 +282,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 其中目前尚未补完README,估计是个大坑,地址在此: [Crow-Vim >>](https://github.com/Evil-crow/Crow-Vim)
 
-![Vim](http://p8pmsq2a4.bkt.clouddn.com/Vim.png)
+![Vim](http://www.qiniu.evilcrow.site/KDE_Vim.png)
 
 ### gcc套件
 
@@ -306,7 +306,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 - VSCode Great Icons (好看的Icons图标)
 - Ruby Solargraph (提供Ruby补全,等着吧,Ruby劳资会回来的,不过可能上RM)
 
-![VS Code](http://p8pmsq2a4.bkt.clouddn.com/vscode.png)
+![VS Code](http://www.qiniu.evilcrow.site/KDE_vscode.png)
 
 ### Atom
 
@@ -314,19 +314,19 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 (说不定就用WebStorm去了)
 
-![Atom](http://p8pmsq2a4.bkt.clouddn.com/atom.png)
+![Atom](http://www.qiniu.evilcrow.site/KDE_atom.png)
 
 ### Sublime Text
 
 使用时间很短,因为维护不积极,心累.已弃之.
 
-![Sublime Text](http://p8pmsq2a4.bkt.clouddn.com/st.png)
+![Sublime Text](http://www.qiniu.evilcrow.site/KDE_st.png)
 
 ### Qt Creator
 
 没什么多说的,C++ Qt GUI的IDE, 写C++鸡肋一点,但是写Qt很强,图形界面做的也比较好看
 
-![Qt Cteator](http://p8pmsq2a4.bkt.clouddn.com/Qt.png)
+![Qt Cteator](http://www.qiniu.evilcrow.site/KDE_Qt5.png)
 
 ### CLion
 
@@ -334,7 +334,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 **曲线救国: 从Win,或者其他地方export正常的setting.jar,在这里import进行**
 
-![CLion](http://p8pmsq2a4.bkt.clouddn.com/CLion.png)
+![CLion](http://www.qiniu.evilcrow.site/KDE_CLion.png)
 
 ### Haroopad
 
@@ -347,7 +347,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 简单地说,解释能力强,Markdown标记支持完善,同时颜值高 [Haroopad >>](http://pad.haroopress.com/user.html)
 
-![Haroopad](http://p8pmsq2a4.bkt.clouddn.com/Haroopad.png)
+![Haroopad](http://www.qiniu.evilcrow.site/KDE_Haroopad.png)
 
 ### netease-cloud-music
 
@@ -355,7 +355,7 @@ PlainJane(是因为我的红绿灯有问题,但是简洁好看)
 
 *有点小问题,不过无伤大雅*
 
-![netease-cloud-music](http://p8pmsq2a4.bkt.clouddn.com/netease-cloud.png)
+![netease-cloud-music](http://www.qiniu.evilcrow.site/KDE_netease-cloud.png)
 
 ### Shadowsocks-qt5
 
@@ -365,7 +365,7 @@ shadowsocks的话题不多说,仅仅介绍这个好看的客户端,C++Qt编写.
 
 **一般是库版本更新太快,重新做一个软链接,程序正常启动,否则会找不到链接库而启动失败**
 
-![Shdowsocks-qt5](http://p8pmsq2a4.bkt.clouddn.com/ss-qt5.png)
+![Shdowsocks-qt5](http://www.qiniu.evilcrow.site/KDE_ss-qt5.png)
 
 ### fcitx小企鹅输入法
 
@@ -373,7 +373,7 @@ fcitx只是一个框架引擎, 它可以搭载任何输入法, 我们要推荐�
 
 具体的可以访问官网,基本是这样子. [Rime >>](https://www.baidu.com/link?url=-G25PobK8KLfBGkeuSSuWSpQmjzNqFTVj20t02l6Anu&wd=&eqid=99014f4700010abf000000035b6017de)
 
-![Fcitx-rime](http://p8pmsq2a4.bkt.clouddn.com/fcitx.png)
+![Fcitx-rime](http://www.qiniu.evilcrow.site/KDE_fcitx.png)
 
 ### 文字编辑
 
@@ -393,7 +393,7 @@ KDE专属Dock,甩什么`dash-to-dock`, `cairo-dock`十八条街.
 
 原生支持wayland,Fedora适性也是没问题的,超级好看兼好用
 
-![latte](http://p8pmsq2a4.bkt.clouddn.com/latte.png)
+![latte](http://www.qiniu.evilcrow.site/KDE_latte.png)
 
 ---
 *差不多所了,这一次的介绍就到此,我们有机会下次再补充*
