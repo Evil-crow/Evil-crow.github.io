@@ -45,7 +45,7 @@ categories:
 ```bash
 rpm -qa | grep yum
 ```
-![](http://oww4cv296.bkt.clouddn.com/rpm-qa.png)
+![](http://www.qiniu.evilcrow.site/Guide_rpm-qa.png)
 
 第二步 : 解除依赖,并卸载所有的自带yum包
 
@@ -82,7 +82,7 @@ yum makecache
 ```
 **到此为止,新配置的yum及源基本可以使用了,之后进行软件的管理,只要继续添加,修改源就可以了**
 
-![](http://oww4cv296.bkt.clouddn.com/mysql.png)
+![](http://www.qiniu.evilcrow.site/Guide_mysql.png)
 
 ## 相关声明
 
