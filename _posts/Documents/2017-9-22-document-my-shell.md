@@ -6,6 +6,7 @@ excerpt: my_shell 项目文档
 categories:
 - Documents
 tags:
+- Documents
 toc: true
 comments: true
 ---
