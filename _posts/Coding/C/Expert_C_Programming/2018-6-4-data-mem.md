@@ -27,7 +27,7 @@ a.out指的是汇编器输出文件,**但实际上,a.out不是链接器的结果
 
 C文件的内容如何映射到a.out文件中呢? 那部分填充到哪里呢? 来看看下面的图:
 
-![源文件->可执行文件](http://p8uroi1uf.bkt.clouddn.com/src_aout.png)
+![源文件->可执行文件](http://www.qiniu.evilcrow.site/Exceprt_C_src_aout.png)
 
 如何上图所示,首先我们要强调的是:**段(segement)的概念**, 此段非彼段,与Intel内存模型中的段不同
 
@@ -82,14 +82,14 @@ void foo(void)
 }
 ```
 
-![size a.out](http://p8uroi1uf.bkt.clouddn.com/size_aout.png)
+![size a.out](http://www.qiniu.evilcrow.site/Exceprt_C_size_aout.png)
 
-![readelf -a a.out](http://p8uroi1uf.bkt.clouddn.com/readelf_aout.png)
+![readelf -a a.out](http://www.qiniu.evilcrow.site/Exceprt_C_readelf_aout.png)
 
-![odjdump -d a.out](http://p8uroi1uf.bkt.clouddn.com/objdump_aout.png)
+![odjdump -d a.out](http://www.qiniu.evilcrow.site/Exceprt_C_objdump_aout.png)
 
-![](http://p8uroi1uf.bkt.clouddn.com/nm_aout.png)
-![nm -n --format=sysv a.out](http://p8uroi1uf.bkt.clouddn.com/nm_aout2.png)
+![](http://www.qiniu.evilcrow.site/Exceprt_C_nm_aout.png)
+![nm -n --format=sysv a.out](http://www.qiniu.evilcrow.site/Exceprt_C_nm_aout2.png)
 
 **注意,我们的图是从高地址->低地址, 然而我们的试验结果是地址升序排序**
 
@@ -123,7 +123,7 @@ struct exec
 
 **其实很简单,就是为了可执行文件装入内存中方便**, 来看这张图:
 
-![a.out到内存映像](http://p8uroi1uf.bkt.clouddn.com/aout_mem.png)
+![a.out到内存映像](http://www.qiniu.evilcrow.site/Exceprt_C_aout_mem.png)
 
 对于上面这张图: 我们着重说一下这样几点:
 
@@ -157,7 +157,7 @@ struct exec
 
 那么,我们就来看看过程活动记录吧
 
-![过程活动记录](http://p8uroi1uf.bkt.clouddn.com/process.png)
+![过程活动记录](http://www.qiniu.evilcrow.site/Exceprt_C_process.png)
 
 **上面这个其实就是一个函数在堆栈中的内容了**
 
@@ -298,11 +298,11 @@ void mem_free(void *ptr)
 上面的代码很明显的内存泄漏,我们通过valgrind的memcheck工具进行检测
 
 ![valgrind --tool=memcheck --leak-check=full ./a.out 
-](http://p8uroi1uf.bkt.clouddn.com/valgrind--full_check.png)
+](http://www.qiniu.evilcrow.site/Exceprt_C_valgrind--full_check.png)
 
 另外我们还可以进行代码分析,如下:
 
-![valgrind --tool=callgrind ./a.out && kcachegrind callgrind.out.*](http://p8uroi1uf.bkt.clouddn.com/valgrind_kcachegrind.png)
+![valgrind --tool=callgrind ./a.out && kcachegrind callgrind.out.*](http://www.qiniu.evilcrow.site/Exceprt_C_valgrind_kcachegrind.png)
 
 ### 2. 总线错误(Bus Error)
 

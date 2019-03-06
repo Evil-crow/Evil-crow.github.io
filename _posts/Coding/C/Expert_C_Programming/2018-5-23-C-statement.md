@@ -62,7 +62,7 @@ C声明的那点事
 
 首先看看这张图:
 
-![如何解析C语言声明](http://p8pmsq2a4.bkt.clouddn.com/C_statement.png) 
+![如何解析C语言声明](http://www.qiniu.evilcrow.site/Exceprt_C_C_statement.png) 
 
 神图!,我来给大家解释一下.
 

@@ -173,7 +173,7 @@ void test(void)
 
 结果如下,大家看了代码基本就懂了:
 
-![./a.out](http://p8uroi1uf.bkt.clouddn.com/jmp.png)
+![./a.out](http://www.qiniu.evilcrow.site/Exceprt_C_jmp.png)
 
 ## 四, Linux内核的错误处理
 

@@ -27,7 +27,7 @@ comments: true
 
  不过,MS-Dos有它的一套进行非法内存访问的判断措施
  
- ![core dump](http://p8pmsq2a4.bkt.clouddn.com/core_dump.png)
+ ![core dump](http://www.qiniu.evilcrow.site/Exceprt_C_core_dump.png)
 
 3. 缺省可见性,语言实现起来十分复杂,况且C/C++还支持分离式编译,所以文件内容的可见性十分重要
 
