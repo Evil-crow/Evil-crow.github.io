@@ -18,11 +18,11 @@ categories:
 
 1. 进行新的邮箱绑定 如下图:
 
-	![](http://p8pmsq2a4.bkt.clouddn.com/git_name_email.png)
+	![](http://www.qiniu.evilcrow.site/QA_git_name_email.png)
 
 	先查看本地上进行git-push时的用户名和邮箱
 
-	![](http://p8pmsq2a4.bkt.clouddn.com/git_email_addition.png)
+	![](http://www.qiniu.evilcrow.site/QA_git_email_addition.png)
 
 	可以通过添加多个邮箱的方式来追回记录
 
