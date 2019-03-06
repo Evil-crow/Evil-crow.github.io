@@ -55,9 +55,9 @@ int main(int argc, char *argv[])
 
 这不就很明显的看出`open()`实现在哪里了?
 
-![gdb step指令](http://p8pmsq2a4.bkt.clouddn.com/gdb_s.png)
+![gdb step指令](http://www.qiniu.evilcrow.site/TLPI_gdb_s.png)
 
-![locate 确定文件位置](http://p8pmsq2a4.bkt.clouddn.com/locate.png)
+![locate 确定文件位置](http://www.qiniu.evilcrow.site/TLPI_locate.png)
 
 如上
 
